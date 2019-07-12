@@ -62,6 +62,7 @@ action.loadTabPage = (module:string) => (dispatch:any, getState:any) => {
             });
         } else {
             // 403
+            
             Err403((component:any) => {
                 NProgress.done();
                 dispatch({ type: 'APP_TAB_CHANGE',

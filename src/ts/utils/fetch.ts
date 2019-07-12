@@ -3,24 +3,33 @@ import { message } from 'antd';
 import * as React from 'react';
 import {getCookie, setCookie, setCookieWithScope} from "./cookies";
 import {_Object} from 'customInterface';
-import { isEmpty } from '.';
+import { isEmpty,getUriParams } from '.';
 
 const ReactDOM = require('react-dom');
 const Err50x = (cb:Function) => { require.ensure([], require => { cb(require('pages/Error/50x')); }); };
-
 const Fetch:_Object = {};
-
-
-const normalHeaders = new Headers({
+const normalHeaders = {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
-});
-const formHeaders = new Headers({
+};
+const formHeaders = {
     'Content-Type': 'application/x-www-form-urlencoded'
-});
+};
 
+interface requestParams {
+    method:string,
+    url:string,
+    params:_Object,
+    opts:_Object
+}
 
-var newFetch = function(url:string, fetchOpts?:Object,opts:any={}){//定义新的fetch方法，封装原有的fetch方法
+/**
+ * 定义新的fetch方法，封装原有的fetch方法,增加超时处理
+ * @param url 
+ * @param fetchOpts 
+ * @param opts 
+ */
+var newFetch = function(url:string, fetchOpts?:Object,opts:any={}){
     let _opts:_Object = {timeout:1000*60,...opts}
     var fetchPromise = fetch(url, fetchOpts);
     var timeoutPromise = new Promise(function(resolve, reject){
@@ -31,13 +40,6 @@ var newFetch = function(url:string, fetchOpts?:Object,opts:any={}){//定义新�
     return Promise.race([fetchPromise, timeoutPromise])
 };
 
-function getUriParams(data:any){
-    var params = [];
-    for(let i in data){
-        params.push(i+'='+data[i]);
-    }
-    return encodeURIComponent(params.join('&'));
-}
 /**
  * 处理请求返回异常
  * @param err 
@@ -51,17 +53,21 @@ function handleException(err:Object){
  * @param opts 
  */
 function createHttpHeader(opts:_Object){
-    return opts.withCookie?{
-        ...normalHeaders,
-        credentials: 'include',
-        Authorization: 'Bearer '+getCookie(opts.tokenType?opts.tokenType:'access_token')
-    }:normalHeaders
+    return new Headers( 
+        opts.withCookie?{
+            ...normalHeaders,
+            credentials: 'include',
+            Authorization: 'Bearer '+getCookie(opts.tokenType?opts.tokenType:'access_token')
+        }
+        :
+        normalHeaders
+    );
 }
 /**
- * 刷新token
+ * 刷新token,并继续上次的请求
  */
-function refreshToken(url:string,params:any,opts:any){
-    if(isEmpty('refresh_token'))
+function refreshToken(reqParams:requestParams){
+    if(isEmpty(getCookie('refresh_token')))
         location.href = 'login.html';
     else{
         fetch(API.baseUrl+'/refreshToken',{
@@ -71,9 +77,11 @@ function refreshToken(url:string,params:any,opts:any){
             if(response.ok||response.status==301||response.status==302)
                 response.json().then((resp:any)=>{
                     if(resp.code==0){
+                        //正常获取数据后记录cookie
                         setCookieWithScope('access_token',resp.data.accessToken);
                         setCookieWithScope('refresh_token',resp.data.refreshToken);
-                        newFetch
+                        //重新请求上次的接口
+                        _Fetch(reqParams);
                     }else
                         location.href = 'login.html';
                 });
@@ -81,64 +89,40 @@ function refreshToken(url:string,params:any,opts:any){
                 location.href = 'login.html';
         }).catch(error=>{
             console.log('error',error);
+            location.href = 'login.html';
         })
     }
 
 }
 
-
-Fetch.get = (url:string,params?:Object,opts:any={}) => {
-    // 虚拟接口服务
-    require('../mock')(url);
-    //非模拟接口并且有参数才拼接参数
-    if(apiTest.indexOf(url)>-1&&params&&JSON.stringify(params)!=='{}')
-        url = url+'?'+getUriParams(params);
-   
-    return newFetch((opts.baseUrl?opts.baseUrl:API.baseUrl)+url, {
-        method: 'GET',
-        headers: createHttpHeader(opts),
-    },opts).then(response => {
-        return handleResponse(url,params,opts, response);
+function _Fetch(reqParams:requestParams){
+    require('../mock')(reqParams.url);
+    let {method,url,params,opts} = reqParams;
+    let fetchOpts:_Object = {
+        method:method,
+        headers:createHttpHeader(opts)
+    }
+    switch(method.toLocaleUpperCase()){
+        case 'GET':
+            if(apiTest.indexOf(url)>-1&&!isEmpty(params))
+                url = url+'?'+getUriParams(params);
+            break;
+        case 'POST':
+            fetchOpts.body = JSON.stringify(params);
+            break;
+        default: break;
+    }
+    return newFetch((opts.baseUrl?opts.baseUrl:API.baseUrl)+url , fetchOpts , opts ).then(response => {
+        return handleResponse(reqParams, response);
     }).catch(handleException)
 }
 
-Fetch.post = (url:string, params:Object={},opts:any={}) => {
-    //虚拟服务接口
-    require('../mock')(url);
-
-    return newFetch((opts.baseUrl?opts.baseUrl:API.baseUrl)+url, {
-        method: 'POST',
-        headers: createHttpHeader(opts),
-        body: JSON.stringify(params),
-    },opts).then(response => {
-        return handleResponse(url,params,opts, response);
-    }).catch(handleException)
-}
-
-Fetch.postFile = (url:string, params:Object,opts:any={}) => {
-    return newFetch(API.baseUrl+url, {
-        method: 'POST',
-        // headers: new Headers({
-        //     'Content-Type': 'multipart/form-data'
-        // }),
-        body: params,
-        credentials: 'include'
-    },opts).then(response => {
-        return handleResponse(url,params,opts, response);
-    }).catch(handleException)
-}
-
-Fetch.put = (url:string, params:Object,opts:any={}) => {
-    return newFetch(API.baseUrl+url, {
-        method: 'PUT',
-        // headers: normalHeaders,
-        body: params,
-    },opts).then(response => {
-        return handleResponse(url,params,opts, response);
-    }).catch(handleException)
-}
-
-function handleResponse (url:string,params:any,opts:any, response:any) {
+/**
+ * 处理请求返回体
+ * @param reqParams 
+ * @param response 
+ */
+function handleResponse (reqParams:requestParams, response:any) {
     if(response.ok||response.status==301||response.status==302)
         return new Promise((resolve,reject)=>{
             response.json().then((resp:any)=>{
@@ -146,7 +130,7 @@ function handleResponse (url:string,params:any,opts:any, response:any) {
             });
         });
     else if(response.status == 403){
-        refreshToken(url,params,opts);
+        refreshToken(reqParams);
     }
     else if(~[502, 503, 504].indexOf(response.status)){
         Err50x((component:any) => {
@@ -154,10 +138,46 @@ function handleResponse (url:string,params:any,opts:any, response:any) {
         });
     }
     else {
-        console.error(`Request failed. Url = ${url} . Message = ${response.statusText}`);
+        console.error(`Request failed. Url = ${reqParams.url} . Message = ${response.statusText}`);
         message.error('【' + status + '】' + response.statusText);
         return {error: {message: 'Request failed due to server error '}};
     }
+}
+
+Fetch.get = function (url:string,params:Object,opts:any={}) {
+    // console.log('get',arguments)
+    // _Fetch({method:'get',...([].slice.call(arguments))});
+    return _Fetch({method:'get',url,params,opts});
+}
+
+Fetch.post = function (url:string, params:Object={},opts:any={}) {
+    // console.log('post',[].slice.call(arguments));
+    // _Fetch({method:'post',...([].slice.call(arguments))});
+    return _Fetch({method:'post',url,params,opts});
+}
+
+Fetch.postFile = function (url:string, params:Object,opts:any={}) {
+    _Fetch({method:'post',url,params,opts});
+    // return newFetch(API.baseUrl+url, {
+    //     method: 'POST',
+    //     // headers: new Headers({
+    //     //     'Content-Type': 'multipart/form-data'
+    //     // }),
+    //     body: params,
+    //     credentials: 'include'
+    // },opts).then(response => {
+    //     return handleResponse(url,params,opts, response);
+    // }).catch(handleException)
+}
+
+Fetch.put = (url:string, params:Object,opts:any={}) => {
+    // return newFetch(API.baseUrl+url, {
+    //     method: 'PUT',
+    //     // headers: normalHeaders,
+    //     body: params,
+    // },opts).then(response => {
+    //     return handleResponse(url,params,opts, response);
+    // }).catch(handleException)
 }
 
 export default Fetch;

@@ -10,6 +10,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import LocaleToggle from 'components/LocaleToggle';
 
 import 'less/login';
+import { _Object } from 'customInterface';
 
 interface CompProps {
     form:any,
@@ -153,6 +154,7 @@ let LoginComp = connect((state:any)=>{
         //登陆后再验证cookie，然后跳转
         dispatch(action.login(data.username, data.password, data.remember)).
             then(()=>{
+                //登陆完再进行一次验证
                 return dispatch(action.isExpiration())
             }).
             then(()=>{

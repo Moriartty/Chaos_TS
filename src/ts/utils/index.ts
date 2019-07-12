@@ -32,6 +32,15 @@ export function objectAppend (obj0:_Object, obj:_Object) {
 //     return url;
 // }
 
+//拼接查询字符串
+export function getUriParams(data:any){
+    var params = [];
+    for(let i in data){
+        params.push(i+'='+data[i]);
+    }
+    return encodeURIComponent(params.join('&'));
+}
+
 /**
  * 判断传入数据是否为空
  * @param val

@@ -29,21 +29,7 @@ export default (function () {
 const resourceBaseUrl = 'http://18.222.66.96'
 
 const apiTest = [
-    '/getAllData',
-    '/postPerfData',
-    '/report/com.tct.camera/getAppPMActiveInfo',
-    '/report/retention',
-    '/report/hotevent',
-    '/report/com.tct.camera/appUserActiveInfo',
-    '/report/getAppDistribution',
-    '/report/getDeviceNumber',
-    '/report/getAndroidVersion',
-    '/report/com.tclhz.gallery/getAppVersionList',
-    '/report/device-report/getDeviceActiveOfDay',
-    '/report/userEngagement',
-    '/report/index/getPainSpotList',
-    '/report/getAppList',
-    '/report/getActivityCount',
+    '/admin/getAuthorityOfRole'
 ];
 
 export {
