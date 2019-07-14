@@ -1,6 +1,13 @@
 import { Button } from 'antd';
+import * as React from 'react';
 
-class CircleBtn extends React.PureComponent {
+interface CompProps {
+    title?:string,
+    icon?:any,
+    onClick?:Function
+}
+
+class CircleBtn extends React.PureComponent<CompProps> {
     render () {
         const { title, icon, onClick } = this.props;
         return (
@@ -9,7 +16,7 @@ class CircleBtn extends React.PureComponent {
                 shape="circle"
                 icon={icon}
                 size="small"
-                onClick={onClick}
+                onClick={()=>onClick()}
                 className="margin-left-sm"/>
         );
     }

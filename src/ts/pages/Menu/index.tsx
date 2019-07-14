@@ -5,12 +5,21 @@ import EditModal from './EditModal';
 // import Toolbar from './Toolbar';
 import Toolbar from 'components/App/Toolbar';
 import Table from './Table';
+import * as React from 'react';
 
 import 'less/menu';
-import {Button} from "antd"
-import {FormattedMessage} from "react-intl"
+import {Button} from "antd";
+import {FormattedMessage} from "react-intl";
 
-class Menu extends React.Component {
+interface CompProps {
+    onLoad:Function,
+    onLeave:Function,
+    onAdd:Function,
+    onRefresh:Function,
+    operations:Array<string>
+}
+
+class Menu extends React.Component<CompProps> {
     componentWillMount () {
         this.props.onLoad();
     }
@@ -41,7 +50,7 @@ class Menu extends React.Component {
     }
 }
 
-Menu = connect(state => {
+const MenuComponent = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/menu'].functions;
     return { operations };
 }, dispatch => ({
@@ -55,7 +64,7 @@ Menu = connect(state => {
      * 添加菜单
      * @param parentId
      */
-    onAdd (parentId) {
+    onAdd (parentId:number|string) {
         dispatch({ type: 'MENU_ADD', parentId: parentId });
     },
     /**

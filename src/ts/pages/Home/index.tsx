@@ -1,8 +1,14 @@
 import {Card,Row,Col} from 'antd';
 import {connect} from 'react-redux';
 import action from 'actions/home';
+import * as React from 'react';
 
-class Home extends React.Component{
+interface CompProps {
+    init:Function,
+    availableSystem:Array<any>
+}
+
+class Home extends React.Component<CompProps>{
     componentDidMount(){
         this.props.init();
     }
@@ -32,7 +38,7 @@ class Home extends React.Component{
     }
 }
 
-Home = connect(state=>{
+const HomeComponent = connect((state:any)=>{
     const {availableSystem} = state['home'];
     return {availableSystem};
 },dispatch=>({
@@ -42,4 +48,4 @@ Home = connect(state=>{
 }))(Home)
 
 
-module.exports = Home;
+module.exports = HomeComponent;

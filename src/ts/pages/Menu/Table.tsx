@@ -4,19 +4,32 @@ import ExTable from 'components/ExTable';
 import { Badge, Tag, Divider, Popconfirm } from 'antd';
 import CircleBtn from './CircleBtn';
 import { FormattedMessage } from 'react-intl';
+import * as React from 'react';
+import { _Object } from 'customInterface'; 
 
-class Table extends React.Component {
-    constructor (props) {
+interface CompProps {
+    operations:any, 
+    onMove:Function, 
+    onSubAdd:Function, 
+    onEdit:Function, 
+    onDelete:Function,
+    loading:boolean,
+    list:any
+}
+
+class Table extends React.Component<CompProps> {
+    private columns:Array<Object>
+
+    constructor (props:CompProps) {
         super(props);
-
         const { operations, onMove, onSubAdd, onEdit, onDelete } = this.props;
         this.columns = [
             { title: '根菜单',
                 dataIndex: 'name',
-                render: (value, data) => (
+                render: (value:any, data:_Object) => (
                     <div>
                         {
-                            data.indents.map((indent, i) => <span key={i} className="indent">{indent}</span>)
+                            data.indents.map((indent:any, i:any) => <span key={i} className="indent">{indent}</span>)
                         }
                         <Tag color={['purple', 'blue', 'cyan', 'green'][data.indents.length - 1]} style={{ marginLeft: 8 }}><FormattedMessage id={value}/></Tag>
                         <CircleBtn onClick={onMove.bind(this, data.id, true)} title="上移" icon="arrow-up"/>
@@ -27,15 +40,15 @@ class Table extends React.Component {
                     </div>
                 )
             },
-            { title: '菜单标签', dataIndex: 'module', render: (value) => value && <Tag color="geekblue">{value}</Tag> },
-            { title: '状态', dataIndex: 'display', render: (value) => value === 1 ? <Badge status="success" text="显示"/> : <Badge status="default" text="隐藏"/> }
+            { title: '菜单标签', dataIndex: 'module', render: (value:any) => value && <Tag color="geekblue">{value}</Tag> },
+            { title: '状态', dataIndex: 'display', render: (value:any) => value === 1 ? <Badge status="success" text="显示"/> : <Badge status="default" text="隐藏"/> }
         ];
 
         if (operations.include('UPDATE', 'DELETE')) {
             this.columns.push({
                 title: '操作',
-                render: (value, data) => {
-                    let actions = [];
+                render: (value:any, data:any) => {
+                    let actions:any = [];
                     if (operations.include('UPDATE')) {
                         actions.push(<a key="b1" onClick={onEdit.bind(this, data)}><FormattedMessage id={'menu_operation_edit'}/></a>);
                     }
@@ -46,7 +59,7 @@ class Table extends React.Component {
                             </Popconfirm>
                         );
                     }
-                    return <div>{actions.joinItem(i => <Divider key={i} type="vertical"/>)}</div>;
+                    return <div>{actions.joinItem((i:any) => <Divider key={i} type="vertical"/>)}</div>;
                 }
             });
         }
@@ -62,7 +75,7 @@ class Table extends React.Component {
     }
 }
 
-Table = connect(state => {
+const TableComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/menu'].functions;
     const { list, loading } = state.menu;
     return { operations, list, loading };
@@ -71,14 +84,14 @@ Table = connect(state => {
      * 修改菜单
      * @param item
      */
-    onEdit (item) {
+    onEdit (item:any) {
         dispatch({ type: 'MENU_EDIT', data: item });
     },
     /**
      * 删除菜单
      * @param id
      */
-    onDelete (id) {
+    onDelete (id:any) {
         dispatch(action.deleteMenu(id)).then(() => {
             dispatch(action.loadList());
         });
@@ -88,11 +101,11 @@ Table = connect(state => {
      * @param id
      * @param isUp
      */
-    onMove (id, isUp) {
+    onMove (id:any, isUp:any) {
         dispatch(action.moveMenu(id, isUp)).then(() => {
             dispatch(action.loadList());
         });
     }
 }))(Table);
 
-export default Table;
+export default TableComp;

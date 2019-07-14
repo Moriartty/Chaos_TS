@@ -74,8 +74,10 @@ Array.prototype.joinItem = function (separatorItem) {
  */
 Date.prototype.format = function (pattern) {
     var fix = function (t) {
-        if (t < 10) { t = '0' + t; }
-        return t;
+        let _t;
+        if (t < 10) { _t = '0' + t; }
+        else {_t = t.toString()}
+        return _t;
     };
     var x = this;
     var y = x.getFullYear();

@@ -5,8 +5,24 @@ import { Form } from 'antd';
 import ExFormItem from 'components/ExFormItem';
 import ExModal from 'components/ExModal';
 import { FormattedMessage } from 'react-intl';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-const EditForm = Form.create()((props) => {
+interface CompProps {
+    onSubmit?:Function,
+    editShow?:boolean, 
+    editData?:any, 
+    list?:any, 
+    onClose?:Function, 
+    intl?:any
+}
+interface EditFormProps {
+    data?:any,
+    list?:any,
+    form?:any
+}
+
+const EditForm:any = Form.create()((props:EditFormProps) => {
     const { data, list, form } = props;
     const { getFieldDecorator, getFieldValue } = form;
     const type = parseInt(getFieldValue('type') || data.type);
@@ -16,7 +32,7 @@ const EditForm = Form.create()((props) => {
                 type="select"
                 name="parentId"
                 initialValue={data.parentId || 0}
-                list={list.map(o => ({
+                list={list.map((o:_Object) => ({
                     id: o.id,
                     name: o.indents.join('') + o.name
                 }))}
@@ -80,10 +96,11 @@ const EditForm = Form.create()((props) => {
     );
 });
 
-class EditModal extends React.Component {
+class EditModal extends React.Component<CompProps> {
+    form:any;
     handleSave = () => {
         const form = this.form;
-        form.validateFields((err, data) => {
+        form.validateFields((err:any, data:_Object) => {
             if (err) {
                 return;
             }
@@ -93,7 +110,7 @@ class EditModal extends React.Component {
         });
     };
 
-    saveFormRef = (form) => {
+    saveFormRef = (form:any) => {
         this.form = form;
     };
 
@@ -116,15 +133,15 @@ class EditModal extends React.Component {
     }
 }
 
-EditModal = connect(state => {
+const EditModalComp = connect((state:any) => {
     const { editShow, editData, list } = state.menu;
-    return { editShow, editData, list: [{ id: 0, name: '顶级菜单', indents: [] }].concat(list.filter(o => !o.module)) };
+    return { editShow, editData, list: [{ id: 0, name: '顶级菜单', indents: [] }].concat(list.filter((o:_Object) => !o.module)) };
 }, dispatch => ({
     /**
      * 提交保存
      * @param data
      */
-    onSubmit (data) {
+    onSubmit (data:any) {
         if (data.id > 0) {
             dispatch(action.updateMenu(data)).then(() => {
                 this.props.onClose();
@@ -147,4 +164,4 @@ EditModal = connect(state => {
     }
 }))(EditModal);
 
-export default EditModal;
+export default EditModalComp;
