@@ -1,13 +1,14 @@
 
-import {get,post} from 'utils/fetch';
+import Fetch from 'utils/fetch';
 import menuConfig from 'config/menu';
-let action = {};
+import { _Object } from 'customInterface';
+let action:_Object = {};
 
 /**
  * 加载角色列表
  * @returns {Function}
  */
-action.loadList = () => dispatch => get('/role').then(list => {
+action.loadList = () => (dispatch:any) => Fetch.get('/role').then((list:any) => {
     dispatch({ type: 'ROLE_LIST', list: list });
 });
 
@@ -16,24 +17,24 @@ action.loadList = () => dispatch => get('/role').then(list => {
  * @returns {Function}
  */
 function loadMenuTree () {
-    return dispatch => {
-        return get('/menu').then(data => {
+    return (dispatch:any) => {
+        return Fetch.get('/menu').then((data:any) => {
             let treeData = [
                 { id: '0', name: 'menuName_permission', icon: 'am-icon-home', list: data }
             ];
             // 递归添加<tr>
-            const recursive = function (item) {
+            const recursive = function (item:_Object) {
                 // id统一转化为字符串
                 item.id = String(item.id);
                 // 手动添加操作权限
                 if (item.module && menuConfig[item.module].operations) { // 过滤出菜单
-                    item.list = menuConfig[item.module].operations.map(o => {
+                    item.list = menuConfig[item.module].operations.map((o:_Object) => {
                         return { id: item.id + '_' + o.key, name: o.name, type: 'OPT' };
                     });
                 }
 
                 if (item.list && item.list.length) {
-                    item.list.forEach(function (o, i, list) {
+                    item.list.forEach(function (o:_Object, i:number, list:Array<any>) {
                         o.level = item.level + 1;
                         o.last = i === list.length - 1; // 是否为当前级别的最后一个
                         o.indents = item.indents.slice(0, -1); // 包含父级菜单的前(n-1)个
@@ -46,7 +47,7 @@ function loadMenuTree () {
                     });
                 }
             };
-            treeData.forEach(function (o, i, list) {
+            treeData.forEach(function (o:_Object, i, list) {
                 o.indents = []; // 体现菜单关系的缩进符
                 o.level = 0; // 菜单深度级别，从0级开始
                 o.last = i === list.length - 1; // 是否为当前级别的最后一个
@@ -64,13 +65,13 @@ action.loadMenuTree = loadMenuTree;
  * @param role
  * @returns {Function}
  */
-function selectRole (role) {
-    return dispatch => {
+function selectRole (role:_Object) {
+    return (dispatch:any) => {
         dispatch({ type: 'ROLE_SELECT', role: role });
-        return get('/role/auth', {
+        return Fetch.get('/role/auth', {
             id: role.id
-        }).then(data => {
-            let roleAuth = [];
+        }).then((data:Array<any>) => {
+            let roleAuth:Array<any> = [];
             // 只要有一个勾上，则顶级节点（非实际菜单）也得勾上
             if (data.length) {
                 roleAuth.push('0');
@@ -80,7 +81,7 @@ function selectRole (role) {
 
                     // 操作类型
                     if (o.functions) {
-                        roleAuth = roleAuth.concat(o.functions.map(func => `${o.menuId}_${func}`));
+                        roleAuth = roleAuth.concat(o.functions.map((func:any) => `${o.menuId}_${func}`));
                     }
                 });
             }
@@ -96,9 +97,9 @@ action.selectRole = selectRole;
  * @param data
  * @returns {Function}
  */
-function updateRoleMenu (roleId, data) {
-    return dispatch => {
-        return post('/role/auth-update', {
+function updateRoleMenu (roleId:string|number, data:any) {
+    return (dispatch:any) => {
+        return Fetch.post('/role/auth-update', {
             id: roleId,
             data: JSON.stringify(data)
         });
@@ -111,9 +112,9 @@ action.updateRoleMenu = updateRoleMenu;
  * @param data
  * @returns {Function}
  */
-function addRole (data) {
-    return dispatch => {
-        return post('/role/create', {
+function addRole (data:_Object) {
+    return (dispatch:any) => {
+        return Fetch.post('/role/create', {
             name: data.name,
             desc: data.desc
         });
@@ -126,9 +127,9 @@ action.addRole = addRole;
  * @param data
  * @returns {Function}
  */
-function updateRole (data) {
-    return dispatch => {
-        return post('/role/update', {
+function updateRole (data:_Object) {
+    return (dispatch:any) => {
+        return Fetch.post('/role/update', {
             id: data.id,
             name: data.name,
             desc: data.desc
@@ -142,9 +143,9 @@ action.updateRole = updateRole;
  * @param id
  * @returns {Function}
  */
-function deleteRole (id) {
-    return dispatch => {
-        return post('/role/delete', {
+function deleteRole (id:number|string) {
+    return (dispatch:any) => {
+        return Fetch.post('/role/delete', {
             id: id
         }).then(() => {
             // 取消当前选择的角色

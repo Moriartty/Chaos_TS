@@ -7,13 +7,13 @@ let action:_Object = {};
  * @param data
  * @returns {Function}
  */
-action.update = data => dispatch => post('/profile/update', data);
+action.update = (data:any) => (dispatch:any) => Fetch.post('/profile/update', data);
 
 /**
  * 更新密码
  * @param data
  * @returns {Function}
  */
-action.updatePassword = data => dispatch => post('/profile/update-password', data);
+action.updatePassword = (data:any) => (dispatch:any) => Fetch.post('/profile/update-password', data);
 
 export default action;

@@ -1,19 +1,20 @@
 
-import {get,post} from 'utils/fetch';
-let action = {};
+import Fetch from 'utils/fetch';
+import { _Object } from 'customInterface';
+let action:_Object = {};
 
 /**
  * 加载组织数据
  * @returns {Function}
  */
-action.loadOrgData = () => dispatch => get('/org/tree').then(data => {
-    let listData = []; // 列状
+action.loadOrgData = () => (dispatch:any) => Fetch.get('/org/tree').then((data:Array<any>) => {
+    let listData:Array<any> = []; // 列状
     let treeData = data;
     // 递归计算附加属性
-    const recursive = function (item) {
+    const recursive = function (item:_Object) {
         listData.push(item);
         if (item.list && item.list.length) {
-            item.list.forEach(function (o, i, list) {
+            item.list.forEach(function (o:_Object, i:number, list:Array<any>) {
                 o.parentId = item.id;
                 o.level = item.level + 1;
                 o.last = i === list.length - 1; // 是否为当前级别的最后一个
@@ -44,9 +45,9 @@ action.loadOrgData = () => dispatch => get('/org/tree').then(data => {
  * @param data
  * @returns {Function}
  */
-function addOrg (data) {
-    return dispatch => {
-        return post('/org/create', {
+function addOrg (data:_Object) {
+    return (dispatch:any) => {
+        return Fetch.post('/org/create', {
             parentId: data.parentId,
             name: data.name
         });
@@ -59,9 +60,9 @@ action.addOrg = addOrg;
  * @param data
  * @returns {Function}
  */
-function updateOrg (data) {
-    return dispatch => {
-        return post('/org/update', {
+function updateOrg (data:_Object) {
+    return (dispatch:any) => {
+        return Fetch.post('/org/update', {
             id: data.id,
             parentId: data.parentId,
             name: data.name
@@ -75,9 +76,9 @@ action.updateOrg = updateOrg;
  * @param id
  * @returns {Function}
  */
-function deleteOrg (id) {
-    return dispatch => {
-        return post('/org/delete', {
+function deleteOrg (id:number|string) {
+    return (dispatch:any) => {
+        return Fetch.post('/org/delete', {
             id: id
         });
     };
@@ -89,8 +90,8 @@ action.deleteOrg = deleteOrg;
  * @param id
  * @returns {Function}
  */
-function selectOrg (id) {
-    return dispatch => {
+function selectOrg (id:number|string) {
+    return (dispatch:any) => {
         dispatch({ type: 'USER_ORG_SELECT', id: id });
         return dispatch(loadUserPage(id, 1));
     };
@@ -103,24 +104,24 @@ action.selectOrg = selectOrg;
  * @param pageNo
  * @returns {Function}
  */
-function loadUserPage (orgId, pageNo = 1) {
-    return (dispatch, getState) => {
+function loadUserPage (orgId:number|string, pageNo = 1) {
+    return (dispatch:any, getState:any) => {
         dispatch({ type: 'USER_LOADING', loading: true });
         const state = getState().user;
         const params = state.searchParams;
-        return get('/user', {
+        return Fetch.get('/user', {
             pageNo: pageNo,
             pageSize: params.pageSize,
             name: state.userSearchKey,
             orgId: orgId || state.orgSelectedId
-        }).then(data => {
+        }).then((data:any) => {
             dispatch({
                 type: 'USER_PAGE_LOAD',
                 no: data.pageNo,
                 count: data.totalPages,
                 dataCount: data.totalCount,
-                list: data.result.map(user => {
-                    user.role = user.roles.map(role => role.roleCode);
+                list: data.result.map((user:_Object) => {
+                    user.role = user.roles.map((role:_Object) => role.roleCode);
                     // if(user.isPic==1){
                     //     user.role.push('微信管理员');
                     // }
@@ -142,19 +143,19 @@ action.loadUserPage = loadUserPage;
  * @param id
  * @returns {Function}
  */
-function loadUserInfo (id) {
-    return dispatch => {
-        return get('/user/info', {
+function loadUserInfo (id:number|string) {
+    return (dispatch:any) => {
+        return Fetch.get('/user/info', {
             id: id
-        }).then(data => {
+        }).then((data:_Object) => {
             // 组织
             if (!data.org) {
                 data.org = '公司';
             }
 
             // 角色
-            let roleNames = [];
-            data.roleIds = data.roles.map(o => {
+            let roleNames:Array<any> = [];
+            data.roleIds = data.roles.map((o:_Object) => {
                 roleNames.push(o.roleCode);
                 return o.id;
             });
@@ -171,12 +172,12 @@ action.loadUserInfo = loadUserInfo;
  * @param data
  * @returns {Function}
  */
-function addUser (data) {
-    return dispatch => {
+function addUser (data:_Object) {
+    return (dispatch:any) => {
         if (!data.password) {
             data.password = '123456';
         }
-        return post('/user/create', data);
+        return Fetch.ost('/user/create', data);
     };
 }
 action.addUser = addUser;
@@ -186,9 +187,9 @@ action.addUser = addUser;
  * @param data
  * @returns {Function}
  */
-function updateUser (data) {
-    return dispatch => {
-        return post('/user/update', data);
+function updateUser (data:any) {
+    return (dispatch:any) => {
+        return Fetch.post('/user/update', data);
     };
 }
 action.updateUser = updateUser;
@@ -198,9 +199,9 @@ action.updateUser = updateUser;
  * @param id
  * @returns {Function}
  */
-function dismissUser (id) {
-    return dispatch => {
-        return post('/user/dismiss', {
+function dismissUser (id:number|string) {
+    return (dispatch:any) => {
+        return Fetch.post('/user/dismiss', {
             id: id
         });
     };
@@ -212,9 +213,9 @@ action.dismissUser = dismissUser;
  * @param id
  * @returns {Function}
  */
-function resetPassword (id) {
-    return dispatch => {
-        return post('/user/password-reset', {
+function resetPassword (id:number|string) {
+    return (dispatch:any) => {
+        return Fetch.post('/user/password-reset', {
             id: id,
             password: '123456'
         });
