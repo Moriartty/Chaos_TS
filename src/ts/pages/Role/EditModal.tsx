@@ -3,8 +3,14 @@ import action from 'actions/role';
 import ExModal from 'components/ExModal';
 import ExFormItem from 'components/ExFormItem';
 import { Form, message } from 'antd';
+import * as React from 'react';
 
-const EditForm = Form.create()((props) => {
+interface formProps {
+    data?:any,
+    form?:any
+}
+
+const EditForm:any = Form.create()((props:formProps) => {
     const { data, form } = props;
     const { getFieldDecorator } = form;
     return (
@@ -30,10 +36,18 @@ const EditForm = Form.create()((props) => {
     );
 });
 
-class EditModal extends React.Component {
+interface modalProps {
+    onSubmit:Function,
+    onClose:Function ,
+    editShow:boolean,
+    editData:any
+}
+
+class EditModal extends React.Component<modalProps> {
+    form:any;
     handleSave = () => {
         const form = this.form;
-        form.validateFields((err, data) => {
+        form.validateFields((err:any, data:any) => {
             if (err) {
                 return;
             }
@@ -44,7 +58,7 @@ class EditModal extends React.Component {
         });
     };
 
-    saveFormRef = (form) => {
+    saveFormRef = (form:any) => {
         this.form = form;
     };
 
@@ -66,7 +80,7 @@ class EditModal extends React.Component {
     }
 }
 
-EditModal = connect(state => {
+const EditModalComp = connect((state:any) => {
     const { editShow, editData } = state.role;
     return { editShow, editData };
 }, dispatch => ({
@@ -74,7 +88,7 @@ EditModal = connect(state => {
      * 提交保存
      * @param data
      */
-    onSubmit (data) {
+    onSubmit (data:any) {
         if (data.id > 0) {
             dispatch(action.updateRole(data)).then(() => {
                 this.props.onClose();

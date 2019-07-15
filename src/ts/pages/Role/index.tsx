@@ -5,10 +5,21 @@ import EditModal from './EditModal';
 import RoleList from './RoleList';
 import RoleMenu from './RoleMenu';
 import { FormattedMessage } from 'react-intl';
-
+import * as React from 'react';
 import 'less/role';
+import { _Object } from 'customInterface';
 
-class Role extends React.Component {
+interface CompProps {
+    init:Function,
+    onLeave:Function,
+    operations:any, 
+    roleInfo: _Object, 
+    onAdd:Function, 
+    onEdit:Function, 
+    onDelete:Function
+}
+
+class Role extends React.Component<CompProps> {
     componentWillMount () {
         this.props.init();
     }
@@ -26,7 +37,7 @@ class Role extends React.Component {
                     {
                         operations.indexOf('CREATE') >= 0 && (
                             <div className="text-center">
-                                <Button onClick={onAdd} type="primary" icon="plus"><FormattedMessage id={'role_operation_add'}/></Button>
+                                <Button onClick={()=>onAdd()} type="primary" icon="plus"><FormattedMessage id={'role_operation_add'}/></Button>
                             </div>
                         )
                     }
@@ -69,7 +80,7 @@ class Role extends React.Component {
     }
 }
 
-Role = connect(state => {
+const RoleComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/role'].functions;
     const { roleInfo } = state.role;
     return { operations, roleInfo };
@@ -91,14 +102,14 @@ Role = connect(state => {
      * 修改角色
      * @param item
      */
-    onEdit (item) {
+    onEdit (item:any) {
         dispatch({ type: 'ROLE_EDIT', data: item });
     },
     /**
      * 删除角色
      * @param id
      */
-    onDelete (id) {
+    onDelete (id:number) {
         dispatch(action.deleteRole(id));
     }
 }))(Role);

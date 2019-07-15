@@ -3,15 +3,26 @@ import appAction from 'actions/app';
 import action from 'actions/profile';
 import { Form, message, Button, Icon, Row, Col } from 'antd';
 import ExFormItem from 'components/ExFormItem';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-class Profile extends React.Component {
+interface CompProps {
+    userInfo:_Object,
+    form:any,
+    onSubmit:Function,
+}
+interface CompState {
+    loading:boolean
+}
+
+class Profile extends React.Component<CompProps,CompState>{
     state={
         loading: false
     };
 
-    submit = (e) => {
+    submit = (e:any) => {
         e.preventDefault();
-        this.props.form.validateFields((err, data) => {
+        this.props.form.validateFields((err:any, data:_Object) => {
             if (err) {
                 return;
             }
@@ -86,9 +97,7 @@ class Profile extends React.Component {
     }
 }
 
-Profile = Form.create()(Profile);
-
-Profile = connect(state => {
+const ProfileComp = connect((state:any) => {
     const { userInfo } = state.app;
     return { userInfo };
 }, dispatch => ({
@@ -96,7 +105,7 @@ Profile = connect(state => {
      * 提交保存
      * @param data
      */
-    onSubmit (data) {
+    onSubmit (data:_Object) {
         this.setState({ loading: true });
         dispatch(action.update(data)).then(() => {
             message.success('保存成功!');
@@ -104,6 +113,6 @@ Profile = connect(state => {
             dispatch(appAction.loadUserInfo());
         });
     }
-}))(Profile);
+}))(Form.create()(Profile));
 
-module.exports = Profile;
+module.exports = ProfileComp;
