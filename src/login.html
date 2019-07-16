@@ -20,44 +20,18 @@
 <script src="https://cdn.bootcss.com/labjs/2.0.3/LAB.min.js"></script>
 <script src="js/jquery.min.js" type="text/javascript"></script>
 <script src="https://cdn.bootcss.com/moment.js/2.24.0/moment.min.js"></script> 
-
+<script src="js/auth.js"></script>
 <script>
-    const url = "http://localhost:8081/chaos_fj/isExpiration";
-    const token = getCookie('access_token');
-    function loadScripts(){
+     function loadScripts(){
         let process = $LAB;
         "<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>"
         process = process.script('<%=htmlWebpackPlugin.files.chunks[chunk].entry %>')
         "<% } %>"
     }
-    function getCookie(name) {
-        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
-        if(arr=document.cookie.match(reg))
-            return (arr[2]);
-        else
-            return null;
+    function success() {
+        location.href = 'index.html';
     }
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization':token?'Bearer '+token:null,
-            credentials: 'include'
-        }
-    }).then(response=>{
-        if(response.ok||response.status==301||response.status==302)
-            response.json().then(resp=>{
-                if(resp.code==0&&resp.data===false)
-                    location.href = 'index.html';
-                else
-                    loadScripts();
-            })
-        else
-            loadScripts();
-    }).catch(()=>{
-        loadScripts();
-    })
+    auth_accessToken(success,loadScripts);
 </script>
 <!--<script>-->
     <!--var targetNode = document;-->

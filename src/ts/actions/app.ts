@@ -4,14 +4,12 @@ import menuConfig from 'config/menu';
 import * as NProgress from 'nprogress';
 import config,{proBaseUrl} from 'config/api';
 import Fetch from '../utils/fetch';
-import {setCookieWithScope,setCookie,delCookieWithScope, getCookie} from '../utils/cookies';
+import {setCookieWithScope,setCookie,delCookieWithScope, getCookie,delCookie} from '../utils/cookies';
 import {_Object} from 'customInterface';
 import { isEmpty } from 'utils/index';
 
 const Err403 = (cb:Function) => { require.ensure([], require => { cb(require('pages/Error/403')); }); };
 let action:_Object = {};
-
-
 
 /**
  * 切换语言
@@ -155,8 +153,8 @@ action.login = (loginName:string, password:string, autoLogin:number) => (dispatc
         baseUrl: config.accountBaseUrl
     }).then((json:_Object) => {
         if(!isEmpty(json)){
-            setCookieWithScope('access_token',json.accessToken);
-            setCookieWithScope('refresh_token',json.refreshToken);
+            setCookie('access_token',json.accessToken);
+            setCookie('refresh_token',json.refreshToken);
         }
         return json;
     });
@@ -167,8 +165,8 @@ action.login = (loginName:string, password:string, autoLogin:number) => (dispatc
  * @returns {Function}
  */
 action.logout = () => (dispatch:any) => {
-    delCookieWithScope('access_token');
-    delCookieWithScope('refresh_token');
+    delCookie('access_token');
+    delCookie('refresh_token');
     dispatch({ type: 'APP_LOGOUT' });
     return Promise.resolve();
 }

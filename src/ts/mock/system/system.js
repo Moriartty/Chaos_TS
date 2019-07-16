@@ -10,13 +10,18 @@ module.exports = [
             'code': '0',
             'data': [
                 {
+                    systemName:'Teye',
+                    systemUrl:'http://www.test-teye.com/big-data/index.html',
+                    systemIcon:''
+                },
+                {
                     systemName:'ForTest',
-                    systemUrl:'http://www.test-teye.com/fortest',
+                    systemUrl:'http://www.test-teye.com/fortest/index.html',
                     systemIcon:''
                 },
                 {
                     systemName:'Naruto',
-                    systemUrl:'http://www.test-teye.com/naruto',
+                    systemUrl:'http://www.test-teye.com/naruto/index.html',
                     systemIcon:''
                 }
             ]

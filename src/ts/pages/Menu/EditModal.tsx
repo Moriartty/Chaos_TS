@@ -115,7 +115,7 @@ class EditModal extends React.Component<CompProps> {
     };
 
     render () {
-        const { editShow, editData: data, list, onClose, intl } = this.props;
+        const { editShow=false, editData: data, list, onClose, intl } = this.props;
         return (
             <ExModal
                 visible={editShow}

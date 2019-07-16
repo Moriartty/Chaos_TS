@@ -10,13 +10,13 @@ import 'less/role';
 import { _Object } from 'customInterface';
 
 interface CompProps {
-    init:Function,
-    onLeave:Function,
-    operations:any, 
-    roleInfo: _Object, 
-    onAdd:Function, 
-    onEdit:Function, 
-    onDelete:Function
+    init?:Function,
+    onLeave?:Function,
+    operations?:any, 
+    roleInfo?: _Object, 
+    onAdd?:Function, 
+    onEdit?:Function, 
+    onDelete?:Function
 }
 
 class Role extends React.Component<CompProps> {
@@ -114,4 +114,4 @@ const RoleComp = connect((state:any) => {
     }
 }))(Role);
 
-module.exports = Role;
+module.exports = RoleComp;

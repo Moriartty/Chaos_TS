@@ -1,12 +1,13 @@
 import {objectAppend} from '../utils';
+import { _Object } from 'customInterface';
 
-const defaultState = {
+const defaultState:_Object = {
     loading:false,
     data:[],
 };
 
-export default (state,action) => {
-    let newState = {};
+export default (state:_Object,action:_Object) => {
+    let newState:_Object = {};
     switch(action.type){
         case 'TAGS_LOADING':
             newState.loading = action.loading;

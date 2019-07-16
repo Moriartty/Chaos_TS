@@ -8,15 +8,6 @@ module.exports = [
             'code': '0',
             'data': [
                 { id: 1, name: 'menuName_home', module: 'home' },
-                { id: 2, name: 'menuName_report', module: 'report' },
-                {
-                    id: 7,
-                    name: 'menuName_contentMgr',
-                    list:[
-                        { id: 700, name: 'menuName_contentMgr_OGC', module: 'contentMgr/OGC', functions: ['SEARCH'] },
-                        { id: 703, name: 'menuName_contentMgr_RichTextEditor', module: 'contentMgr/RichTextEditor',functions: ['SEARCH']},
-                    ]
-                },
                 {
                     id: 9,
                     name: 'menuName_systemConfig',
@@ -50,15 +41,6 @@ module.exports = [
             'code': '0',
             'data': [
                 { id: 1, name: 'menuName_home', module: 'home', display: 1 },
-                { id: 2, name: 'menuName_report', module: 'report',display:1 },
-                {
-                    id: 7,
-                    name: 'menuName_contentMgr',
-                    list:[
-                        { id: 700, name: 'menuName_contentMgr_OGC', module: 'contentMgr/OGC'},
-                        { id: 703, name: 'menuName_contentMgr_RichTextEditor', module: 'contentMgr/RichTextEditor'},
-                    ]
-                },
                 {
                     id: 9,
                     name: 'menuName_systemConfig',

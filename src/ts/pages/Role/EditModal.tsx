@@ -4,6 +4,7 @@ import ExModal from 'components/ExModal';
 import ExFormItem from 'components/ExFormItem';
 import { Form, message } from 'antd';
 import * as React from 'react';
+import { _Object } from 'customInterface';
 
 interface formProps {
     data?:any,
@@ -40,7 +41,7 @@ interface modalProps {
     onSubmit?:Function,
     onClose?:Function ,
     editShow?:boolean,
-    editData?:any
+    editData?:_Object
 }
 
 class EditModal extends React.Component<modalProps> {
@@ -63,7 +64,7 @@ class EditModal extends React.Component<modalProps> {
     };
 
     render () {
-        const { editShow, editData: data, onClose } = this.props;
+        const { editShow, editData: data={}, onClose } = this.props;
         return (
             <ExModal
                 visible={editShow}

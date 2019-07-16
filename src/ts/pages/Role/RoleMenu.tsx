@@ -149,7 +149,7 @@ class RoleMenu extends React.Component<CompProps> {
     }
 
     render () {
-        const { operations, menuTree, roleInfo, roleAuth, onSave } = this.props;
+        const { operations=[], menuTree=[], roleInfo, roleAuth, onSave } = this.props;
         return (
             <div className="role-menu">
                 <ul className="unstyled">

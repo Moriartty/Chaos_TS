@@ -78,8 +78,8 @@ function refreshToken(reqParams:requestParams){
                 response.json().then((resp:any)=>{
                     if(resp.code==0){
                         //正常获取数据后记录cookie
-                        setCookieWithScope('access_token',resp.data.accessToken);
-                        setCookieWithScope('refresh_token',resp.data.refreshToken);
+                        setCookieWithScope('access_token',resp.data);
+                        // setCookieWithScope('refresh_token',resp.data.refreshToken);
                         //重新请求上次的接口
                         _Fetch(reqParams);
                     }else

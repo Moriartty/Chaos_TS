@@ -1,9 +1,10 @@
-import { objectAppend } from 'utils';
+import { objectAppend } from 'utils/index';
+import { _Object } from 'customInterface';
 /**
  * 每个容器组件对应一个reducer
  * 这里可以唯一知道新旧状态的地方
  */
-const defaultState = {
+const defaultState:_Object = {
     roleList: [],
     roleInfo: {}, // 当前选中的角色
     roleAuth: [], // 包含的菜单ID
@@ -12,8 +13,8 @@ const defaultState = {
     menuTree: []
 };
 
-export default (state, action) => {
-    let newState = {};
+export default (state:_Object, action:_Object) => {
+    let newState:_Object = {};
     switch (action.type) {
     case 'ROLE_ADD':
         newState.editShow = true;

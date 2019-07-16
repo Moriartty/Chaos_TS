@@ -12,11 +12,11 @@ import {Button} from "antd";
 import {FormattedMessage} from "react-intl";
 
 interface CompProps {
-    onLoad:Function,
-    onLeave:Function,
-    onAdd:Function,
-    onRefresh:Function,
-    operations:Array<string>
+    onLoad?:Function,
+    onLeave?:Function,
+    onAdd?:Function,
+    onRefresh?:Function,
+    operations?:Array<string>
 }
 
 class Menu extends React.Component<CompProps> {
@@ -75,4 +75,4 @@ const MenuComponent = connect((state:any) => {
     }
 }))(Menu);
 
-module.exports = Menu;
+module.exports = MenuComponent;

@@ -8,7 +8,6 @@ import action from 'actions/app';
 import openNotification from 'components/ExNotification';
 import PotentialError from 'components/PotentialError';
 import { FormattedMessage } from 'react-intl';
-import {getCookie} from "../../utils/cookies";
 
 const TabPane = Tabs.TabPane;
 
@@ -128,7 +127,7 @@ const MasterPageComponent = connect((state:any) => {
             // 所有首屏需要加载的数据已经加载完成，效果比起componentDidMount更合理
             // 首屏加载完时移除
             if (document.getElementById('initLoading')) { document.body.removeChild(document.getElementById('initLoading')); }
-            dispatch(action.getActivityCount());
+            // dispatch(action.getActivityCount());
             // 加载常用模块,暂时没有
             // dispatch(action.loadEntryMenu());
             // //加载日期信息

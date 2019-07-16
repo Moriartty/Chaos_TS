@@ -1,6 +1,6 @@
 import { duration } from "moment";
 
-const defaultDuration = 1000*60*60;//默认一小时
+const defaultDuration = 1000*60*60*24;//默认一天
 
 //写cookies
 export function setCookie(c_name:string, value:string, expireTime=defaultDuration){
@@ -41,7 +41,7 @@ export function delCookie(name:string)
 //删除cookies（有作用域的）
 export function delCookieWithScope(name:string){
     var exp = new Date();
-    var name = "access_token";
+    // var name = "access_token";
     exp.setTime(exp.getTime() - 1);
     var cval=getCookie(name);
     if(cval!=null){
