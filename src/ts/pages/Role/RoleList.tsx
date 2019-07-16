@@ -1,11 +1,18 @@
 import { connect } from 'react-redux';
 import action from 'actions/role';
 import { Menu, Icon } from 'antd';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-class RoleList extends React.Component {
-    roleObj={};
+interface CompProps {
+    onSelected:Function,
+    roleList:Array<any>
+}
 
-    handleClick = (e) => {
+class RoleList extends React.Component<CompProps> {
+    roleObj:_Object={};
+
+    handleClick = (e:any) => {
         const item = this.roleObj[e.key];
         this.props.onSelected(item);
     };
@@ -37,7 +44,7 @@ class RoleList extends React.Component {
     }
 }
 
-RoleList = connect(state => {
+const RoleListComp = connect((state:any) => {
     const { roleList } = state.role;
     return { roleList };
 }, dispatch => ({
@@ -45,9 +52,9 @@ RoleList = connect(state => {
      * 选择某个角色
      * @param role
      */
-    onSelected (role) {
+    onSelected (role:any) {
         dispatch(action.selectRole(role));
     }
 }))(RoleList);
 
-export default RoleList;
+export default RoleListComp;

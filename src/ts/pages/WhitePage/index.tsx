@@ -1,13 +1,14 @@
 import { Button, Layout } from 'antd';
 // import img from 'img/err404.png';
-import img from 'img/crack.jpg';
+const img = require('img/crack.jpg');
 const { Content } = Layout;
+import * as React from 'react';
 
 class WhitePage extends React.Component {
     render () {
         return (
-            <Layout className="full-height" style={{  background: '#fff'}}>
-                <Content className="page-error" style={{ textAlign: 'center' }}>
+            <Layout className="full-height" style={{  background: '#fff'}} tagName='main'>
+                <Content className="page-error" style={{ textAlign: 'center' }} tagName="main">
                     <div>
                         <img src={img}/>
                     </div>

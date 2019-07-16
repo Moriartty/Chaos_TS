@@ -1,9 +1,23 @@
 import { connect } from 'react-redux';
 import action from 'actions/user';
 import ExTable from 'components/ExTable';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-class Table extends React.Component {
-    constructor (props) {
+interface CompProps {
+    loading:boolean, 
+    userPageList: Array<any>, 
+    userPageNo: number, 
+    dataCount:any, 
+    searchParams:_Object, 
+    onRowClick:Function, 
+    onPageChange:Function, 
+    onPageSizeChange:Function
+}
+
+class Table extends React.Component<CompProps> {
+    columns:Array<Object>;
+    constructor (props:CompProps) {
         super(props);
 
         this.columns = [
@@ -23,17 +37,17 @@ class Table extends React.Component {
             <ExTable {...paginationOptions}
                 loading={loading}
                 columns={this.columns}
-                onRow={record => ({ onClick: onRowClick.bind(this, record.id) })}
+                onRow={(record:_Object) => ({ onClick: onRowClick.bind(this, record.id) })}
                 dataSource={list}/>
         );
     }
 }
 
-Table = connect(state => {
+const TableComp = connect((state:any) => {
     const { userPageList, userPageNo, dataCount, searchParams, loading } = state['user'];
     return { userPageList, userPageNo, dataCount, searchParams, loading };
 }, dispatch => ({
-    onPageSizeChange (current, pageSize) {
+    onPageSizeChange (current:any, pageSize:number) {
         dispatch({ type: 'USER_SEARCH_PARAMS', params: { pageSize } });
         dispatch(action.loadUserPage(undefined, current));
     },
@@ -41,17 +55,17 @@ Table = connect(state => {
      * 换页
      * @param pageNo
      */
-    onPageChange (pageNo) {
+    onPageChange (pageNo:number) {
         dispatch(action.loadUserPage(undefined, pageNo));
     },
     /**
      * 点击每行用户信息
      * @param id
      */
-    onRowClick (id) {
+    onRowClick (id:number) {
         dispatch({ type: 'USER_INFO_SHOW', show: true });
         dispatch(action.loadUserInfo(id));
     }
 }))(Table);
 
-export default Table;
+export default TableComp;

@@ -37,10 +37,10 @@ const EditForm:any = Form.create()((props:formProps) => {
 });
 
 interface modalProps {
-    onSubmit:Function,
-    onClose:Function ,
-    editShow:boolean,
-    editData:any
+    onSubmit?:Function,
+    onClose?:Function ,
+    editShow?:boolean,
+    editData?:any
 }
 
 class EditModal extends React.Component<modalProps> {

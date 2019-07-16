@@ -3,8 +3,25 @@ import action from 'actions/user';
 import ExModal from 'components/ExModal';
 import ExFormItem from 'components/ExFormItem';
 import { Form } from 'antd';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-const EditForm = Form.create()((props) => {
+interface modalProps {
+    onSubmit?:Function,
+    userEditShow?:boolean, 
+    userEditData?:any, 
+    orgList?:Array<any>, 
+    roleList?:Array<any>, 
+    onClose?:Function
+}
+interface formProps {
+    data?:any,
+    orgList?:Array<any>,
+    roleList?:Array<any>,
+    [key:string]:any
+}
+
+const EditForm:any = Form.create()((props:formProps) => {
     const { data, orgList, roleList, form } = props;
     const { getFieldDecorator } = form;
     return (
@@ -85,10 +102,11 @@ const EditForm = Form.create()((props) => {
     );
 });
 
-class UserEditModal extends React.Component {
+class UserEditModal extends React.Component<modalProps> {
+    form:any;
     handleSave = () => {
         const form = this.form;
-        form.validateFields((err, data) => {
+        form.validateFields((err:any, data:any) => {
             if (err) {
                 return;
             }
@@ -97,7 +115,7 @@ class UserEditModal extends React.Component {
         });
     };
 
-    saveFormRef = (form) => {
+    saveFormRef = (form:any) => {
         this.form = form;
     };
 
@@ -121,7 +139,7 @@ class UserEditModal extends React.Component {
     }
 }
 
-UserEditModal = connect(state => {
+const UserEditModalComp = connect((state:any) => {
     const { userEditShow, userEditData, orgList } = state['user'];
     return { userEditShow, userEditData, orgList, roleList: state.role.roleList };
 }, dispatch => ({
@@ -129,7 +147,7 @@ UserEditModal = connect(state => {
      * 提交保存
      * @param data
      */
-    onSubmit (data) {
+    onSubmit (data:_Object) {
         // data.isPic=data.isPic?1:0;
         data.roleIds = data.roleIds.join(',');
         if (data.id > 0) {
@@ -154,4 +172,4 @@ UserEditModal = connect(state => {
     }
 }))(UserEditModal);
 
-export default UserEditModal;
+export default UserEditModalComp;

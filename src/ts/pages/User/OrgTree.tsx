@@ -1,13 +1,25 @@
 import { connect } from 'react-redux';
 import action from 'actions/user';
 import { Icon, Popconfirm } from 'antd';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-class OrgTree extends React.Component {
+interface CompProps {
+    operations?:Array<any>, 
+    orgSelectedId?:number, 
+    onDelete?:Function, 
+    onSelect?:Function, 
+    onEdit?:Function,
+    userSearchKey?:any, 
+    orgData?:any
+}
+
+class OrgTree extends React.Component<CompProps> {
     /**
      * 折叠/展开
      * @param e
      */
-    collapse (e) {
+    collapse (e:any) {
         e.stopPropagation();
         const $this = $(e.currentTarget);
         const $subList = $this.closest('.node-name').next('ul');
@@ -29,14 +41,14 @@ class OrgTree extends React.Component {
      * @param item
      * @returns {XML}
      */
-    renderItem (item) {
+    renderItem (item:_Object) {
         const list = item.list;
         const { operations, orgSelectedId, onDelete, onSelect, onEdit } = this.props;
         return (
             <li key={item.index}>
                 <div onClick={onSelect.bind(this, item.id)} className={'no-select node-name' + (orgSelectedId == item.id ? ' selected' : '')}>
                     {
-                        item.indents.map((indent, index) => {
+                        item.indents.map((indent:any, index:number) => {
                             return (
                                 <span key={index} className="indent">
                                     {
@@ -72,7 +84,7 @@ class OrgTree extends React.Component {
                     list && list.length > 0 && (
                         <ul className="unstyled">
                             {
-                                list.map((o, i) => {
+                                list.map((o:_Object, i:number) => {
                                     o.index = i;
                                     return this.renderItem(o);
                                 })
@@ -90,7 +102,7 @@ class OrgTree extends React.Component {
             <div className="user-org padding-right-sm">
                 <ul className="unstyled">
                     {
-                        orgData.map((o, i) => {
+                        orgData.map((o:_Object, i:number) => {
                             o.index = i;
                             return this.renderItem(o);
                         })
@@ -102,7 +114,7 @@ class OrgTree extends React.Component {
     }
 }
 
-OrgTree = connect(state => {
+const OrgTreeComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/user'].functions;
     const { userSearchKey, orgData, orgSelectedId } = state.user;
     return { operations, userSearchKey, orgData, orgSelectedId };
@@ -111,21 +123,21 @@ OrgTree = connect(state => {
      * 选择组织
      * @param id
      */
-    onSelect (id) {
+    onSelect (id:number) {
         dispatch(action.selectOrg(id));
     },
     /**
      * 编辑
      * @param item
      */
-    onEdit (item) {
+    onEdit (item:any) {
         dispatch({ type: 'USER_ORG_EDIT', data: item });
     },
     /**
      * 删除
      * @param id
      */
-    onDelete (id) {
+    onDelete (id:number) {
         dispatch(action.deleteOrg(id)).then(() => {
             // 重新加载列表
             dispatch(action.loadOrgData());
@@ -133,4 +145,4 @@ OrgTree = connect(state => {
     }
 }))(OrgTree);
 
-export default OrgTree;
+export default OrgTreeComp;

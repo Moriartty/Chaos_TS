@@ -2,18 +2,22 @@
  * 原生对象的扩展方法
  */
 
-// /**
-//  * Promise（webpack构建后的代码竟然用了Promise，所以在此做兼容）
-//  */
-// if (!window.Promise) {
-//     window.Promise = require('tf-utils/class/Promise').default;
-// }
+interface Array<T> {
+    include(...args:any):boolean,
+    joinItem(item:any):Array<T>
+}
+interface Date{
+    format(s:string):string
+}
+interface Number {
+    formatThousands():string
+}
 
 /**
  * 兼容数组find方法
  */
 if (typeof Array.prototype.find !== 'function') {
-    Array.prototype.find = function (callback) {
+    Array.prototype.find = function (callback:Function) {
         let item;
         for (let i = 0; i < this.length; ++i) {
             if (callback(this[i], i, this)) {
@@ -73,7 +77,7 @@ Array.prototype.joinItem = function (separatorItem) {
  * @returns {*}
  */
 Date.prototype.format = function (pattern) {
-    var fix = function (t) {
+    var fix = function (t:number) {
         let _t;
         if (t < 10) { _t = '0' + t; }
         else {_t = t.toString()}

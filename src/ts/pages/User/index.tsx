@@ -7,10 +7,15 @@ import OrgEditModal from './OrgEditModal';
 import UserEditModal from './UserEditModal';
 import DetailModal from './DetailModal';
 import Toolbar from './Toolbar';
-
+import * as React from 'react';
 import 'less/user';
 
-class User extends React.Component {
+interface CompProps {
+    init:Function,
+    onLeave:Function
+}
+
+class User extends React.Component<CompProps> {
     componentWillMount () {
         this.props.init();
     }
@@ -37,10 +42,10 @@ class User extends React.Component {
     }
 }
 
-User = connect(null, dispatch => ({
+const UserComp = connect(null, dispatch => ({
     init () {
         // 加载组织树
-        dispatch(action.loadOrgData()).then(treeData => {
+        dispatch(action.loadOrgData()).then((treeData:any) => {
             // 默认选择第一个组织
             dispatch(action.selectOrg(treeData[0].id));
         });
@@ -52,4 +57,4 @@ User = connect(null, dispatch => ({
     }
 }))(User);
 
-module.exports = User;
+module.exports = UserComp;

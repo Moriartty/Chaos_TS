@@ -2,15 +2,26 @@ import { connect } from 'react-redux';
 import action from 'actions/role';
 import { Button, Icon, message } from 'antd';
 import { FormattedMessage } from 'react-intl';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
 const levelColors = ['#eb2f96', '#fa8c16', '#13c2c2', '#2f54eb', '#fa541c'];
 
-class RoleMenu extends React.Component {
+interface CompProps {
+    roleAuth?:Array<any>,
+    onCheckChange?:Function,
+    operations?:Array<any>, 
+    menuTree?:any, 
+    roleInfo?:_Object,  
+    onSave?:Function
+}
+
+class RoleMenu extends React.Component<CompProps> {
     /**
      * 折叠/展开
      * @param e
      */
-    collapse (e) {
+    collapse (e:any) {
         const $this = $(e.currentTarget);
         const $subList = $this.closest('.menu-name').next('ul');
         if ($subList.is(':visible')) {
@@ -30,19 +41,19 @@ class RoleMenu extends React.Component {
      * 勾选复选框
      * @param e
      */
-    handleCheckChange (e) {
+    handleCheckChange (e:any) {
         let roleAuth = this.props.roleAuth.concat();
 
         const t = e.currentTarget;
         const $this = $(t);
         let changedMenuIds = [t.value]; // 有改变的菜单
         // 下级联动（一次性选择）
-        $this.closest('.menu-name').next('ul').find('input').each(function (i, chk) {
+        $this.closest('.menu-name').next('ul').find('input').each(function (i:number, chk:_Object) {
             changedMenuIds.push(chk.value);
         });
 
         // 上级联动（逐层遍历判断）
-        const recursive = function ($chk, checked) {
+        const recursive = function ($chk:any, checked:boolean) {
             var $parentChk = $chk.closest('ul').prev('.menu-name').find('input');
             if ($parentChk.length) {
                 // 判断当前级所有复选框，如果全部没勾则父节点不勾，否则父节点打勾
@@ -55,7 +66,7 @@ class RoleMenu extends React.Component {
                     recursive($parentChk, true);
                 } else {
                     var hasCheck = false;
-                    $chk.closest('li').siblings('li').find('input').each(function (i, chk) {
+                    $chk.closest('li').siblings('li').find('input').each(function (i:number, chk:_Object) {
                         if (chk.checked) {
                             hasCheck = true;
                             return false;
@@ -88,7 +99,7 @@ class RoleMenu extends React.Component {
      * @param item
      * @returns {XML}
      */
-    renderItem (item) {
+    renderItem (item:_Object) {
         const indents = item.indents;
         const list = item.list;
         const roleMenuIds = this.props.roleAuth;
@@ -96,7 +107,7 @@ class RoleMenu extends React.Component {
             <li key={item.index}>
                 <div className="no-select menu-name">
                     {
-                        indents.map((indent, index) => {
+                        indents.map((indent:any, index:number) => {
                             return (
                                 <span key={index} className="indent">
                                     {
@@ -112,7 +123,7 @@ class RoleMenu extends React.Component {
                     }
                     <label className="cursor-pointer">
                         <input type="checkbox"
-                            checked={~roleMenuIds.indexOf(item.id)}
+                            checked={roleMenuIds.indexOf(item.id)>-1}
                             value={item.id}
                             onChange={this.handleCheckChange.bind(this)}/>
                         {/* eslint-disable-next-line */}
@@ -125,7 +136,7 @@ class RoleMenu extends React.Component {
                     list && list.length > 0 && (
                         <ul className="unstyled">
                             {
-                                list.map((o, i) => {
+                                list.map((o:_Object, i:number) => {
                                     o.index = i;
                                     return this.renderItem(o);
                                 })
@@ -143,7 +154,7 @@ class RoleMenu extends React.Component {
             <div className="role-menu">
                 <ul className="unstyled">
                     {
-                        menuTree.map((o, i) => {
+                        menuTree.map((o:_Object, i:number) => {
                             o.index = i;
                             return this.renderItem(o);
                         })
@@ -159,7 +170,7 @@ class RoleMenu extends React.Component {
     }
 }
 
-RoleMenu = connect(state => {
+const RoleMenuComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/role'].functions;
     const { menuTree, roleInfo, roleAuth } = state.role;
     return { operations, menuTree, roleInfo, roleAuth };
@@ -168,7 +179,7 @@ RoleMenu = connect(state => {
      * 改变复选框
      * @param roleAuth
      */
-    onCheckChange (roleAuth) {
+    onCheckChange (roleAuth:Array<any>) {
         dispatch({ type: 'ROLE_MENU_CHK_CHANGE', roleAuth });
     },
     /**
@@ -176,10 +187,10 @@ RoleMenu = connect(state => {
      * @param roleId
      * @param roleAuth
      */
-    onSave (roleId, roleAuth) {
+    onSave (roleId:number, roleAuth:Array<any>) {
         // 格式转化
-        let obj = {}; // {6:[], 9:["CREATE","UPDATE"]}
-        roleAuth.forEach(id => {
+        let obj:_Object = {}; // {6:[], 9:["CREATE","UPDATE"]}
+        roleAuth.forEach((id:any) => {
             // eslint-disable-next-line
             if (id != '0') { // 排除手动添加的
                 const index = id.indexOf('_');

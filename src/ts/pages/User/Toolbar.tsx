@@ -2,9 +2,21 @@ import { connect } from 'react-redux';
 import action from 'actions/user';
 import { Row, Col, Button, Input, Icon } from 'antd';
 import { FormattedMessage } from 'react-intl';
+import * as React from 'react';
 
-class Toolbar extends React.Component {
-    constructor (props) {
+interface CompProps {
+    operations?:Array<any>, 
+    orgSelectedId?:number, 
+    onOrgAdd?:Function, 
+    onUserAdd?:Function, 
+    onSearch?:Function
+}
+interface CompState {
+    searchKey:number|string
+}
+
+class Toolbar extends React.Component<CompProps,CompState> {
+    constructor (props:CompProps) {
         super(props);
 
         this.state = {
@@ -12,7 +24,7 @@ class Toolbar extends React.Component {
         };
     }
 
-    handleChange = (e) => {
+    handleChange = (e:any) => {
         this.setState({ searchKey: e.target.value });
     };
 
@@ -30,8 +42,8 @@ class Toolbar extends React.Component {
                 {
                     operations.include('CREATE') && (
                         <Col span={6}>
-                            <Button type="primary" onClick={onOrgAdd} icon="usergroup-add" disabled={orgSelectedId == -1}><FormattedMessage id={'user_operation_addOrg'}/></Button>
-                            <Button type="primary" onClick={onUserAdd} icon="user-add" className="margin-left" disabled={orgSelectedId == -1}><FormattedMessage id={'user_operation_addStaff'}/></Button>
+                            <Button type="primary" onClick={()=>onOrgAdd()} icon="usergroup-add" disabled={orgSelectedId == -1}><FormattedMessage id={'user_operation_addOrg'}/></Button>
+                            <Button type="primary" onClick={()=>onUserAdd()} icon="user-add" className="margin-left" disabled={orgSelectedId == -1}><FormattedMessage id={'user_operation_addStaff'}/></Button>
                         </Col>
                     )
                 }
@@ -48,7 +60,7 @@ class Toolbar extends React.Component {
     }
 }
 
-Toolbar = connect(state => {
+const ToolbarComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/user'].functions;
     const { orgSelectedId } = state.user;
     return { operations, orgSelectedId };
@@ -69,10 +81,10 @@ Toolbar = connect(state => {
      * 模糊搜索
      * @param value
      */
-    onSearch (value) {
+    onSearch (value:any) {
         dispatch({ type: 'USER_SEARCH', value: value });
         dispatch(action.loadUserPage(this.props.orgSelectedId, 1));
     }
 }))(Toolbar);
 
-export default Toolbar;
+export default ToolbarComp;

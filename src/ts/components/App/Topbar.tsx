@@ -9,7 +9,7 @@ import PotentialError from 'components/PotentialError';
 //奇怪，import 方式引用不行
 // import screenfull from 'screenfull';
 const screenfull = require('screenfull');
-import { isAuthenticated } from '../../utils/Session';
+// import { isAuthenticated } from '../../utils/Session';
 const defaultAvatar = require('img/logo.svg');
 import {_Object} from 'customInterface';
 
@@ -61,7 +61,7 @@ class Topbar extends React.Component<CompProps,CompState> {
         const menu = (
             <Menu className='menu'>
                 <Menu.ItemGroup title='用户中心' className='menu-group'>
-                    <Menu.Item>你好 - {isAuthenticated()}</Menu.Item>
+                    <Menu.Item>你好</Menu.Item>
                     <Menu.Item onClick={onNav.bind(this, 'profile')}>个人信息</Menu.Item>
                     {/*<Menu.Item><span>切换系统</span></Menu.Item>*/}
                     <Menu.Item><span onClick={()=>onLogout()}>退出登录</span></Menu.Item>

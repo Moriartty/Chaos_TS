@@ -3,10 +3,21 @@ import action from 'actions/user';
 import ExModal from 'components/ExModal';
 import { Avatar, Tag, Button, Popconfirm, message } from 'antd';
 import { FormattedMessage } from 'react-intl';
+const defaultAvatar = require('img/avatar-default.png');
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-import defaultAvatar from 'img/avatar-default.png';
+interface CompProps {
+    operations?:Array<any>, 
+    userInfoData?: _Object, 
+    userInfoShow?:boolean, 
+    onEdit?:Function, 
+    onDismiss?:Function, 
+    onPasswordReset?:Function, 
+    onClose?:Function
+}
 
-class DetailModal extends React.Component {
+class DetailModal extends React.Component<CompProps> {
     render () {
         const { operations, userInfoData: info, userInfoShow, onEdit, onDismiss, onPasswordReset, onClose } = this.props;
         return (
@@ -55,7 +66,7 @@ class DetailModal extends React.Component {
     }
 }
 
-DetailModal = connect(state => {
+const DetailModalComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/user'].functions;
     const { userInfoData, userInfoShow } = state.user;
     return { operations, userInfoData, userInfoShow };
@@ -64,7 +75,7 @@ DetailModal = connect(state => {
      * 编辑
      * @param item
      */
-    onEdit (item) {
+    onEdit (item:any) {
         this.props.onClose();
         dispatch({ type: 'USER_EDIT', data: item });
     },
@@ -73,7 +84,7 @@ DetailModal = connect(state => {
      * @param id
      * @param orgId
      */
-    onDismiss (id, orgId) {
+    onDismiss (id:number, orgId:number) {
         this.props.onClose();
         dispatch(action.dismissUser(id)).then(() => {
             // 重新加载列表
@@ -84,7 +95,7 @@ DetailModal = connect(state => {
      * 密码重置
      * @param id
      */
-    onPasswordReset (id) {
+    onPasswordReset (id:number) {
         dispatch(action.resetPassword(id)).then(() => {
             message.success('密码重置成功！');
         });
@@ -97,4 +108,4 @@ DetailModal = connect(state => {
     }
 }))(DetailModal);
 
-export default DetailModal;
+export default DetailModalComp;

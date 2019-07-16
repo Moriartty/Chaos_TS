@@ -48,7 +48,7 @@ class Table extends React.Component<CompProps> {
             this.columns.push({
                 title: '操作',
                 render: (value:any, data:any) => {
-                    let actions:any = [];
+                    let actions:Array<any> = [];
                     if (operations.include('UPDATE')) {
                         actions.push(<a key="b1" onClick={onEdit.bind(this, data)}><FormattedMessage id={'menu_operation_edit'}/></a>);
                     }

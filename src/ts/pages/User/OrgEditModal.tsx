@@ -3,8 +3,25 @@ import action from 'actions/user';
 import ExModal from 'components/ExModal';
 import ExFormItem from 'components/ExFormItem';
 import { Form } from 'antd';
+import * as React from 'react';
+import { _Object } from 'customInterface';
 
-const EditForm = Form.create()((props) => {
+interface modalProps {
+    orgEditShow?:boolean, 
+    orgEditData?: any, 
+    orgList?:Array<any>, 
+    onClose?:Function,
+    onSubmit?:Function,
+    [key:string]:any
+}
+
+interface formProps {
+    data?:_Object,
+    orgList?:Array<any>,
+    [key:string]:any
+}
+
+const EditForm:any = Form.create()((props:formProps) => {
     const { data, orgList, form } = props;
     const { getFieldDecorator } = form;
     return (
@@ -30,10 +47,11 @@ const EditForm = Form.create()((props) => {
     );
 });
 
-class OrgEditModal extends React.Component {
+class OrgEditModal extends React.Component<modalProps> {
+    form:any;
     handleSave = () => {
         const form = this.form;
-        form.validateFields((err, data) => {
+        form.validateFields((err:any, data:any) => {
             if (err) {
                 return;
             }
@@ -44,7 +62,7 @@ class OrgEditModal extends React.Component {
         });
     };
 
-    saveFormRef = (form) => {
+    saveFormRef = (form:any) => {
         this.form = form;
     };
 
@@ -67,7 +85,7 @@ class OrgEditModal extends React.Component {
     }
 }
 
-OrgEditModal = connect(state => {
+const OrgEditModalComp = connect((state:any) => {
     const { orgEditShow, orgEditData, orgList } = state['user'];
     return { orgEditShow, orgEditData, orgList };
 }, dispatch => ({
@@ -75,7 +93,7 @@ OrgEditModal = connect(state => {
      * 提交保存
      * @param data
      */
-    onSubmit (data) {
+    onSubmit (data:_Object) {
         data.parentId = data.parentId == 0 ? '' : data.parentId;
         if (data.id > 0) {
             dispatch(action.updateOrg(data)).then(() => {
@@ -99,4 +117,4 @@ OrgEditModal = connect(state => {
     }
 }))(OrgEditModal);
 
-export default OrgEditModal;
+export default OrgEditModalComp;
