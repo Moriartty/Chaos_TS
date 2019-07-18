@@ -192,79 +192,73 @@ action.loadUserInfo = () => (dispatch:any) => Fetch.get('/profile').then((data:a
 });
 
 /**
+ * 加载用户指定系统下的所有操作权限列表
+ */
+action.loadUserAuth = () => (dispatch:any) => Fetch.get('/user/auth').then((data:any)=>{
+    dispatch({type:'APP_SET_USER_AUTHLIST',list:data});
+})
+
+/**
  * 加载用户菜单信息
  * @returns {Function}
  */
-action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => 
-    Fetch.get('/menu/user').then((data:_Object|Array<any>) => {
-    // console.log(data);
-    // url -> obj
-
-
-    let obj:_Object = {
-        // 固定菜单页面
-        home: menuConfig.home,
-        profile: menuConfig.profile,
-        avatar: menuConfig.avatar,
-        password: menuConfig.password
-    };
-    /**
-     * 递归设置每个菜单的级别码
-     * @param item
-     * @param no 如三级目录级别码：011
-     */
-    function recursive (item:_Object, no:number|string) {
-        if (item.list) {
-            item.list.forEach((o:_Object, i:number) => {
-                const num = no + '>' + i.toString();
-                o.no = num;
-                const menu = menuConfig[o.module];
-                if (menu) {
-                    o.page = menu.page;
-                    o.icon = menu.icon;
-                    if (!o.functions) {
-                        o.functions = [];
+action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => {
+    Promise.all([Fetch.get('/role/auth'),Fetch.get('/menu/user')]).then((data:Array<any>)=>{
+        const roleAuth = data[0];
+        let userMenu = data[1];
+        dispatch({type:'APP_SET_USER_AUTHLIST',list:roleAuth});
+        //这里可以固定某些菜单页面
+        let obj:_Object = {};
+        function recursive (item:_Object, no:number|string) {
+            if (item.list) {
+                item.list.forEach((o:_Object, i:number) => {
+                    const num = no + '>' + i.toString();
+                    o.no = num;
+                    o.id = o.oid;
+                    const menu = menuConfig[o.module];
+                    if (menu) {
+                        o.page = menu.page;
+                        o.icon = menu.icon;
+                        o.functions = roleAuth.findAll(o.oid,'pid').map((k:_Object)=>k.name);
+                        obj[o.module] = o;
                     }
-                    obj[o.module] = o;
-                }
-                recursive(o, num);
-            });
-        }
-    }
-    data.forEach((item:_Object, i:number) => {
-        const no = '>' + i.toString();
-        item.no = no;
-        const menu = menuConfig[item.module];
-        if (menu) {
-            item.page = menu.page;
-            item.icon = menu.icon;
-            if (!item.functions) {
-                item.functions = [];
+                    recursive(o, num);
+                });
             }
-            obj[item.module] = item;
         }
-        recursive(item, no);
-    });
-
-    dispatch({
-        type: 'APP_SET_MENU',
-        data,
-        obj
-    });
-    let module = '';
-    if(localStorage.getItem('chaos_activeTab')&&localStorage.getItem('chaos_activeTab')!='null')
-        module = localStorage.getItem('chaos_activeTab');
-    else
-        module = 'home';
-    // const module = localStorage.getItem('activeTab')||'home';
-    if (!reloadOnly) {
-        // 默认打开首页
-        // dispatch(action.loadTabPage('home'));
-        dispatch(action.loadTabPage(module));
-    }
-
-    return data;
-});
+        userMenu.forEach((item:_Object, i:number) => {
+            const no = '>' + i.toString();
+            item.no = no;
+            item.id = item.oid;
+            const menu = menuConfig[item.module];
+            if (menu) {
+                item.page = menu.page;
+                item.icon = menu.icon;
+                item.functions = roleAuth.findAll(item.oid,'pid').map((k:_Object)=>k.name);
+                obj[item.module] = item;
+            }
+            recursive(item, no);
+        });
+        dispatch({
+            type: 'APP_SET_MENU',
+            data:userMenu,
+            obj
+        });
+        let module = '';
+        if(localStorage.getItem('chaos_activeTab')&&localStorage.getItem('chaos_activeTab')!='null')
+            module = localStorage.getItem('chaos_activeTab');
+        else
+            module = 'home';
+        // const module = localStorage.getItem('activeTab')||'home';
+        if (!reloadOnly) {
+            // 默认打开首页
+            // dispatch(action.loadTabPage('home'));
+            dispatch(action.loadTabPage(module));
+        }
+    
+        return userMenu;
+    })
+};
 
 /**
  * 获取当前日期信息

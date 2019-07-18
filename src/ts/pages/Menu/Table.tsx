@@ -35,7 +35,7 @@ class Table extends React.Component<CompProps> {
                         <CircleBtn onClick={onMove.bind(this, data.id, true)} title="上移" icon="arrow-up"/>
                         <CircleBtn onClick={onMove.bind(this, data.id, false)} title="下移" icon="arrow-down"/>
                         {
-                            !data.module && <CircleBtn title="添加子菜单" icon="plus" onClick={onSubAdd.bind(this, data.id)}/>
+                            data.type!='OPT' && <CircleBtn title="添加子菜单" icon="plus" onClick={onSubAdd.bind(this, data.id)}/>
                         }
                     </div>
                 )
@@ -66,11 +66,14 @@ class Table extends React.Component<CompProps> {
     }
 
     render () {
+        const {loading,list} = this.props;
         return (
             <ExTable
-                loading={this.props.loading}
+                loading={loading}
                 columns={this.columns}
-                dataSource={this.props.list}/>
+                dataSource={list}
+                rowKey='oid'
+            />
         );
     }
 }

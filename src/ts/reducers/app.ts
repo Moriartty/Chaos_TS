@@ -28,6 +28,7 @@ const defaultState:_Object = {
         desc: '',
         duration: 2
     },
+    userAuthList:[],
     isLogin:true
 };
 
@@ -43,6 +44,9 @@ export default (state:_Object, action:_Object) => {
         case 'APP_SET_MENU':
             newState.menuData = action.data;
             newState.menuObj = action.obj;
+            break;
+        case 'APP_SET_USER_AUTHLIST':
+            newState.userAuthList = action.list;    
             break;
         case 'APP_SET_SIDEBAR_MENU':
             newState.sidebarMenuData = action.data;

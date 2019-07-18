@@ -1,20 +1,44 @@
 module.exports = [
     {
-        desc: '获取用户的菜单数据',
+        desc: '获取用户指定系统的菜单数据,用于渲染系统菜单目录',
         type: 'GET',
         url: '/menu/user',
-        params: '从cookie里面获取',
+        params: {
+            userId:'',
+            systemId:''
+        },//从cookie里面获取
         result: {
             'code': '0',
             'data': [
-                { id: 1, name: 'menuName_home', module: 'home' },
+                { oid: 1, name: 'menuName_home', module: 'home',pid:-1,type:'LEAF_MODULE' },
                 {
-                    id: 9,
+                    oid: 9,
                     name: 'menuName_systemConfig',
+                    module:'',
+                    pid:0,
+                    type:'PARENT_MODULE',
                     list: [
-                        { id: 900, name: 'menuName_systemConfig_role', module: 'systemConfig/role', functions: ['CREATE', 'UPDATE', 'DELETE'] },
-                        { id: 901, name: 'menuName_systemConfig_menu', module: 'systemConfig/menu', functions: ['CREATE', 'UPDATE', 'EDIT', 'DELETE'] },
-                        { id: 902, name: 'menuName_systemConfig_user', module: 'systemConfig/user', functions: ['CREATE', 'UPDATE', 'DELETE', 'ADD_STAFF', 'ADD_ORG', 'RESET', 'LEAVE'] },
+                        { 
+                            oid: 900, 
+                            name: 'menuName_systemConfig_role', 
+                            module: 'systemConfig/role',
+                            pid:9,
+                            type:'LEAF_MODULE', 
+                        },
+                        { 
+                            oid: 901, 
+                            name: 'menuName_systemConfig_menu', 
+                            module: 'systemConfig/menu',
+                            pid:9,
+                            type:'LEAF_MODULE', 
+                        },
+                        { 
+                            oid: 902, 
+                            name: 'menuName_systemConfig_user', 
+                            module: 'systemConfig/user',
+                            pid:9,
+                            type:'LEAF_MODULE', 
+                        },
                     ]
                 }
             ]
@@ -33,25 +57,251 @@ module.exports = [
         }
     },
     {
-        desc: '获取所有菜单数据',
+        desc: '获取所有菜单数据,渲染初始的权限树',
         type: 'GET',
         url: '/menu',
         params: '无',
         result: {
             'code': '0',
             'data': [
-                { id: 1, name: 'menuName_home', module: 'home', display: 1 },
                 {
-                    id: 9,
-                    name: 'menuName_systemConfig',
-                    list: [
-                        { id: 900, name: 'menuName_systemConfig_role', module: 'systemConfig/role', display: 1 },
-                        { id: 901, name: 'menuName_systemConfig_menu', module: 'systemConfig/menu', display: 1 },
-                        { id: 902, name: 'menuName_systemConfig_user', module: 'systemConfig/user', display: 1 },
-
-                    ],
-                    display: 1
+                    oid:-1,
+                    pid:0,
+                    type:'SYSTEM',
+                    name:"systemName_teye",
+                    module:'',
+                    display:1,
+                    list:[
+                        { 
+                            oid: 1,
+                            pid:-1,
+                            type:'LEAF_MODULE', 
+                            name: 'menuName_home', 
+                            module: 'home', 
+                            display: 1 ,
+                            list:[
+                                {
+                                    oid:1000,
+                                    pid:1,
+                                    type:'OPT',
+                                    name:'home_operation_view',
+                                    module:'',
+                                    display:1,
+                                    url:'ccc'
+                                },
+                            ]
+                        },
+                        {
+                            oid: 9,
+                            pid:-1,
+                            type:'PARENT_MODULE',
+                            name: 'menuName_systemConfig',
+                            module:'systemConfig',
+                            list: [
+                                { 
+                                    oid: 900, 
+                                    pid:9,
+                                    type:'LEAF_MODULE',
+                                    name: 'menuName_systemConfig_role', 
+                                    module: 'systemConfig/role', 
+                                    display: 3 ,
+                                    list:[
+                                        {
+                                            oid:9000,
+                                            pid:900,
+                                            type:'OPT',
+                                            name:'role_operation_add',
+                                            module:'',
+                                            display:1,
+                                            url:'aaa'
+                                        },
+                                        {
+                                            oid:9001,
+                                            pid:900,
+                                            type:'OPT',
+                                            name:'role_operation_modify',
+                                            module:'',
+                                            display:1,
+                                            url:'bbb'
+                                        },
+                                        {
+                                            oid:9002,
+                                            pid:900,
+                                            type:'OPT',
+                                            name:'role_operation_delete',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:9003,
+                                            pid:900,
+                                            type:'OPT',
+                                            name:'role_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                    ]
+                                },
+                                { 
+                                    oid: 901, 
+                                    pid:9,
+                                    type:'LEAF_MODULE',
+                                    name: 'menuName_systemConfig_menu', 
+                                    module: 'systemConfig/menu', 
+                                    display: 2 ,
+                                    list:[
+                                        {
+                                            oid:9010,
+                                            pid:901,
+                                            type:'OPT',
+                                            name:'menu_operation_add',
+                                            module:'',
+                                            display:1,
+                                            url:'aaa'
+                                        },
+                                        {
+                                            oid:9011,
+                                            pid:901,
+                                            type:'OPT',
+                                            name:'menu_operation_update',
+                                            module:'',
+                                            display:1,
+                                            url:'bbb'
+                                        },
+                                        {
+                                            oid:9012,
+                                            pid:901,
+                                            type:'OPT',
+                                            name:'menu_operation_delete',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:9013,
+                                            pid:901,
+                                            type:'OPT',
+                                            name:'menu_operation_edit',
+                                            module:'',
+                                            display:1,
+                                            url:'ddd'
+                                        },
+                                        {
+                                            oid:9014,
+                                            pid:901,
+                                            type:'OPT',
+                                            name:'menu_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                    ]
+                                },
+                                { 
+                                    oid: 902, 
+                                    pid:9,
+                                    type:'LEAF_MODULE',
+                                    name: 'menuName_systemConfig_user', 
+                                    module: 'systemConfig/user', 
+                                    display: 1,
+                                    list:[
+                                        {
+                                            oid:9020,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_add',
+                                            module:'',
+                                            display:1,
+                                            url:'aaa'
+                                        },
+                                        {
+                                            oid:9021,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_modify',
+                                            module:'',
+                                            display:1,
+                                            url:'bbb'
+                                        },
+                                        {
+                                            oid:9022,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_delete',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:9023,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_addStaff', 
+                                            module:'',
+                                            display:1,
+                                            url:'ddd'
+                                        },
+                                        {
+                                            oid:9024,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_addOrg', 
+                                            module:'',
+                                            display:1,
+                                            url:'ddd'
+                                        },
+                                        {
+                                            oid:9025,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_reset', 
+                                            module:'',
+                                            display:1,
+                                            url:'ddd'
+                                        },
+                                        {
+                                            oid:9026,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_leave',
+                                            module:'',
+                                            display:1,
+                                            url:'ddd'
+                                        },
+                                        {
+                                            oid:9027,
+                                            pid:902,
+                                            type:'OPT',
+                                            name:'user_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                    ] 
+                                },
+                            ],
+                            display: 1
+                        }
+                    ]
                 }
+            ]
+        }
+    },
+    {
+        desc:'获取系统列表',
+        type:'GET',
+        url:'/menu/systems',
+        params:{
+            userId:''
+        },
+        result:{
+            code:'0',
+            data:[
+                {oid:1,name:'systemName_teye',module:'',pid:0},
+                {oid:2,name:'systemName_fortest',module:'',pid:0},
+                {oid:3,name:'systemName_naruto',module:'',pid:0},
             ]
         }
     },

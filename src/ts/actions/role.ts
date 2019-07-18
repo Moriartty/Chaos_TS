@@ -20,18 +20,18 @@ function loadMenuTree () {
     return (dispatch:any) => {
         return Fetch.get('/menu').then((data:any) => {
             let treeData = [
-                { id: '0', name: 'menuName_permission', icon: 'am-icon-home', list: data }
+                { oid: '0', name: 'menuName_permission', icon: 'am-icon-home', list: data }
             ];
             // 递归添加<tr>
             const recursive = function (item:_Object) {
                 // id统一转化为字符串
-                item.id = String(item.id);
+                item.id = String(item.oid);
                 // 手动添加操作权限
-                if (item.module && menuConfig[item.module].operations) { // 过滤出菜单
-                    item.list = menuConfig[item.module].operations.map((o:_Object) => {
-                        return { id: item.id + '_' + o.key, name: o.name, type: 'OPT' };
-                    });
-                }
+                // if (item.module && menuConfig[item.module].operations) { // 过滤出菜单
+                //     item.list = menuConfig[item.module].operations.map((o:_Object) => {
+                //         return { id: item.id + '_' + o.key, name: o.name, type: 'OPT' };
+                //     });
+                // }
 
                 if (item.list && item.list.length) {
                     item.list.forEach(function (o:_Object, i:number, list:Array<any>) {
@@ -72,18 +72,25 @@ function selectRole (role:_Object) {
             id: role.id
         }).then((data:Array<any>) => {
             let roleAuth:Array<any> = [];
-            // 只要有一个勾上，则顶级节点（非实际菜单）也得勾上
-            if (data.length) {
+            // // 只要有一个勾上，则顶级节点（非实际菜单）也得勾上
+            // if (data.length) {
+            //     roleAuth.push('0');
+
+            //     data.forEach(o => {
+            //         roleAuth.push(String(o.menuId));
+
+            //         // 操作类型
+            //         if (o.functions) {
+            //             roleAuth = roleAuth.concat(o.functions.map((func:any) => `${o.menuId}_${func}`));
+            //         }
+            //     });
+            // }
+            if(data.length){
                 roleAuth.push('0');
-
-                data.forEach(o => {
-                    roleAuth.push(String(o.menuId));
-
-                    // 操作类型
-                    if (o.functions) {
-                        roleAuth = roleAuth.concat(o.functions.map((func:any) => `${o.menuId}_${func}`));
-                    }
-                });
+                data.forEach((o:_Object)=>{
+                    roleAuth.push(String(o.oid));
+                })
+                roleAuth = Array.from(new Set(roleAuth));
             }
             dispatch({ type: 'ROLE_MENU_LOADED', roleAuth });
         });

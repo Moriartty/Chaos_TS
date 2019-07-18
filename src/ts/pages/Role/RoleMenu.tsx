@@ -4,6 +4,7 @@ import { Button, Icon, message } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import * as React from 'react';
 import { _Object } from 'customInterface';
+import { hasChildInTree } from 'utils/index';
 
 const levelColors = ['#eb2f96', '#fa8c16', '#13c2c2', '#2f54eb', '#fa541c'];
 
@@ -43,7 +44,6 @@ class RoleMenu extends React.Component<CompProps> {
      */
     handleCheckChange (e:any) {
         let roleAuth = this.props.roleAuth.concat();
-
         const t = e.currentTarget;
         const $this = $(t);
         let changedMenuIds = [t.value]; // 有改变的菜单
@@ -123,7 +123,7 @@ class RoleMenu extends React.Component<CompProps> {
                     }
                     <label className="cursor-pointer">
                         <input type="checkbox"
-                            checked={roleMenuIds.indexOf(item.id)>-1}
+                            checked={hasChildInTree(item,roleMenuIds)}
                             value={item.id}
                             onChange={this.handleCheckChange.bind(this)}/>
                         {/* eslint-disable-next-line */}
@@ -149,7 +149,7 @@ class RoleMenu extends React.Component<CompProps> {
     }
 
     render () {
-        const { operations=[], menuTree=[], roleInfo, roleAuth, onSave } = this.props;
+        const { operations, menuTree, roleInfo, roleAuth, onSave } = this.props;
         return (
             <div className="role-menu">
                 <ul className="unstyled">
@@ -161,7 +161,7 @@ class RoleMenu extends React.Component<CompProps> {
                     }
                 </ul>
                 {
-                    operations.indexOf('UPDATE') >= 0 && (
+                    operations.indexOf('role_operation_modify') >= 0 && (
                         <Button type="primary" icon="save" className="save" onClick={onSave.bind(this, roleInfo.id, roleAuth)}>保存</Button>
                     )
                 }
@@ -180,6 +180,7 @@ const RoleMenuComp = connect((state:any) => {
      * @param roleAuth
      */
     onCheckChange (roleAuth:Array<any>) {
+        console.log('roleAuth',roleAuth);
         dispatch({ type: 'ROLE_MENU_CHK_CHANGE', roleAuth });
     },
     /**
@@ -222,4 +223,4 @@ const RoleMenuComp = connect((state:any) => {
     }
 }))(RoleMenu);
 
-export default RoleMenu;
+export default RoleMenuComp;

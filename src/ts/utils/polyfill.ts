@@ -1,10 +1,12 @@
+
 /**
  * 原生对象的扩展方法
  */
 
 interface Array<T> {
     include(...args:any):boolean,
-    joinItem(item:any):Array<T>
+    joinItem(item:any):Array<T>,
+    findAll(target:any,key:any):Array<T>
 }
 interface Date{
     format(s:string):string
@@ -70,6 +72,15 @@ Array.prototype.joinItem = function (separatorItem) {
     }
     return this;
 };
+Array.prototype.findAll = function(target,key){
+    let arr:Array<any> = [];
+    this.forEach((o:any)=>{
+        const curValue = key?o[key]:o;
+        if(curValue==target)
+            arr.push(o);
+    })
+    return arr;
+}
 
 /**
  * 日期格式化

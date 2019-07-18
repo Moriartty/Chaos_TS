@@ -1,7 +1,18 @@
 import { _Object } from 'customInterface';
+import menuConfig from 'config/menu';
 import Fetch from 'utils/fetch';
 
 let action:_Object = {};
+
+/**
+ * 获取系统列表
+ */
+action.loadSystemList = () => (dispatch:any) => {
+    return Fetch.get('/menu/systems').then((data:Array<_Object>)=>{
+        dispatch({type:'MENU_SYSTEMLIST_LOAD',systemList:data});
+        return data;
+    })
+}
 
 /**
  * 获取菜单列表
@@ -11,7 +22,6 @@ function loadList () {
     return (dispatch:any) => {
         dispatch({ type: 'MENU_LOADING', loading: true });
         return Fetch.get('/menu').then((data:any) => {
-            console.log('menu',data);
             let menuList:Array<any> = [];
             let treeData = [
                 { name: '(根目录)', list: data }

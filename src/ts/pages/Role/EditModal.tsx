@@ -116,4 +116,4 @@ const EditModalComp = connect((state:any) => {
     }
 }))(EditModal);
 
-export default EditModal;
+export default EditModalComp;

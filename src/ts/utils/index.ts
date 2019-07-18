@@ -41,6 +41,27 @@ export function getUriParams(data:any){
     return encodeURIComponent(params.join('&'));
 }
 
+/** 
+ * 递归解决在树中查找问题
+*/
+export function hasChildInTree(treeData:_Object,nodeList:Array<_Object>,curNode?:any):any{
+    if(isEmpty(treeData))
+        return false;
+    else if(nodeList.indexOf(treeData.id)>-1)
+        return true;
+    else{
+        if(isEmpty(treeData.list))
+            return false;
+        else{
+            const reducer = (value:any, currentValue:any) => {
+                return value||hasChildInTree(currentValue,nodeList);
+            };
+            return treeData.list.reduce(reducer,false);
+        }
+    }
+    
+}
+
 /**
  * 判断传入数据是否为空
  * @param val
