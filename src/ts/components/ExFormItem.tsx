@@ -40,7 +40,8 @@ interface CompProps {
     step?:any,
     addonAfter?:any,
     renderName?:any,
-    disabledDate?:any
+    disabledDate?:any,
+    disabled?:boolean
 }
 interface rule {
     required?:any,
@@ -83,7 +84,8 @@ class InputFile extends React.PureComponent<inputFileProps> {
 }
 
 export default function ExFormItem (props:CompProps) {
-    let { getFieldDecorator, type, label, help, name, style, initialValue, required, placeholder, extraRules, list:preList, onChange,withEmpty,rows } = props;
+    let { getFieldDecorator, type, label, help, name, style, initialValue, 
+        required, placeholder, extraRules, list:preList, onChange=function(){},withEmpty,rows,disabled=false } = props;
     let component;
     let rules:Array<rule> = [{ required, message: `${label}必填！` }];
     if (extraRules) {
@@ -108,7 +110,9 @@ export default function ExFormItem (props:CompProps) {
                 showSearch={props.showSearch}
                 onChange={()=>onChange()}
                 allowClear={!props.noClear}
-                optionFilterProp="children">
+                optionFilterProp="children"
+                disabled={disabled}
+                >
                 {
                     isEmpty(list)?'':list.map((o, i) => {
                         return <Select.Option disabled={o.disabled} key={i} value={o.id} title={o.name}>{props.renderName ? props.renderName(o) : o.name}</Select.Option>;
@@ -120,7 +124,7 @@ export default function ExFormItem (props:CompProps) {
     case 'radio':
         const RadioOption = props.button ? Radio.Button : Radio;
         component = (
-            <RadioGroup onChange={()=>onChange()}>
+            <RadioGroup onChange={()=>onChange()} disabled={disabled}>
                 {
                     list.map((o, i) => {
                         return <RadioOption key={i} value={o.id}>{o.name}</RadioOption>;

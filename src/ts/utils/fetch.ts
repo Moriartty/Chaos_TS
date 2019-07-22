@@ -4,6 +4,7 @@ import * as React from 'react';
 import {getCookie, setCookie, setCookieWithScope} from "./cookies";
 import {_Object} from 'customInterface';
 import { isEmpty,getUriParams } from '.';
+import CONST from 'config/const';
 
 const ReactDOM = require('react-dom');
 const Err50x = (cb:Function) => { require.ensure([], require => { cb(require('pages/Error/50x')); }); };
@@ -41,14 +42,6 @@ var newFetch = function(url:string, fetchOpts?:Object,opts:any={}){
 };
 
 /**
- * 处理请求返回异常
- * @param err 
- */
-function handleException(err:Object){
-    console.error(` Message = ${err}`);
-    return Promise.reject({error: {message: ` Message = ${err}`}});
-}
-/**
  * 创建http请求头
  * @param opts 
  */
@@ -70,7 +63,7 @@ function refreshToken(reqParams:requestParams){
     if(isEmpty(getCookie('refresh_token')))
         location.href = 'login.html';
     else{
-        fetch(API.baseUrl+'/refreshToken',{
+        fetch(API.baseUrl+CONST.APP_REFRESHTOKEN,{
             method: 'GET',
             headers: createHttpHeader({withCookie:true,tokenType:'refresh_token'})
         }).then(response=>{
@@ -112,7 +105,7 @@ function _Fetch(reqParams:requestParams){
             break;
         default: break;
     }
-    return newFetch((opts.baseUrl?opts.baseUrl:API.baseUrl)+url , fetchOpts , opts ).then(response => {
+    return newFetch((opts.baseUrl||API.baseUrl)+url , fetchOpts , opts ).then(response => {
         return handleResponse(reqParams, response);
     }).catch(handleException)
 }
@@ -142,6 +135,14 @@ function handleResponse (reqParams:requestParams, response:any) {
         message.error('【' + status + '】' + response.statusText);
         return {error: {message: 'Request failed due to server error '}};
     }
+}
+/**
+ * 处理请求返回异常
+ * @param err 
+ */
+function handleException(err:Object){
+    console.error(` Message = ${err}`);
+    return Promise.reject({error: {message: ` Message = ${err}`}});
 }
 
 Fetch.get = function (url:string,params:Object,opts:any={}) {

@@ -3,11 +3,9 @@ import { connect } from 'react-redux';
 import action from 'actions/app';
 import { Form, Icon, Input, Button, Checkbox, Tabs, Alert,Row,Col } from 'antd';
 // import ReactCanvasNest from 'components/react-canvas-nest';
-import EvanYou from 'components/evan-you';
+import {EvanYou,LocaleToggle} from 'components/index';
 const headerIcon = require('img/bg2.png');
-const test = require('img/favicon_en.svg');
 import { FormattedMessage, injectIntl } from 'react-intl';
-import LocaleToggle from 'components/LocaleToggle';
 
 import 'less/login';
 import { _Object } from 'customInterface';
@@ -138,8 +136,6 @@ class Login extends React.Component<CompProps,CompState> {
         );
     }
 }
-
-// let LoginComp = Form.create()(Login);
 
 let LoginComp = connect((state:any)=>{
     const {locale} = state.app;

@@ -29,7 +29,7 @@ module.exports = [
                 {
                     oid:1000,
                     pid:1,
-                    type:'OPT',
+                    type:'4',
                     name:'home_operation_view',
                     module:'',
                     display:1,
@@ -38,7 +38,7 @@ module.exports = [
                 {
                     oid:9000,
                     pid:900,
-                    type:'OPT',
+                    type:'4',
                     name:'role_operation_add',
                     module:'',
                     display:1,
@@ -47,7 +47,7 @@ module.exports = [
                 {
                     oid:9001,
                     pid:900,
-                    type:'OPT',
+                    type:'4',
                     name:'role_operation_modify',
                     module:'',
                     display:1,
@@ -56,7 +56,7 @@ module.exports = [
                 {
                     oid:9002,
                     pid:900,
-                    type:'OPT',
+                    type:'4',
                     name:'role_operation_delete',
                     module:'',
                     display:1,
@@ -65,7 +65,7 @@ module.exports = [
                 {
                     oid:9003,
                     pid:900,
-                    type:'OPT',
+                    type:'4',
                     name:'role_operation_view',
                     module:'',
                     display:1,
@@ -74,7 +74,7 @@ module.exports = [
                 {
                     oid:9010,
                     pid:901,
-                    type:'OPT',
+                    type:'4',
                     name:'menu_operation_add',
                     module:'',
                     display:1,
@@ -83,7 +83,7 @@ module.exports = [
                 {
                     oid:9011,
                     pid:901,
-                    type:'OPT',
+                    type:'4',
                     name:'menu_operation_update',
                     module:'',
                     display:1,
@@ -92,7 +92,7 @@ module.exports = [
                 {
                     oid:9012,
                     pid:901,
-                    type:'OPT',
+                    type:'4',
                     name:'menu_operation_delete',
                     module:'',
                     display:1,
@@ -101,7 +101,7 @@ module.exports = [
                 {
                     oid:9013,
                     pid:901,
-                    type:'OPT',
+                    type:'4',
                     name:'menu_operation_edit',
                     module:'',
                     display:1,
@@ -110,7 +110,7 @@ module.exports = [
                 {
                     oid:9014,
                     pid:901,
-                    type:'OPT',
+                    type:'4',
                     name:'menu_operation_view',
                     module:'',
                     display:1,
@@ -119,7 +119,7 @@ module.exports = [
                 {
                     oid:9020,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_add',
                     module:'',
                     display:1,
@@ -128,7 +128,7 @@ module.exports = [
                 {
                     oid:9021,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_modify',
                     module:'',
                     display:1,
@@ -137,7 +137,7 @@ module.exports = [
                 {
                     oid:9022,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_delete',
                     module:'',
                     display:1,
@@ -146,7 +146,7 @@ module.exports = [
                 {
                     oid:9023,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_addStaff', 
                     module:'',
                     display:1,
@@ -155,7 +155,7 @@ module.exports = [
                 {
                     oid:9024,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_addOrg', 
                     module:'',
                     display:1,
@@ -164,7 +164,7 @@ module.exports = [
                 {
                     oid:9025,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_reset', 
                     module:'',
                     display:1,
@@ -173,7 +173,7 @@ module.exports = [
                 {
                     oid:9026,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_leave',
                     module:'',
                     display:1,
@@ -182,7 +182,7 @@ module.exports = [
                 {
                     oid:9027,
                     pid:902,
-                    type:'OPT',
+                    type:'4',
                     name:'user_operation_view',
                     module:'',
                     display:1,

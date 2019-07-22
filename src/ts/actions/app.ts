@@ -3,10 +3,11 @@ import {message} from 'antd';
 import menuConfig from 'config/menu';
 import * as NProgress from 'nprogress';
 import config,{proBaseUrl} from 'config/api';
-import Fetch from '../utils/fetch';
+import Fetch from 'utils/fetch';
 import {setCookieWithScope,setCookie,delCookieWithScope, getCookie,delCookie} from '../utils/cookies';
 import {_Object} from 'customInterface';
 import { isEmpty } from 'utils/index';
+import API from 'config/const';
 
 const Err403 = (cb:Function) => { require.ensure([], require => { cb(require('pages/Error/403')); }); };
 let action:_Object = {};
@@ -145,7 +146,7 @@ action.register = (username:string,password:string) => {
  * @returns {Function}
  */
 action.login = (loginName:string, password:string, autoLogin:number) => (dispatch:any) => {
-    return Fetch.post('/login', {
+    return Fetch.post(API.APP_LOGIN, {
         username: loginName,
         password: password,
         auto: autoLogin ? 1 : 0
@@ -173,15 +174,16 @@ action.logout = () => (dispatch:any) => {
 /**
  * 判断access_token是否过期
  */
-action.isExpiration = () => (dispatch:any) => Fetch.get('/isExpiration',{},{
-    baseUrl:config.accountBaseUrl,
-    tokenType:'refresh_token',
-    withCookie:true
-}).then((json:any)=>{
-    return json;
-}).catch((err:any)=>{
-    return Promise.reject(err);
-});
+action.isExpiration = () => (dispatch:any) => 
+    Fetch.get(API.APP_ISEXPIRATION,{},{
+        baseUrl:config.accountBaseUrl,
+        tokenType:'refresh_token',
+        withCookie:true
+    }).then((json:any)=>{
+        return json;
+    }).catch((err:any)=>{
+        return Promise.reject(err);
+    });
 
 /**
  * 加载用户信息

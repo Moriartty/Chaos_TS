@@ -8,8 +8,21 @@ const defaultState:_Object = {
     loading: false,
     list: [],
     editShow: false,
-    editData: {},
-    systemList:[]
+    editData: {
+        display: 1,
+        module: "",
+        name: "",
+        oid: '',
+        pid: '',
+        type: ""
+    },
+    systemList:[],
+    systemEditModalShow:false,
+    systemEditData:{
+        oid:'',
+        pid:0,
+        systemName:''
+    }
 };
 
 export default (state:_Object, action:_Object) => {
@@ -21,29 +34,40 @@ export default (state:_Object, action:_Object) => {
         case 'MENU_LOADING':
             newState.loading = action.loading;
             break;
+        case 'MENU_SYSTEMEDITMODAL_ADD':
+            newState.systemEditModalShow = true;
+            newState.systemEditData = defaultState.systemEditData;
+            break;
+        case 'MENU_SYSTEMEDITMODAL_EDIT':
+            newState.systemEditModalShow = true;
+            newState.systemEditData = action.data;
+            break;
+        case 'MENU_SYSTEMEDITMODAL_CLOSE':
+            newState.systemEditModalShow = false;
+            break;
         case 'MENU_LIST':
             newState.list = action.list;
             break;
         case 'MENU_ADD':
             newState.editShow = true;
             newState.editData = {
-                parentId: action.parentId,
-                type: 1, // 1菜单，2目录
+                pid: action.pid,//当前点击的item的oid作为新建item的pid
+                type: action._type, // 1系统，2目录，3菜单，4操作
                 module: '',
                 name: '',
-                display: 1
+                display: 1,
             };
             break;
         case 'MENU_EDIT':
             newState.editShow = true;
-            const { id, module, name, display, parentId } = action.data;
+            const { oid, module, name, display, pid,type } = action.data;
             newState.editData = {
-                parentId,
-                type: module ? 1 : 2, // 1菜单，2目录
-                id,
+                pid,
+                type, // 1系统，2目录，3菜单，4操作
+                oid,
                 module,
                 name,
-                display
+                display,
             };
             break;
         case 'MENU_EDIT_CLOSE':

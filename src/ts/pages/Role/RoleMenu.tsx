@@ -127,7 +127,7 @@ class RoleMenu extends React.Component<CompProps> {
                             value={item.id}
                             onChange={this.handleCheckChange.bind(this)}/>
                         {/* eslint-disable-next-line */}
-                        <span style={{ color: item.type == 'OPT' ? '#666' : levelColors[indents.length] }}>
+                        <span style={{ color: item.type == '4' ? '#666' : levelColors[indents.length] }}>
                             <FormattedMessage id={item.name}/>
                         </span>
                     </label>

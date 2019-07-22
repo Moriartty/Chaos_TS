@@ -1,5 +1,4 @@
 import { _Object } from 'customInterface';
-import menuConfig from 'config/menu';
 import Fetch from 'utils/fetch';
 
 let action:_Object = {};
@@ -55,7 +54,6 @@ function loadList () {
                 item.last = i === list.length - 1; // 是否为当前级别的最后一个
                 recursive(item);
             });
-
             dispatch({ type: 'MENU_LIST', list: menuList });
             dispatch({ type: 'MENU_LOADING' });
         });
