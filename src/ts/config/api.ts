@@ -1,7 +1,7 @@
 const proAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐号系统后端：服务器
 const devAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐号系统后端：本地
-const proBaseUrl = location.host;
-const devBaseUrl:string = location.host;
+const proBaseUrl = 'http://'+location.host;
+const devBaseUrl:string = 'http://'+location.host;
 
 interface conf {
     baseUrl?:string,

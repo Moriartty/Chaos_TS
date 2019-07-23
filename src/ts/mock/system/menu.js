@@ -11,6 +11,37 @@ module.exports = [
             'code': '0',
             'data': [
                 { oid: 1, name: 'menuName_home', module: 'home',pid:-1,type:'3' },
+                { oid: 2, name: 'menuName_profile', module: 'profile',pid:-1,type:'3' },
+                {
+                    oid: 8,
+                    name: 'menuName_track',
+                    module:'',
+                    pid:0,
+                    type:'2',
+                    list: [
+                        { 
+                            oid: 800, 
+                            name: 'menuName_track_trackInfo', 
+                            module: 'track/trackInfo',
+                            pid:8,
+                            type:'3', 
+                        },
+                        { 
+                            oid: 801, 
+                            name: 'menuName_track_trackType', 
+                            module: 'track/trackType',
+                            pid:8,
+                            type:'3', 
+                        },
+                        { 
+                            oid: 802, 
+                            name: 'menuName_track_trackDemand', 
+                            module: 'track/trackDemand',
+                            pid:8,
+                            type:'3', 
+                        },
+                    ]
+                },
                 {
                     oid: 9,
                     name: 'menuName_systemConfig',
@@ -88,6 +119,169 @@ module.exports = [
                                     module:'',
                                     display:1,
                                     url:'ccc'
+                                },
+                            ]
+                        },
+                        { 
+                            oid: 2,
+                            pid:-1,
+                            type:'3', 
+                            name: 'menuName_profile', 
+                            module: 'profile', 
+                            display: 1 ,
+                            list:[
+                                {
+                                    oid:2000,
+                                    pid:1,
+                                    type:'4',
+                                    name:'profile_operation_view',
+                                    module:'',
+                                    display:1,
+                                    url:'ccc'
+                                },
+                            ]
+                        },
+                        {
+                            oid: 8,
+                            name: 'menuName_track',
+                            module:'',
+                            pid:0,
+                            type:'2',
+                            list: [
+                                { 
+                                    oid: 800, 
+                                    name: 'menuName_track_trackInfo', 
+                                    module: 'track/trackInfo',
+                                    pid:8,
+                                    type:'3', 
+                                    list:[
+                                        {
+                                            oid:8000,
+                                            pid:800,
+                                            type:'4',
+                                            name:'trackInfo_operation_add',
+                                            module:'',
+                                            display:1,
+                                            url:'aaa'
+                                        },
+                                        {
+                                            oid:8001,
+                                            pid:800,
+                                            type:'4',
+                                            name:'trackInfo_operation_modify',
+                                            module:'',
+                                            display:1,
+                                            url:'bbb'
+                                        },
+                                        {
+                                            oid:8002,
+                                            pid:800,
+                                            type:'4',
+                                            name:'trackInfo_operation_delete',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:8003,
+                                            pid:800,
+                                            type:'4',
+                                            name:'trackInfo_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                    ]
+                                },
+                                { 
+                                    oid: 801, 
+                                    name: 'menuName_track_trackType', 
+                                    module: 'track/trackType',
+                                    pid:8,
+                                    type:'3', 
+                                    list:[
+                                        {
+                                            oid:8010,
+                                            pid:801,
+                                            type:'4',
+                                            name:'trackType_operation_add',
+                                            module:'',
+                                            display:1,
+                                            url:'aaa'
+                                        },
+                                        {
+                                            oid:8011,
+                                            pid:801,
+                                            type:'4',
+                                            name:'trackType_operation_modify',
+                                            module:'',
+                                            display:1,
+                                            url:'bbb'
+                                        },
+                                        {
+                                            oid:8012,
+                                            pid:801,
+                                            type:'4',
+                                            name:'trackType_operation_delete',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:8013,
+                                            pid:801,
+                                            type:'4',
+                                            name:'trackType_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                    ]
+                                },
+                                { 
+                                    oid: 802, 
+                                    name: 'menuName_track_trackDemand', 
+                                    module: 'track/trackDemand',
+                                    pid:8,
+                                    type:'3',
+                                    list:[
+                                        {
+                                            oid:8020,
+                                            pid:802,
+                                            type:'4',
+                                            name:'trackDemand_operation_add',
+                                            module:'',
+                                            display:1,
+                                            url:'aaa'
+                                        },
+                                        {
+                                            oid:8021,
+                                            pid:802,
+                                            type:'4',
+                                            name:'trackDemand_operation_modify',
+                                            module:'',
+                                            display:1,
+                                            url:'bbb'
+                                        },
+                                        {
+                                            oid:8022,
+                                            pid:802,
+                                            type:'4',
+                                            name:'trackDemand_operation_delete',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:8023,
+                                            pid:802,
+                                            type:'4',
+                                            name:'trackType_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                    ] 
                                 },
                             ]
                         },

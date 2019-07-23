@@ -7,6 +7,7 @@ import LocaleToggle from './LocaleToggle';
 import Overlay from './Overlay';
 import PotentialError from './PotentialError';
 import RegionSelector from './RegionSelector';
+import CircleBtn from './CircleBtn';
 
 export {
     EvanYou,
@@ -17,5 +18,6 @@ export {
     LocaleToggle,
     Overlay,
     PotentialError,
-    RegionSelector
+    RegionSelector,
+    CircleBtn
 }

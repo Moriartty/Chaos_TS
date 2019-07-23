@@ -1,8 +1,10 @@
 import systemConfig from './systemConfig';
+import track from './track';
 import {_Object} from 'customInterface';
 
 const menu:_Object = {
     ...systemConfig,
+    ...track,
     home: {
         name: 'menuName_home',
         icon: 'home',

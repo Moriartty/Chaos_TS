@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import action from 'actions/menu';
 import ExTable from 'components/ExTable';
 import { Badge, Tag, Divider, Popconfirm } from 'antd';
-import CircleBtn from './CircleBtn';
+import {CircleBtn} from 'components/index';
 import { FormattedMessage } from 'react-intl';
 import * as React from 'react';
 import { _Object } from 'customInterface'; 

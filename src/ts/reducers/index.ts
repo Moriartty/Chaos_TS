@@ -8,6 +8,8 @@ import menu from './menu';
 import user from './user';
 import home from './home';
 import tags from './tags';
+import profile from './profile';
+import track from './track';
 
 export default combineReducers({
     app,
@@ -15,5 +17,7 @@ export default combineReducers({
     menu,
     user,
     home,
-    tags
+    tags,
+    profile,
+    track
 });

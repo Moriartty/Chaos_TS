@@ -8,7 +8,7 @@ interface tableProps {
     scrollY?:any,
     pageNo?:number, 
     pageSize?:number, 
-    dataCount?:1, 
+    dataCount?:number, 
     onPageChange?:Function, 
     onPageSizeChange?:Function, 
     tableSize?:any,

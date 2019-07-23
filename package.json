@@ -7,6 +7,7 @@
     "build": "rimraf chaos && cross-env NODE_ENV=production webpack --config build/webpack.pro.config.js",
     "start": "cross-env NODE_ENV=development  webpack-dev-server --inline --progress --config build/webpack.dev.config.js",
     "test_fj": "cross-env NODE_ENV=test_fj webpack-dev-server --inline --progress --config build/webpack.dev.config.js",
+    "test_yl": "cross-env NODE_ENV=test_yl webpack-dev-server --inline --progress --config build/webpack.dev.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

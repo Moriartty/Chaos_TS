@@ -36,6 +36,51 @@ module.exports = [
                     url:'ccc'
                 },
                 {
+                    oid:2000,
+                    pid:1,
+                    type:'4',
+                    name:'profile_operation_view',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
+                    oid:8010,
+                    pid:801,
+                    type:'4',
+                    name:'trackType_operation_add',
+                    module:'',
+                    display:1,
+                    url:'aaa'
+                },
+                {
+                    oid:8011,
+                    pid:801,
+                    type:'4',
+                    name:'trackType_operation_modify',
+                    module:'',
+                    display:1,
+                    url:'bbb'
+                },
+                {
+                    oid:8012,
+                    pid:801,
+                    type:'4',
+                    name:'trackType_operation_delete',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
+                    oid:8013,
+                    pid:801,
+                    type:'4',
+                    name:'trackType_operation_view',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
                     oid:9000,
                     pid:900,
                     type:'4',

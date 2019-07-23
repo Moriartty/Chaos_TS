@@ -1,7 +1,10 @@
 export default {
     APP_LOGIN:'/login',
     APP_ISEXPIRATION:'/isExpiration',
-    APP_REFRESHTOKEN:'/refreshToken'
+    APP_REFRESHTOKEN:'/refreshToken',
+    TRACK_TYPE_GETALL:'/event/trackType/find'
 }
+
 const menuTypes = [{id:1,name:'系统'},{ id: 2, name: '目录' }, { id: 3, name: '菜单' },{id:4,name:'操作'}];
+
 export {menuTypes}

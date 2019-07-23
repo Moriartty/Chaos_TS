@@ -2,23 +2,29 @@ import { connect } from 'react-redux';
 import appAction from 'actions/app';
 import action from 'actions/profile';
 import { Form, message, Button, Icon, Row, Col } from 'antd';
-import ExFormItem from 'components/ExFormItem';
+import {ExFormItem} from 'components/index';
 import * as React from 'react';
 import { _Object } from 'customInterface';
 
 interface CompProps {
-    userInfo:_Object,
+    userInfo?:_Object,
     form:any,
-    onSubmit:Function,
+    roleList?:Array<_Object>,
+    onSubmit?:Function,
+    init:Function
 }
 interface CompState {
-    loading:boolean
+    loading?:boolean
 }
 
 class Profile extends React.Component<CompProps,CompState>{
     state={
         loading: false
     };
+
+    componentDidMount(){
+        this.props.init();
+    }
 
     submit = (e:any) => {
         e.preventDefault();
@@ -33,7 +39,7 @@ class Profile extends React.Component<CompProps,CompState>{
     };
 
     render () {
-        const { userInfo: info, form } = this.props;
+        const { userInfo: info, form,roleList } = this.props;
         const { getFieldDecorator } = form;
         return (
             <Form onSubmit={this.submit}>
@@ -59,6 +65,7 @@ class Profile extends React.Component<CompProps,CompState>{
                         <ExFormItem label="组织" type="static" initialValue={info.org}/>
                         <ExFormItem label="上次登录时间" type="static" initialValue={info.lastLogin}/>
                         <ExFormItem label="注册时间" type="static" initialValue={info.createTime}/>
+                        <ExFormItem label="用户角色" type='select' name='role' list={roleList} getFieldDecorator={getFieldDecorator}/>
                     </div>
                 </fieldset>
                 <fieldset>
@@ -99,8 +106,12 @@ class Profile extends React.Component<CompProps,CompState>{
 
 const ProfileComp = connect((state:any) => {
     const { userInfo } = state.app;
-    return { userInfo };
+    const {roleList} = state.profile;
+    return { userInfo,roleList };
 }, dispatch => ({
+    init(){
+        dispatch(action.loadRoleList())
+    },
     /**
      * 提交保存
      * @param data
@@ -113,6 +124,7 @@ const ProfileComp = connect((state:any) => {
             dispatch(appAction.loadUserInfo());
         });
     }
+    
 }))(Form.create()(Profile));
 
 module.exports = ProfileComp;

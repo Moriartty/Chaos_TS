@@ -28,5 +28,22 @@ export default {
     'user_operation_view':common['common_operation_view'],
 
 
-    'logView_operation_search': '搜索'
+    'logView_operation_search': '搜索',
+
+    'profile_operation_view':common['common_operation_view'],
+
+    'trackInfo_operation_view':common['common_operation_view'],
+    'trackInfo_operation_add':common['common_operation_add'],
+    'trackInfo_operation_modify':common['common_operation_modify'],
+    'trackInfo_operation_delete':common['common_operation_delete'],
+
+    'trackType_operation_view':common['common_operation_view'],
+    'trackType_operation_add':common['common_operation_add'],
+    'trackType_operation_modify':common['common_operation_modify'],
+    'trackType_operation_delete':common['common_operation_delete'],
+
+    'trackDemand_operation_view':common['common_operation_view'],
+    'trackDemand_operation_add':common['common_operation_add'],
+    'trackDemand_operation_modify':common['common_operation_modify'],
+    'trackDemand_operation_delete':common['common_operation_delete'],
 };

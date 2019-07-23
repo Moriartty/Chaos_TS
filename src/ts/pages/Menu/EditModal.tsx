@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import action from 'actions/menu';
-import menuConfig from 'config/menu';
 import { Form } from 'antd';
 import {ExFormItem,ExModal} from 'components/index';
 import { FormattedMessage,injectIntl } from 'react-intl';
@@ -29,6 +28,7 @@ interface CompState {
 }
 
 const EditForm:any = Form.create({
+    //监听fields变化
     onFieldsChange(props:EditFormProps, changedFields:_Object) {
         var changed = Object.keys(changedFields).map(o=>{
             var obj:_Object = new Object();
@@ -159,7 +159,7 @@ class EditModal extends React.Component<CompProps,CompState> {
 
     render () {
         const { editShow=false, editData: data, list, onClose, intl } = this.props;
-        console.log(data);
+       
         return (
             <ExModal
                 visible={editShow}
