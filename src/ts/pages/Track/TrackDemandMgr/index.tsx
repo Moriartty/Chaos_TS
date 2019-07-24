@@ -21,7 +21,7 @@ interface CompState {
     isBatchDelState:boolean
 }
 
-class TrackTypeMgr extends React.Component<CompProps,CompState> {
+class TrackDemandMgr extends React.Component<CompProps,CompState> {
     public handleBatchDel:any;
     public table:any;
     constructor(props:CompProps){
@@ -48,7 +48,7 @@ class TrackTypeMgr extends React.Component<CompProps,CompState> {
     render () {
         const {onRefresh,onSearch} = this.props;
         return (
-            <div className='trackTypeContainer'>
+            <div className='trackDemadContainer'>
                 <Toolbar onRefresh={onRefresh}>
                     {
                         this.state.isBatchDelState?(
@@ -77,31 +77,31 @@ class TrackTypeMgr extends React.Component<CompProps,CompState> {
     }
 }
 
-const TrackTypeMgrComp = connect(null, dispatch => ({
+const TrackDemandMgrComp = connect(null, dispatch => ({
     /**
      * page数据初始化加载
      */
     init () {
-        dispatch(action.loadTrackType());
+        dispatch(action.loadTrackDemand());
     },
     /**
      * 点击刷新或操作
      */
     onRefresh(){
-        dispatch(action.loadTrackType());
+        dispatch(action.loadTrackDemand());
     },
     /**
      * 查询
      * @param params
      */
     onSearch (params:_Object) {
-        dispatch({ type: 'TRACK_TYPE_SEARCHPARAM_CHANGE', params });
-        dispatch(action.loadTrackType(1));
+        dispatch({ type: 'TRACK_DEMAND_SEARCHPARAM_CHANGE', params });
+        dispatch(action.loadTrackDemand(1));
     },
     onAdd(){
-        dispatch({type:'TRACK_TYPE_EDITMODAL_SHOW',show:true});
-        dispatch({type:'TRACK_TYPE_EDITMODAL_RESET'});
+        dispatch({type:'TRACK_DEMAND_EDITMODAL_SHOW',show:true});
+        dispatch({type:'TRACK_DEMAND_EDITMODAL_RESET'});
     }
-}))(TrackTypeMgr);
+}))(TrackDemandMgr);
 
-module.exports = TrackTypeMgrComp;
+module.exports = TrackDemandMgrComp;

@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 import {ExFormItem,ExModal} from 'components/index';
 import {Form,message} from 'antd';
 import action from 'actions/track';
+import moment from 'moment';
 import { _Object } from 'customInterface';
 import * as React from 'react';
 
@@ -28,7 +29,9 @@ const EditForm:any = Form.create({
         return {
             id:Form.createFormField({value:params.id}),
             name:Form.createFormField({value:params.name}),
-            trackId:Form.createFormField({value:params.trackId})
+            state:Form.createFormField({value:params.state}),
+            testPath:Form.createFormField({value:params.testPath}),
+            trackType:Form.createFormField({value:params.trackType})
         }
     }
 })(props=>{
@@ -38,7 +41,9 @@ const EditForm:any = Form.create({
         <Form>
             <ExFormItem type={'hidden'} name={'id'} getFieldDecorator={getFieldDecorator}/>
             <ExFormItem name={'name'} label={'name'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem name={'trackId'} label={'trackId'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'state'} label={'state'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'testPath'} label={'testPath'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'trackType'} label={'trackType'} getFieldDecorator={getFieldDecorator}/>
         </Form>
     )
 });
@@ -84,15 +89,15 @@ class EditModal extends React.Component<CompProps>{
 }
 
 const EditModalComp = connect((state:any)=>{
-    const {trackType_editModalShow:show,trackType_editData:editData,trackType_editModalLoading:editModalLoading} = state['track'];
+    const {trackDemand_editModalShow:show,trackDemand_editData:editData,trackDemand_editModalLoading:editModalLoading} = state['track'];
     return {show,editData,loading:editModalLoading};
 },dispatch=>({
     
     onSubmit(data:_Object){
-        dispatch(action.addOrEditTrackType(data));
+        dispatch(action.addOrEditTrackDemand(data));
     },
     onClose(){
-        dispatch({type:'TRACK_TYPE_EDITMODAL_SHOW',show:false});
+        dispatch({type:'TRACK_DEMAND_EDITMODAL_SHOW',show:false});
     }
 }))(EditModal);
 

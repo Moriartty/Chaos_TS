@@ -40,13 +40,16 @@ class Table extends React.Component<CompProps,CompState> {
         this.setState({selectedRowKeys:[]});
     }
     render () {
+        console.log(this.props)
         const { loading, list, pageNo, dataCount, searchParams, onPageChange, onPageSizeChange,isBatchDelState } = this.props;
         const {selectedRowKeys} = this.state;
         const paginationOptions = { pageNo, pageSize: searchParams.pageSize, dataCount, onPageChange, onPageSizeChange };
         let rowSelection;
         this.columns = [
             { title: 'name', dataIndex: 'name' },
-            { title: 'trackId', dataIndex:'trackId'},
+            { title: 'state', dataIndex:'state'},
+            { title:'testPath',dataIndex:'testPath'},
+            { title: 'trackType', dataIndex:'trackType'},
         ];
         if(isBatchDelState){
             rowSelection = {
@@ -98,29 +101,29 @@ class Table extends React.Component<CompProps,CompState> {
 }
 //这里有一个需要注意的问题，关于HOC组件使用ref无法获得真实组件的问题，添加withRef
 let TableComp = connect((state:any) => {
-    const { trackType_loading:loading, trackType_list:list, trackType_page:page, trackType_searchParams:searchParams } = state['track'];
+    const { trackDemand_loading:loading, trackDemand_list:list, trackDemand_page:page, trackDemand_searchParams:searchParams } = state['track'];
     return { loading, list, ...page, searchParams };
 }, dispatch => ({
     onPageSizeChange ( pageSize:number) {
-        dispatch({ type: 'TRACK_TYPE_SEARCHPARAM', params: { pageSize } });
+        dispatch({ type: 'TRACK_DEMAND_SEARCHPARAM', params: { pageSize } });
     },
     /**
      * 换页
      * @param pageNo
      */
     onPageChange (pageNo:number) {
-        dispatch(action.loadTrackType(pageNo));
+        dispatch(action.loadTrackDemand(pageNo));
     },
     handleEdit(data:_Object,e:any){
         e.stopPropagation();
-        dispatch({type:'TRACK_TYPE_EDITMODAL_SHOW',show:true});
-        dispatch({type:'TRACK_TYPE_EDITMODAL_DATA',data:data});
+        dispatch({type:'TRACK_DEMAND_EDITMODAL_SHOW',show:true});
+        dispatch({type:'TRACK_DEMAND_EDITMODAL_DATA',data:data});
     },
     handleDelete(id:number){
-        dispatch(action.deleteTrack(id));
+        dispatch(action.deleteTrackDemand(id));
     },
     onBatch(keys:Array<number>){
-        dispatch(action.batchDeleteTrack(keys))
+        dispatch(action.batchDeleteTrackDemand(keys))
     }
 }), null, {withRef: true})(Table);
 export default TableComp;

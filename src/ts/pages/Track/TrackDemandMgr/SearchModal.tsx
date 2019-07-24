@@ -60,7 +60,7 @@ class SearchModal extends React.Component<CompProps> {
 }
 
 const SearchModalComp = connect((state:any) => {
-    const { trackType_searchParams:searchParams } = state['track'];
+    const { trackDemand_searchParams:searchParams } = state['track'];
     return { searchParams };
 }, null)(SearchModal);
 
