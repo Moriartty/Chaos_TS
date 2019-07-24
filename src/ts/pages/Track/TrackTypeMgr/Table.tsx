@@ -14,17 +14,47 @@ interface CompProps {
     onPageChange?:Function, 
     onPageSizeChange?:Function,
     handleEdit?:Function,
-    handleDelete?:Function
+    handleDelete?:Function,
+    isBatchDelState?:boolean,
+    onBatch?:Function
+}
+interface CompState {
+    selectedRowKeys:Array<any>
 }
 
-class Table extends React.Component<CompProps> {
+class Table extends React.Component<CompProps,CompState> {
     private columns:Array<_Object>;
     constructor (props:CompProps) {
         super(props);
+        this.state = {
+            selectedRowKeys: []
+        }
+    }
+    onSelectChange = (selectedRowKeys:Array<any>) => {
+        this.setState({selectedRowKeys});
+    };
+    onBatchDel = () => {
+        this.props.onBatch(this.state.selectedRowKeys);
+    }
+    onCancel = () => {
+        this.setState({selectedRowKeys:[]});
+    }
+    render () {
+        const { loading, list, pageNo, dataCount, searchParams, onPageChange, onPageSizeChange,isBatchDelState } = this.props;
+        const {selectedRowKeys} = this.state;
+        const paginationOptions = { pageNo, pageSize: searchParams.pageSize, dataCount, onPageChange, onPageSizeChange };
+        let rowSelection;
         this.columns = [
             { title: 'name', dataIndex: 'name' },
             { title: 'trackId', dataIndex:'trackId'},
-            {
+        ];
+        if(isBatchDelState){
+            rowSelection = {
+                selectedRowKeys,
+                onChange: this.onSelectChange,
+            };
+        }else{
+            this.columns.push( {
                 title:'Action',dataIndex:'',key:'',render:(data:_Object)=>{
                     return (
                         <span>
@@ -32,7 +62,7 @@ class Table extends React.Component<CompProps> {
                             <Divider type={'vertical'}/>
                             <Popconfirm
                                 title={'确认删除？'}
-                                onConfirm={()=>this.props.handleDelete(data.id)}
+                                onConfirm={(e)=>{ e.stopPropagation();this.props.handleDelete(data.id)}}
                                 onCancel={(e)=>e.stopPropagation()}
                             >
                                 <a href={'javascript:;'} onClick={(e)=>{e.stopPropagation()}}>Delete</a>
@@ -40,17 +70,15 @@ class Table extends React.Component<CompProps> {
                         </span>
                     )
                 }
-            }
-        ];
-    }
-    render () {
-        const { loading, list, pageNo, dataCount, searchParams, onPageChange, onPageSizeChange } = this.props;
-        const paginationOptions = { pageNo, pageSize: searchParams.pageSize, dataCount, onPageChange, onPageSizeChange };
+            });
+        }
         return (
             <ExTable
                 {...paginationOptions}
                 loading={loading}
                 columns={this.columns}
+                rowKey={'id'}
+                rowSelection={rowSelection}
                 dataSource={list}
                 expandRowByClick={true}
                 expandedRowRender={(record:_Object) => {
@@ -68,12 +96,13 @@ class Table extends React.Component<CompProps> {
         );
     }
 }
-const TableComp = connect((state:any) => {
+//这里有一个需要注意的问题，关于HOC组件使用ref无法获得真实组件的问题，添加withRef
+let TableComp = connect((state:any) => {
     const { loading, list, page, searchParams } = state['track'];
     return { loading, list, ...page, searchParams };
 }, dispatch => ({
     onPageSizeChange ( pageSize:number) {
-        dispatch({ type: 'OGC_SEARCHPARAM', params: { pageSize } });
+        dispatch({ type: 'TRACK_SEARCHPARAM', params: { pageSize } });
     },
     /**
      * 换页
@@ -84,11 +113,14 @@ const TableComp = connect((state:any) => {
     },
     handleEdit(data:_Object,e:any){
         e.stopPropagation();
-        dispatch({type:'OGC_EDITMODAL_SHOW',show:true});
-        dispatch({type:'OGC_EDITMODAL_DATA',data:data});
+        dispatch({type:'TRACK_EDITMODAL_SHOW',show:true});
+        dispatch({type:'TRACK_EDITMODAL_DATA',data:data});
     },
-    handleDelete(id:number,e:any){
-        e.stopPropagation();
+    handleDelete(id:number){
+        dispatch(action.deleteTrack(id));
+    },
+    onBatch(keys:Array<number>){
+        dispatch(action.batchDeleteTrack(keys))
     }
-}))(Table);
+}), null, {withRef: true})(Table);
 export default TableComp;

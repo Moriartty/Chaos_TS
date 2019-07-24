@@ -2,6 +2,7 @@
 import Fetch from '../utils/fetch';
 import { _Object } from 'customInterface';
 import API from 'config/const';
+import {message} from 'antd';
 let actions:_Object = {};
 
 /**
@@ -29,17 +30,42 @@ actions.loadList = (pageNo:number, pageSize:number) => (dispatch:any, getState:a
         });
     });
 };
+
+
 /**
- * 保存编辑
- * @param data
- * @returns {function(*)}
+ * 新增或编辑track
  */
-actions.editItem = (data:any) => (dispatch:any) => {
-    dispatch({type:'TRACK_EDITMODAL_LOADING',loading:true});
-    Fetch.post('/track',data).then((data:any)=>{
-        dispatch({type:'TRACK_EDITMODAL_LOADING',loading:false});
-        dispatch({type:'TRACK_EDITMODAL_SHOW',show:false});
+actions.addOrEditTrackType = (data:_Object) => (dispatch:any) => {
+    Fetch.post(API.TRACK_TYPE_SAVE,data).then(()=>{
+        message.success('操作成功');
+        dispatch({type:'TRACK_EDITMODAL_SHOW',show:false})
+        dispatch(actions.loadList())
+    }).catch((err:any)=>{
+        message.warn('操作失败');
     })
-};
+}
+
+/**
+ * 删除一个埋点类型
+ */
+actions.deleteTrack = (key:number) => (dispatch:any) => {
+    Fetch.get(API.TRACK_TYPE_REMOVE+'/'+key,{}).then(()=>{
+        message.success('操作成功');
+        dispatch(actions.loadList())
+    }).catch((err:any)=>{
+        message.warn('操作失败');
+    })
+}
+/**
+ * 批量删除埋点类型
+ */
+actions.batchDeleteTrack = (keys:Array<number>) => {
+    Fetch.get(API.TRACK_TYPE_BATCHREMOVE,{ids:keys.join(',')}).then((data:any)=>{
+        console.log(data);
+        message.success('操作成功');
+    }).catch((err:any)=>{
+        message.warn('操作失败');
+    })
+}
 
 export default actions;

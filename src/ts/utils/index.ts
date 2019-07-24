@@ -36,9 +36,9 @@ export function objectAppend (obj0:_Object, obj:_Object) {
 export function getUriParams(data:any){
     var params = [];
     for(let i in data){
-        params.push(i+'='+data[i]);
+        params.push(i+'='+encodeURIComponent(data[i]));
     }
-    return encodeURIComponent(params.join('&'));
+    return params.join('&');
 }
 
 /** 

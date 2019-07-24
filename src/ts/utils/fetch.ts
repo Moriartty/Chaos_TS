@@ -45,16 +45,17 @@ var newFetch = function(url:string, fetchOpts?:Object,opts:any={}){
  * 创建http请求头
  * @param opts 
  */
-function createHttpHeader(opts:_Object){
-    return new Headers( 
-        opts.withCookie?{
-            ...normalHeaders,
-            credentials: 'include',
-            Authorization: 'Bearer '+getCookie(opts.tokenType?opts.tokenType:'access_token')
-        }
-        :
-        normalHeaders
-    );
+function createHttpHeader(opts:_Object,method:string){
+    let header = opts.withCookie?{
+        ...normalHeaders,
+        credentials: 'include',
+        Authorization: 'Bearer '+getCookie(opts.tokenType?opts.tokenType:'access_token')
+    }
+    :
+    {...normalHeaders};
+    if(method.toLocaleUpperCase()==='GET')
+        delete header["Content-Type"];
+    return new Headers(header);
 }
 /**
  * 刷新token,并继续上次的请求
@@ -65,7 +66,7 @@ function refreshToken(reqParams:requestParams){
     else{
         fetch(API.baseUrl+CONST.APP_REFRESHTOKEN,{
             method: 'GET',
-            headers: createHttpHeader({withCookie:true,tokenType:'refresh_token'})
+            headers: createHttpHeader({withCookie:true,tokenType:'refresh_token'},'get')
         }).then(response=>{
             if(response.ok||response.status==301||response.status==302)
                 response.json().then((resp:any)=>{
@@ -81,7 +82,6 @@ function refreshToken(reqParams:requestParams){
             else
                 location.href = 'login.html';
         }).catch(error=>{
-            console.log('error',error);
             location.href = 'login.html';
         })
     }
@@ -93,7 +93,7 @@ function _Fetch(reqParams:requestParams){
     let {method,url,params,opts} = reqParams;
     let fetchOpts:_Object = {
         method:method,
-        headers:createHttpHeader(opts)
+        headers:createHttpHeader(opts,method)
     }
     switch(method.toLocaleUpperCase()){
         case 'GET':
@@ -132,8 +132,7 @@ function handleResponse (reqParams:requestParams, response:any) {
     }
     else {
         console.error(`Request failed. Url = ${reqParams.url} . Message = ${response.statusText}`);
-        message.error('【' + status + '】' + response.statusText);
-        return {error: {message: 'Request failed due to server error '}};
+        return Promise.reject({error: {message: 'Request failed due to server error '}});
     }
 }
 /**
@@ -141,8 +140,8 @@ function handleResponse (reqParams:requestParams, response:any) {
  * @param err 
  */
 function handleException(err:Object){
-    console.error(` Message = ${err}`);
-    return Promise.reject({error: {message: ` Message = ${err}`}});
+    console.error(` ExceptionMessage = ${err}`);
+    return Promise.reject({error: {message: ` ExceptionMessage = ${err}`}});
 }
 
 Fetch.get = function (url:string,params:Object,opts:any={}) {

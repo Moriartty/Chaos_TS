@@ -1,3 +1,5 @@
+import CONST from './const';
+import { _Object } from 'customInterface';
 const proAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐号系统后端：服务器
 const devAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐号系统后端：本地
 const proBaseUrl = 'http://'+location.host;
@@ -28,9 +30,11 @@ export default (function () {
 
 const resourceBaseUrl = 'http://18.222.66.96'
 
-const apiTest = [
-    '/admin/getAuthorityOfRole'
-];
+const apiTest:Array<string> = [];
+let temp:_Object = CONST;
+Object.keys(CONST).forEach(o=>{
+    apiTest.push(temp[o])
+})
 
 export {
     apiTest,

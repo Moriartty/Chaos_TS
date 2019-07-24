@@ -31,7 +31,6 @@ export default (state:any, action:_Object) => {
             newState.searchParams = action.params;
             break;
         case 'TRACK_SEARCHPARAM_CHANGE':
-            console.log(action.params);
             newState.searchParams = action.params;
             break;
         case 'TRACK_LOAD':
@@ -50,6 +49,9 @@ export default (state:any, action:_Object) => {
             break;
         case 'TRACK_EDITMODAL_DATA':
             newState.editData = action.data;
+            break;
+        case 'TRACK_EDITMODAL_RESET':
+            newState.editData = defaultState.editData;
             break;
         default:return state || defaultState;
     }

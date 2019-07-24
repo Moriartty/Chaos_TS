@@ -22,16 +22,14 @@ const EditForm:any = Form.create({
             obj[o] = changeFields[o].value;
             return obj;
         });
-        props.onChange(props.editData,changed[0]);
+        // props.onChange(props.editData,changed[0]);
     },
     mapPropsToFields:(props)=> {
         const params = props.editData;
         return {
             id:Form.createFormField({value:params.id}),
-            title:Form.createFormField({value:params.title}),
-            content:Form.createFormField({value:params.content}),
-            author:Form.createFormField({value:params.author}),
-            happenTime:Form.createFormField({value:moment(params.happenTime)})
+            name:Form.createFormField({value:params.name}),
+            trackId:Form.createFormField({value:params.trackId})
         }
     }
 })(props=>{
@@ -40,10 +38,8 @@ const EditForm:any = Form.create({
     return (
         <Form>
             <ExFormItem type={'hidden'} name={'id'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem name={'title'} label={'Title'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem type={'textarea'} name={'content'} label={'Content'} getFieldDecorator={getFieldDecorator} rows={4}/>
-            <ExFormItem name={'author'} label={'Author'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem type={'date'} name={'happenTime'} label={'HappenTime'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'name'} label={'name'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'trackId'} label={'trackId'} getFieldDecorator={getFieldDecorator}/>
         </Form>
     )
 });
@@ -74,7 +70,7 @@ class EditModal extends React.Component<CompProps>{
             <ExModal
                 visible={show}
                 confirmLoading={loading}
-                title={'Edit'}
+                title={editData.id?'Edit':'Add'}
                 onCancel={onClose}
                 onOk={this.handleSave}
             >
@@ -94,10 +90,10 @@ const EditModalComp = connect((state:any)=>{
 },dispatch=>({
     
     onSubmit(data:_Object){
-        dispatch(action.editItem(data));
+        dispatch(action.addOrEditTrackType(data));
     },
     onClose(){
-        dispatch({type:'OGC_EDITMODAL_SHOW',show:false});
+        dispatch({type:'TRACK_EDITMODAL_SHOW',show:false});
     }
 }))(EditModal);
 
