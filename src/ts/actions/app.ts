@@ -31,6 +31,27 @@ action.toggleLocale = (newLocale:string) => (dispatch:any) => {
 // }
 
 /**
+ * 将当前模块的最新查询条件保存到localstorage中
+ */
+action.setSearchParamsInLocalStorage = (searchParams:_Object,reduceAction:string) => () => {
+    localStorage.setItem('chaos_last_searchParams',JSON.stringify(searchParams));
+    localStorage.setItem('chaos_last_search_reduceAction',reduceAction);
+}
+/**
+ * 将上次用户在某个模块的查询条件获取出来
+ */
+action.getSearchParamsFromLocalStorage = () => (dispatch:any) => {
+    const searchParams = localStorage.getItem('chaos_last_searchParams');
+    const reduceAction = localStorage.getItem('chaos_last_search_reduceAction');
+    if(reduceAction){
+        dispatch({type:reduceAction,params:JSON.parse(searchParams)});
+    }
+    return new Promise((resolve)=>{
+        resolve(searchParams?JSON.parse(searchParams):undefined)
+    });
+}
+
+/**
  * 点点菜单链接加载页面
  * @param module
  */

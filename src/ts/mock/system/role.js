@@ -81,6 +81,15 @@ module.exports = [
                     url:'ccc'
                 },
                 {
+                    oid:8024,
+                    pid:802,
+                    type:'4',
+                    name:'trackDemand_operation_verify',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
                     oid:9000,
                     pid:900,
                     type:'4',

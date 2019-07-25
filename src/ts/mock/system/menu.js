@@ -276,7 +276,16 @@ module.exports = [
                                             oid:8023,
                                             pid:802,
                                             type:'4',
-                                            name:'trackType_operation_view',
+                                            name:'trackDemand_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:8024,
+                                            pid:802,
+                                            type:'4',
+                                            name:'trackDemand_operation_verify',
                                             module:'',
                                             display:1,
                                             url:'ccc'

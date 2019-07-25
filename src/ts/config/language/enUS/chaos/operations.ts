@@ -45,4 +45,5 @@ export default {
     'trackDemand_operation_add':common['common_operation_add'],
     'trackDemand_operation_modify':common['common_operation_modify'],
     'trackDemand_operation_delete':common['common_operation_delete'],
+    'trackDemand_operation_verify':'verify',
 };

@@ -1,4 +1,5 @@
 import action from 'actions/track';
+import appAction from 'actions/app';
 import { connect } from 'react-redux';
 // import Toolbar from './Toolbar';
 import Table from './Table';
@@ -82,7 +83,9 @@ const TrackTypeMgrComp = connect(null, dispatch => ({
      * page数据初始化加载
      */
     init () {
-        dispatch(action.loadTrackType());
+        dispatch(appAction.getSearchParamsFromLocalStorage()).then(()=>{
+            dispatch(action.loadTrackType());
+        })
     },
     /**
      * 点击刷新或操作

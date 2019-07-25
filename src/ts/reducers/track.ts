@@ -20,7 +20,6 @@ const defaultState:_Object = {
     trackType_editModalLoading:false,
     trackType_list: [],
 
-
     trackDemand_loading: false,
     trackDemand_page: {
         pageNo: 1,
@@ -28,16 +27,26 @@ const defaultState:_Object = {
         dataCount: 0
     },
     trackDemand_searchParams: {
-        title:''
+        viewState:0,//描述当前的查看状态，0：正常查看，1:查看我的待审核
     },
     trackDemand_editData:{
         id:'',
         name:'',
         trackId:''
     },
+    trackDemand_verifyModalShow:false,
     trackDemand_editModalShow:false,
     trackDemand_editModalLoading:false,
-    trackDemand_list: []
+    trackDemand_list: [],
+
+    verifyStates:[
+        {state:0,stateMsg:'未审核',tagColor:'#40a9ff'},
+        {state:1,stateMsg:'审核通过',tagColor:'#73d13d'},
+        {state:2,stateMsg:'审核不通过',tagColor:'#ff4d4f'},
+        {state:3,stateMsg:'重新审核',tagColor:'#ffa940'},
+        {state:4,stateMsg:'已指派',tagColor:'#13c2c2'},
+        {state:5,stateMsg:'已完成',tagColor:'#bfbfbf'},
+    ],
 };
 
 export default (state:any, action:_Object) => {
@@ -73,7 +82,12 @@ export default (state:any, action:_Object) => {
             newState.trackType_editData = defaultState.trackType_editData;
             break;
 
-
+        case 'TRACK_DEMAND_VIEWSTATE_CHANGE':
+            newState.trackDemand_searchParams = {
+                ...state.trackDemand_searchParams,
+                viewState:action.state
+            };
+            break;
         case 'TRACK_DEMAND_LOADING':
             newState.trackDemand_loading = action.loading;
             break;
@@ -90,6 +104,9 @@ export default (state:any, action:_Object) => {
                 dataCount: action.dataCount
             };
             newState.trackDemand_list = action.list;
+            break;
+        case 'TRACK_DEMAND_VERIFYMODAL_SHOW':
+            newState.trackDemand_verifyModalShow = action.show;
             break;
         case 'TRACK_DEMAND_EDITMODAL_SHOW':
             newState.trackDemand_editModalShow = action.show;

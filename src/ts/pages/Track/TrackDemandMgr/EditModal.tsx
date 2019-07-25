@@ -6,13 +6,18 @@ import moment from 'moment';
 import { _Object } from 'customInterface';
 import * as React from 'react';
 
-interface CompProps {
+interface EditFormProps {
+    trackType_list?:Array<_Object>,
+    form?:any
+}
+
+interface CompProps extends EditFormProps {
     show?:boolean,
     onClose?:Function,
     editData?:_Object,
     loading?:boolean,
     onChange?:Function,
-    onSubmit?:Function
+    onSubmit?:Function,
 }
 
 const EditForm:any = Form.create({
@@ -29,21 +34,23 @@ const EditForm:any = Form.create({
         return {
             id:Form.createFormField({value:params.id}),
             name:Form.createFormField({value:params.name}),
-            state:Form.createFormField({value:params.state}),
+            // state:Form.createFormField({value:params.state}),
             testPath:Form.createFormField({value:params.testPath}),
-            trackType:Form.createFormField({value:params.trackType})
+            trackType:Form.createFormField({value:params.trackType}),
+            description:Form.createFormField({value:params.description})
         }
     }
-})(props=>{
-    const {form} = props;
+})((props:CompProps)=>{
+    const {form,trackType_list} = props;
     const {getFieldDecorator} = form;
     return (
         <Form>
             <ExFormItem type={'hidden'} name={'id'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem name={'name'} label={'name'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem name={'state'} label={'state'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'name'} label={'name'} getFieldDecorator={getFieldDecorator} required/>
+            <ExFormItem name={'trackType'} label={'trackType'} type={'select'} list={trackType_list.map(o=>({id:o.name,name:o.name}))} getFieldDecorator={getFieldDecorator} required/>
+            {/* <ExFormItem name={'state'} label={'state'} getFieldDecorator={getFieldDecorator}/> */}
             <ExFormItem name={'testPath'} label={'testPath'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem name={'trackType'} label={'trackType'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'description'} label={'description'} getFieldDecorator={getFieldDecorator}/>
         </Form>
     )
 });
@@ -69,7 +76,7 @@ class EditModal extends React.Component<CompProps>{
     };
 
     render(){
-        const {show,onClose,editData,loading} = this.props;
+        const {show,onClose,editData,loading,trackType_list} = this.props;
         return (
             <ExModal
                 visible={show}
@@ -82,6 +89,7 @@ class EditModal extends React.Component<CompProps>{
                     ref={this.saveFormRef}
                     editData={editData}
                     onChange={this.fieldsOnChange}
+                    trackType_list={trackType_list}
                 />
             </ExModal>
         )
@@ -89,8 +97,13 @@ class EditModal extends React.Component<CompProps>{
 }
 
 const EditModalComp = connect((state:any)=>{
-    const {trackDemand_editModalShow:show,trackDemand_editData:editData,trackDemand_editModalLoading:editModalLoading} = state['track'];
-    return {show,editData,loading:editModalLoading};
+    const {
+        trackDemand_editModalShow:show,
+        trackDemand_editData:editData,
+        trackDemand_editModalLoading:editModalLoading,
+        trackType_list
+    } = state['track'];
+    return {show,editData,loading:editModalLoading,trackType_list};
 },dispatch=>({
     
     onSubmit(data:_Object){

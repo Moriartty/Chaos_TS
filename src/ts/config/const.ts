@@ -10,6 +10,7 @@ export default {
     TRACK_DEMAND_BATCHREMOVE:'/event/trackDemand/batchRemove',
     TRACK_DEMAND_REMOVE:'/event/trackDemand/remove',
     TRACK_DEMAND_SAVE:'/event/trackDemand/save',
+    TRACK_DEMAND_VERIFY:'/event/trackDemand/verifyData'
 
 }
 

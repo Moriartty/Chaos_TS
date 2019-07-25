@@ -28,7 +28,8 @@ export default {
             { name: 'trackDemand_operation_view' },
             { name: 'trackDemand_operation_add' },
             { name: 'trackDemand_operation_modify' },
-            { name: 'trackDemand_operation_delete' }
+            { name: 'trackDemand_operation_delete' },
+            { name: 'trackDemand_operation_verify'},
         ],
         page: (cb:Function) => { require.ensure([], require => { cb(require('pages/Track/TrackDemandMgr')); } , null , 'trackDemand'); }
     },

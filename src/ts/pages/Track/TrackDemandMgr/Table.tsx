@@ -1,7 +1,7 @@
 import {ExTable} from 'components/index';
 import { connect } from 'react-redux';
 import action from 'actions/track';
-import {Divider,Popconfirm,Button} from 'antd';
+import {Divider,Popconfirm,Button, Tag} from 'antd';
 import * as React from 'react';
 import { _Object } from 'customInterface';
 
@@ -16,11 +16,16 @@ interface CompProps {
     handleEdit?:Function,
     handleDelete?:Function,
     isBatchDelState?:boolean,
-    onBatch?:Function
+    onBatch?:Function,
+    handleVerify?:Function,
+    verifyStates?:Array<_Object>,
+    operations?:Array<any>
 }
 interface CompState {
     selectedRowKeys:Array<any>
 }
+
+
 
 class Table extends React.Component<CompProps,CompState> {
     private columns:Array<_Object>;
@@ -40,16 +45,19 @@ class Table extends React.Component<CompProps,CompState> {
         this.setState({selectedRowKeys:[]});
     }
     render () {
-        console.log(this.props)
-        const { loading, list, pageNo, dataCount, searchParams, onPageChange, onPageSizeChange,isBatchDelState } = this.props;
+        const { loading, list, pageNo, dataCount, searchParams, onPageChange, onPageSizeChange,isBatchDelState,verifyStates,operations } = this.props;
         const {selectedRowKeys} = this.state;
         const paginationOptions = { pageNo, pageSize: searchParams.pageSize, dataCount, onPageChange, onPageSizeChange };
         let rowSelection;
         this.columns = [
             { title: 'name', dataIndex: 'name' },
-            { title: 'state', dataIndex:'state'},
+            { title: 'state', dataIndex:'state',render:(data:_Object)=>{
+                const verifyInfo = verifyStates.find(o=>o.state==data);
+                return <Tag color={verifyInfo.tagColor}>{verifyInfo.stateMsg}</Tag>
+            }},
             { title:'testPath',dataIndex:'testPath'},
             { title: 'trackType', dataIndex:'trackType'},
+            { title: 'description', dataIndex:'description'},
         ];
         if(isBatchDelState){
             rowSelection = {
@@ -61,20 +69,26 @@ class Table extends React.Component<CompProps,CompState> {
                 title:'Action',dataIndex:'',key:'',render:(data:_Object)=>{
                     return (
                         <span>
-                            <a href={'javascript:;'} onClick={this.props.handleEdit.bind(this,data)}>Edit</a>
-                            <Divider type={'vertical'}/>
+                            {
+                                ~~data.state===0&&operations.indexOf('trackDemand_operation_verify')>-1&&
+                                <a href={'javascript:;'} onClick={this.props.handleVerify.bind(this,data)}>审核</a>
+                            }
+
+                            {/* <a href={'javascript:;'} onClick={this.props.handleEdit.bind(this,data)}>Edit</a> */}
+                            {/* <Divider type={'vertical'}/>
                             <Popconfirm
                                 title={'确认删除？'}
                                 onConfirm={(e)=>{ e.stopPropagation();this.props.handleDelete(data.id)}}
                                 onCancel={(e)=>e.stopPropagation()}
                             >
                                 <a href={'javascript:;'} onClick={(e)=>{e.stopPropagation()}}>Delete</a>
-                            </Popconfirm>
+                            </Popconfirm> */}
                         </span>
                     )
                 }
             });
         }
+        console.log(this.props.operations)
         return (
             <ExTable
                 {...paginationOptions}
@@ -101,8 +115,9 @@ class Table extends React.Component<CompProps,CompState> {
 }
 //这里有一个需要注意的问题，关于HOC组件使用ref无法获得真实组件的问题，添加withRef
 let TableComp = connect((state:any) => {
-    const { trackDemand_loading:loading, trackDemand_list:list, trackDemand_page:page, trackDemand_searchParams:searchParams } = state['track'];
-    return { loading, list, ...page, searchParams };
+    const operations = state.app.menuObj['track/trackDemand'].functions;
+    const { trackDemand_loading:loading, trackDemand_list:list, trackDemand_page:page, trackDemand_searchParams:searchParams,verifyStates } = state['track'];
+    return { loading, list, ...page, searchParams,verifyStates,operations };
 }, dispatch => ({
     onPageSizeChange ( pageSize:number) {
         dispatch({ type: 'TRACK_DEMAND_SEARCHPARAM', params: { pageSize } });
@@ -113,6 +128,11 @@ let TableComp = connect((state:any) => {
      */
     onPageChange (pageNo:number) {
         dispatch(action.loadTrackDemand(pageNo));
+    },
+    handleVerify(data:_Object,e:any){
+        e.stopPropagation();
+        dispatch({type:'TRACK_DEMAND_VERIFYMODAL_SHOW',show:true});
+        dispatch({type:'TRACK_DEMAND_EDITMODAL_DATA',data:data});
     },
     handleEdit(data:_Object,e:any){
         e.stopPropagation();
