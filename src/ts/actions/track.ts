@@ -7,7 +7,7 @@ import appAction from 'actions/app'
 let actions:_Object = {};
 
 /**
- * 加载列表
+ * 加载埋点类型列表(分页)
  * @param pageNo
  * @param pageSize
  * @returns {function(*, *)}
@@ -20,7 +20,7 @@ actions.loadTrackType = (pageNo:number, pageSize:number) => (dispatch:any, getSt
         pageNo: pageNo || page.pageNo,
         pageSize: pageSize || page.pageSize
     }
-    return Fetch.post(API.TRACK_TYPE_GETALL,{data:dataParam,page:pageParam} ).then((data:any) => {
+    return Fetch.post(API.TRACK_TYPE_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
         dispatch({ type: 'TRACK_TYPE_LOADING', loading: false });
         dispatch({
             type: 'TRACK_TYPE_LOAD',
@@ -32,6 +32,14 @@ actions.loadTrackType = (pageNo:number, pageSize:number) => (dispatch:any, getSt
         dispatch(appAction.setSearchParamsInLocalStorage(params,'TRACK_TYPE_SEARCHPARAM_CHANGE'));
     });
 };
+/**
+ * 加载全部trackType数据
+ */
+actions.loadAllTrackType = () => (dispatch:any) => {
+    return Fetch.get(API.TRACK_TYPE_GETALL,{}).then((data:_Object)=>{
+        dispatch({type:'TRACK_TYPE_ALLDATA',list:data});
+    })
+}
 
 
 /**
@@ -71,7 +79,7 @@ actions.batchDeleteTrack = (keys:Array<number>) => {
 }
 
 /**
- * 加载TrackDemand列表
+ * 加载TrackDemand列表(分页)
  */
 actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, getState:any) => {
     dispatch({ type: 'TRACK_DEMAND_LOADING', loading: true });
@@ -82,7 +90,7 @@ actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, get
         pageNo: pageNo || page.pageNo,
         pageSize: pageSize || page.pageSize
     }
-    return Fetch.post(API.TRACK_DEMAND_GETALL,{data:dataParam,page:pageParam} ).then((data:any) => {
+    return Fetch.post(API.TRACK_DEMAND_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
         dispatch({ type: 'TRACK_DEMAND_LOADING', loading: false });
         dispatch({
             type: 'TRACK_DEMAND_LOAD',
@@ -94,6 +102,15 @@ actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, get
         dispatch(appAction.setSearchParamsInLocalStorage(params,'TRACK_DEMAND_SEARCHPARAM_CHANGE'));
     });
 };
+/**
+ * 加载全部trackDemand数据
+ */
+actions.loadAllTrackDemand = () => (dispatch:any) => {
+    return Fetch.get(API.TRACK_DEMAND_GETALL,{}).then((data:_Object)=>{
+        dispatch({type:'TRACK_DEMAND_ALLDATA',list:data});
+    })
+}
+
 /**
  * 新增或编辑trackDemand
  */
@@ -128,7 +145,9 @@ actions.batchDeleteTrackDemand = (keys:Array<number>) => () => {
         message.warn('操作失败');
     })
 }
-
+/**
+ * 审核埋点需求
+ */
 actions.verifyTrackDemand = (state:number,data:_Object) => (dispatch:any) => {
     const params = {
         strIds:data.id,
@@ -143,5 +162,66 @@ actions.verifyTrackDemand = (state:number,data:_Object) => (dispatch:any) => {
         message.warn('操作失败');
     })
 }
+
+/**
+ * 加载trackInfo
+ */
+actions.loadTrackInfo = (pageNo:number, pageSize:number) => (dispatch:any, getState:any) => {
+    dispatch({ type: 'TRACK_INFO_LOADING', loading: true });
+    const state = getState()['track'],page = state.trackInfo_page,params = state.trackInfo_searchParams;
+    const dataParam = {};
+    const pageParam = {
+        page: pageNo || page.pageNo,
+        size: pageSize || page.pageSize
+    }
+    return Fetch.post(API.TRACK_INFO_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
+        dispatch({ type: 'TRACK_INFO_LOADING', loading: false });
+        dispatch({
+            type: 'TRACK_INFO_LOAD',
+            pageNo: pageNo || data.page.currPage,
+            pageSize: data.page.size,
+            dataCount: data.page.total,
+            list: data.data
+        });
+        dispatch(appAction.setSearchParamsInLocalStorage(params,'TRACK_INFO_SEARCHPARAM_CHANGE'));
+    });
+};
+
+/**
+ * 新增或编辑track
+ */
+actions.addOrEditTrackInfo = (data:_Object) => (dispatch:any) => {
+    Fetch.post(API.TRACK_INFO_SAVE,data).then(()=>{
+        message.success('操作成功');
+        dispatch({type:'TRACK_INFO_EDITMODAL_SHOW',show:false})
+        dispatch(actions.loadTrackInfo())
+    }).catch((err:any)=>{
+        message.warn('操作失败');
+    })
+}
+
+/**
+ * 删除一个埋点类型
+ */
+actions.deleteTrackInfo = (key:number) => (dispatch:any) => {
+    Fetch.get(API.TRACK_INFO_REMOVE+'/'+key,{}).then(()=>{
+        message.success('操作成功');
+        dispatch(actions.loadTrackInfo())
+    }).catch((err:any)=>{
+        message.warn('操作失败');
+    })
+}
+/**
+ * 批量删除埋点类型
+ */
+actions.batchDeleteTrackInfo = (keys:Array<number>) => {
+    Fetch.get(API.TRACK_INFO_BATCHREMOVE,{ids:keys.join(',')}).then((data:any)=>{
+        console.log(data);
+        message.success('操作成功');
+    }).catch((err:any)=>{
+        message.warn('操作失败');
+    })
+}
+
 
 export default actions;

@@ -2,15 +2,14 @@ import {connect} from 'react-redux';
 import {ExFormItem,ExModal} from 'components/index';
 import {Form,message} from 'antd';
 import action from 'actions/track';
-import moment from 'moment';
 import { _Object } from 'customInterface';
 import * as React from 'react';
 
 interface EditFormProps {
-    trackType_allData?:Array<_Object>,
-    form?:any
+    form?:any,
+    eventTypeCodes?:Array<_Object>,
+    trackDemand_allData?:Array<_Object>
 }
-
 interface CompProps extends EditFormProps {
     show?:boolean,
     onClose?:Function,
@@ -30,27 +29,27 @@ const EditForm:any = Form.create({
         // props.onChange(props.editData,changed[0]);
     },
     mapPropsToFields:(props)=> {
-        const params = props.editData;
+        const {editData,eventTypeCodes} = props;
         return {
-            id:Form.createFormField({value:params.id}),
-            name:Form.createFormField({value:params.name}),
-            // state:Form.createFormField({value:params.state}),
-            testPath:Form.createFormField({value:params.testPath}),
-            trackType:Form.createFormField({value:params.trackType}),
-            description:Form.createFormField({value:params.description})
+            id:Form.createFormField({value:editData.id}),
+            eventId:Form.createFormField({value:editData.eventId}),
+            eventTypeCode:Form.createFormField({value:eventTypeCodes.find((o:_Object)=>o.name==editData.eventType).id}),
+            param:Form.createFormField({value:editData.param}),
+            paramDescribe:Form.createFormField({value:editData.paramDescribe}),
+            demandId:Form.createFormField({value:editData.demandId}),
         }
     }
-})((props:CompProps)=>{
-    const {form,trackType_allData} = props;
+})((props:EditFormProps)=>{
+    const {form,eventTypeCodes,trackDemand_allData} = props;
     const {getFieldDecorator} = form;
     return (
         <Form>
             <ExFormItem type={'hidden'} name={'id'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem name={'name'} label={'name'} getFieldDecorator={getFieldDecorator} required/>
-            <ExFormItem name={'trackType'} label={'trackType'} type={'select'} list={trackType_allData.map(o=>({id:o.name,name:o.name}))} getFieldDecorator={getFieldDecorator} required/>
-            {/* <ExFormItem name={'state'} label={'state'} getFieldDecorator={getFieldDecorator}/> */}
-            <ExFormItem name={'testPath'} label={'testPath'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem name={'description'} label={'description'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem name={'eventId'} label={'eventId'} getFieldDecorator={getFieldDecorator} required/>
+            <ExFormItem type={'select'} list={eventTypeCodes} name={'eventTypeCode'} label={'eventTypeCode'} getFieldDecorator={getFieldDecorator} required/>
+            <ExFormItem type={'select'} list={trackDemand_allData} showSearch name={'demandId'} label={'demandId'} getFieldDecorator={getFieldDecorator} required/>
+            <ExFormItem type={'textarea'} name={'paramDescribe'} label={'paramDescribe'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem type={'textarea'} name={'param'} label={'param'} getFieldDecorator={getFieldDecorator}/>
         </Form>
     )
 });
@@ -64,6 +63,9 @@ class EditModal extends React.Component<CompProps>{
             if(err){
                 return;
             }
+            data.trackType = this.props.trackDemand_allData.find(o=>{
+                return o.id = data.demandId;
+            }).trackType
             this.props.onSubmit(data);
         })
     };
@@ -76,7 +78,7 @@ class EditModal extends React.Component<CompProps>{
     };
 
     render(){
-        const {show,onClose,editData,loading,trackType_allData} = this.props;
+        const {show,onClose,editData,loading,eventTypeCodes,trackDemand_allData} = this.props;
         return (
             <ExModal
                 visible={show}
@@ -84,12 +86,14 @@ class EditModal extends React.Component<CompProps>{
                 title={editData.id?'Edit':'Add'}
                 onCancel={onClose}
                 onOk={this.handleSave}
+                width={600}
             >
                 <EditForm
                     ref={this.saveFormRef}
                     editData={editData}
                     onChange={this.fieldsOnChange}
-                    trackType_allData={trackType_allData}
+                    eventTypeCodes={eventTypeCodes}
+                    trackDemand_allData={trackDemand_allData}
                 />
             </ExModal>
         )
@@ -98,19 +102,20 @@ class EditModal extends React.Component<CompProps>{
 
 const EditModalComp = connect((state:any)=>{
     const {
-        trackDemand_editModalShow:show,
-        trackDemand_editData:editData,
-        trackDemand_editModalLoading:editModalLoading,
-        trackType_allData
+        trackInfo_editModalShow:show,
+        trackInfo_editData:editData,
+        trackInfo_editModalLoading:editModalLoading,
+        eventTypeCodes,
+        trackDemand_allData
     } = state['track'];
-    return {show,editData,loading:editModalLoading,trackType_allData};
+    return {show,editData,loading:editModalLoading,eventTypeCodes,trackDemand_allData};
 },dispatch=>({
     
     onSubmit(data:_Object){
-        dispatch(action.addOrEditTrackDemand(data));
+        dispatch(action.addOrEditTrackInfo(data));
     },
     onClose(){
-        dispatch({type:'TRACK_DEMAND_EDITMODAL_SHOW',show:false});
+        dispatch({type:'TRACK_INFO_EDITMODAL_SHOW',show:false});
     }
 }))(EditModal);
 

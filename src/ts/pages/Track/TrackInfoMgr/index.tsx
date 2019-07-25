@@ -7,7 +7,6 @@ import Toolbar from 'components/App/Toolbar';
 import SearchModal from './SearchModal';
 import {Button} from "antd"
 import EditModal from './EditModal';
-import VerifyModal from './VerifyModal';
 import * as React from 'react';
 import { _Object } from 'customInterface';
 require('less/track.less');
@@ -16,23 +15,21 @@ interface CompProps {
     init:Function,
     onRefresh:Function,
     onSearch:Function,
-    onAdd:Function,
-    onViewStateChange:Function,
-    viewState:number
+    onAdd:Function
 }
 interface CompState {
     showSearchModal?:boolean,
-    isBatchDelState:boolean,
+    isBatchDelState:boolean
 }
 
-class TrackDemandMgr extends React.Component<CompProps,CompState> {
+class TrackInfoMgr extends React.Component<CompProps,CompState> {
     public handleBatchDel:any;
     public table:any;
     constructor(props:CompProps){
         super(props);
         this.state = {
             showSearchModal:false,
-            isBatchDelState:false,
+            isBatchDelState:false
         };
         this.table = React.createRef();
     }
@@ -48,14 +45,11 @@ class TrackDemandMgr extends React.Component<CompProps,CompState> {
         this.setState({isBatchDelState:false});
         this.table.current.wrappedInstance.onBatchDel();
     }
-    handleToggle = () => {
-        this.props.onViewStateChange((~~this.props.viewState===0)?1:0);
-    }
 
     render () {
-        const {onRefresh,onSearch,viewState} = this.props;
+        const {onRefresh,onSearch} = this.props;
         return (
-            <div className='trackDemadContainer'>
+            <div className='trackTypeContainer'>
                 <Toolbar onRefresh={onRefresh}>
                     {
                         this.state.isBatchDelState?(
@@ -66,16 +60,14 @@ class TrackDemandMgr extends React.Component<CompProps,CompState> {
                         ):(
                             <React.Fragment>
                                 {/* <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button> */}
-                                <Button onClick={()=>this.props.onAdd()} icon={'plus'}>新增</Button>
-                                <Button type={'primary'} onClick={this.handleToggle} style={{marginLeft:20}}>{~~viewState===1?'返回普通查看':'查看我的待审核'}</Button>
-                                {/* <Button type={'primary'} style={{marginLeft:20}} onClick={()=>this.setState({isBatchDelState:true})} icon={'trash'}>{'批量删除'}</Button> */}
+                                <Button onClick={()=>this.props.onAdd()} style={{marginLeft:20}} icon={'plus'}>新增</Button>
+                                <Button type={'primary'} style={{marginLeft:20}} onClick={()=>this.setState({isBatchDelState:true})} icon={'trash'}>{'批量删除'}</Button>
                             </React.Fragment>
                         )
                     }
                     
                 </Toolbar>
                 <EditModal/>
-                <VerifyModal/>
                 <SearchModal
                     show={this.state.showSearchModal}
                     onSearch={onSearch}
@@ -86,41 +78,34 @@ class TrackDemandMgr extends React.Component<CompProps,CompState> {
     }
 }
 
-const TrackDemandMgrComp = connect((state:any)=>{
-    const {viewState} = state['track'].trackDemand_searchParams;
-    return {viewState};
-}, dispatch => ({
+const TrackInfoMgrComp = connect(null, dispatch => ({
     /**
      * page数据初始化加载
      */
     init () {
         dispatch(appAction.getSearchParamsFromLocalStorage()).then(()=>{
-            dispatch(action.loadAllTrackType());
-            dispatch(action.loadTrackDemand());
+            dispatch(action.loadAllTrackDemand());
+            dispatch(action.loadTrackInfo());
         })
     },
     /**
      * 点击刷新或操作
      */
     onRefresh(){
-        dispatch(action.loadTrackDemand());
+        dispatch(action.loadTrackInfo());
     },
     /**
      * 查询
      * @param params
      */
     onSearch (params:_Object) {
-        dispatch({ type: 'TRACK_DEMAND_SEARCHPARAM_CHANGE', params });
-        dispatch(action.loadTrackDemand(1));
+        dispatch({ type: 'TRACK_INFO_SEARCHPARAM_CHANGE', params });
+        dispatch(action.loadTrackInfo(1));
     },
     onAdd(){
-        dispatch({type:'TRACK_DEMAND_EDITMODAL_SHOW',show:true});
-        dispatch({type:'TRACK_DEMAND_EDITMODAL_RESET'});
-    },
-    onViewStateChange(state:number){
-        dispatch({type:'TRACK_DEMAND_VIEWSTATE_CHANGE',state});
-        dispatch(action.loadTrackDemand());
+        dispatch({type:'TRACK_INFO_EDITMODAL_SHOW',show:true});
+        dispatch({type:'TRACK_INFO_EDITMODAL_RESET'});
     }
-}))(TrackDemandMgr);
+}))(TrackInfoMgr);
 
-module.exports = TrackDemandMgrComp;
+module.exports = TrackInfoMgrComp;
