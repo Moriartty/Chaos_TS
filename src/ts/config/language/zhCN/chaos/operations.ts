@@ -3,6 +3,7 @@ const common = {
     'common_operation_delete': '删除',
     'common_operation_modify': '修改',
     'common_operation_view':'查看',
+    'common_operation_batchDelete':'批量删除',
 };
 export default {
     'home_operation_view':common['common_operation_view'],
@@ -41,10 +42,17 @@ export default {
     'trackType_operation_add':common['common_operation_add'],
     'trackType_operation_modify':common['common_operation_modify'],
     'trackType_operation_delete':common['common_operation_delete'],
+    'trackType_operation_batchDelete':common['common_operation_batchDelete'],
 
     'trackDemand_operation_view':common['common_operation_view'],
     'trackDemand_operation_add':common['common_operation_add'],
     'trackDemand_operation_modify':common['common_operation_modify'],
     'trackDemand_operation_delete':common['common_operation_delete'],
     'trackDemand_operation_verify':'审核',
+
+    'fieldTranslation_operation_view':common['common_operation_view'],
+    'fieldTranslation_operation_add':common['common_operation_add'],
+    'fieldTranslation_operation_modify':common['common_operation_modify'],
+    'fieldTranslation_operation_delete':common['common_operation_delete'],
+    'fieldTranslation_operation_batchDelete':common['common_operation_batchDelete'],
 };

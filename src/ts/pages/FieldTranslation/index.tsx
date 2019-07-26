@@ -1,4 +1,4 @@
-import action from 'actions/track';
+import action from 'actions/fieldTranslation';
 import appAction from 'actions/app';
 import { connect } from 'react-redux';
 // import Toolbar from './Toolbar';
@@ -10,7 +10,7 @@ import EditModal from './EditModal';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import * as React from 'react';
 import { _Object } from 'customInterface';
-require('less/track.less');
+
 
 interface CompProps {
     init:Function,
@@ -24,7 +24,7 @@ interface CompState {
     isBatchDelState:boolean
 }
 
-class TrackTypeMgr extends React.Component<CompProps,CompState> {
+class FieldTranslation extends React.Component<CompProps,CompState> {
     public handleBatchDel:any;
     public table:any;
     constructor(props:CompProps){
@@ -50,9 +50,8 @@ class TrackTypeMgr extends React.Component<CompProps,CompState> {
 
     render () {
         const {onRefresh,onSearch,operations} = this.props;
-        console.log('aa',operations)
         return (
-            <div className='trackTypeContainer'>
+            <div className='fieldTranslationContainer'>
                 <Toolbar onRefresh={onRefresh}>
                     {
                         this.state.isBatchDelState?(
@@ -62,17 +61,17 @@ class TrackTypeMgr extends React.Component<CompProps,CompState> {
                             </React.Fragment>
                         ):(
                             <React.Fragment>
-                                {/* <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button> */}
+                                <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button>
                                 {
-                                    operations.indexOf('trackType_operation_add')>-1&&
+                                    operations.indexOf('fieldTranslation_operation_add')>-1&&
                                     <Button onClick={()=>this.props.onAdd()} style={{marginLeft:20}} icon={'plus'}>
-                                        <FormattedMessage id='trackType_operation_add'/>
+                                        <FormattedMessage id='fieldTranslation_operation_add'/>
                                     </Button>
                                 }
                                 {
-                                    operations.indexOf('trackType_operation_delete')>-1&&
+                                    operations.indexOf('fieldTranslation_operation_delete')>-1&&
                                     <Button type={'primary'} style={{marginLeft:20}} onClick={()=>this.setState({isBatchDelState:true})} icon={'delete'}>
-                                        <FormattedMessage id={'trackType_operation_batchDelete'}/>
+                                        <FormattedMessage id={'fieldTranslation_operation_batchDelete'}/>
                                     </Button>
                                 }
                             </React.Fragment>
@@ -91,8 +90,8 @@ class TrackTypeMgr extends React.Component<CompProps,CompState> {
     }
 }
 
-const TrackTypeMgrComp = connect((state:any)=>{
-    const operations = state.app.menuObj['track/trackType'].functions;
+const FieldTranslationComp = connect((state:any)=>{
+    const operations = state.app.menuObj['systemConfig/fieldTranslation'].functions;
     return {operations};
 }, dispatch => ({
     /**
@@ -100,27 +99,28 @@ const TrackTypeMgrComp = connect((state:any)=>{
      */
     init () {
         dispatch(appAction.getSearchParamsFromLocalStorage()).then(()=>{
-            dispatch(action.loadTrackType());
+            dispatch(action.loadSystemList());
+            dispatch(action.loadFieldsData());
         })
     },
     /**
      * 点击刷新或操作
      */
     onRefresh(){
-        dispatch(action.loadTrackType());
+        dispatch(action.loadFieldsData());
     },
     /**
      * 查询
      * @param params
      */
     onSearch (params:_Object) {
-        dispatch({ type: 'TRACK_TYPE_SEARCHPARAM_CHANGE', params });
-        dispatch(action.loadTrackType(1));
+        dispatch({ type: 'FIELDTRANS_SEARCHPARAM_CHANGE', params });
+        dispatch(action.loadFieldsData(1));
     },
     onAdd(){
-        dispatch({type:'TRACK_TYPE_EDITMODAL_SHOW',show:true});
-        dispatch({type:'TRACK_TYPE_EDITMODAL_RESET'});
+        dispatch({type:'FIELDTRANS_EDITMODAL_SHOW',show:true});
+        dispatch({type:'FIELDTRANS_EDITMODAL_RESET'});
     }
-}))(TrackTypeMgr);
+}))(FieldTranslation);
 
-module.exports = TrackTypeMgrComp;
+module.exports = FieldTranslationComp;

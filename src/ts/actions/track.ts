@@ -17,8 +17,8 @@ actions.loadTrackType = (pageNo:number, pageSize:number) => (dispatch:any, getSt
     const state = getState()['track'],page = state.trackType_page,params = state.trackType_searchParams;
     const dataParam = {};
     const pageParam = {
-        pageNo: pageNo || page.pageNo,
-        pageSize: pageSize || page.pageSize
+        page: pageNo || page.pageNo,
+        size: pageSize || page.pageSize
     }
     return Fetch.post(API.TRACK_TYPE_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
         dispatch({ type: 'TRACK_TYPE_LOADING', loading: false });
@@ -36,7 +36,7 @@ actions.loadTrackType = (pageNo:number, pageSize:number) => (dispatch:any, getSt
  * 加载全部trackType数据
  */
 actions.loadAllTrackType = () => (dispatch:any) => {
-    return Fetch.get(API.TRACK_TYPE_GETALL,{}).then((data:_Object)=>{
+    return Fetch.get(API.TRACK_TYPE_GETALL,{}).then((data:Array<_Object>)=>{
         dispatch({type:'TRACK_TYPE_ALLDATA',list:data});
     })
 }
@@ -71,7 +71,6 @@ actions.deleteTrack = (key:number) => (dispatch:any) => {
  */
 actions.batchDeleteTrack = (keys:Array<number>) => {
     Fetch.get(API.TRACK_TYPE_BATCHREMOVE,{ids:keys.join(',')}).then((data:any)=>{
-        console.log(data);
         message.success('操作成功');
     }).catch((err:any)=>{
         message.warn('操作失败');
@@ -87,8 +86,8 @@ actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, get
     const dataParam:_Object = {};
     (~~state.trackDemand_searchParams.viewState===1)?dataParam['EQ_state']=0:'';
     const pageParam = {
-        pageNo: pageNo || page.pageNo,
-        pageSize: pageSize || page.pageSize
+        page: pageNo || page.pageNo,
+        size: pageSize || page.pageSize
     }
     return Fetch.post(API.TRACK_DEMAND_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
         dispatch({ type: 'TRACK_DEMAND_LOADING', loading: false });
@@ -106,7 +105,7 @@ actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, get
  * 加载全部trackDemand数据
  */
 actions.loadAllTrackDemand = () => (dispatch:any) => {
-    return Fetch.get(API.TRACK_DEMAND_GETALL,{}).then((data:_Object)=>{
+    return Fetch.get(API.TRACK_DEMAND_GETALL,{}).then((data:Array<_Object>)=>{
         dispatch({type:'TRACK_DEMAND_ALLDATA',list:data});
     })
 }

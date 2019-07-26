@@ -29,7 +29,14 @@ const defaultState:_Object = {
         duration: 2
     },
     userAuthList:[],
-    isLogin:true
+    isLogin:true,
+    section:[
+        {id:'tct-hq',name:'惠州&深圳'},
+        {id:'ta-cd',name:'成都'},
+        {id:'ta-nb',name:'宁波'},
+        {id:'ta-nj',name:'南京'},
+        {id:'ta-sh',name:'上海'}
+    ]
 };
 
 export default (state:_Object, action:_Object) => {

@@ -29,6 +29,7 @@ import * as en from 'react-intl/locale-data/en';
 import store from 'appStore';
 import App from 'components/App';
 import MasterPage from 'components/App/MasterPage';
+import appAction from 'actions/app';
 //引入自定义类型
 import {RootProps,_Object} from 'customInterface';
 
@@ -68,10 +69,10 @@ function chooseLocale (lang:string) {
     }
 }
 
-
 class Root extends React.Component<RootProps> {
     render () {
         const lang = this.props.locale;
+        this.props.loadLang();
         return (
             <IntlProvider key={lang} locale={lang} messages={chooseLocale(lang)}>
                 <Provider store={this.props.store}>
@@ -86,7 +87,11 @@ class Root extends React.Component<RootProps> {
 const RootComponent = connect((state:any) => {
     const { locale } = state.app;
     return { locale };
-}, null)(Root);
+}, dispatch=>({
+    loadLang(){
+        dispatch(appAction.loadUserInfo());
+    }
+}))(Root);
 
 ReactDOM.render(
     <RootComponent store={store}/>

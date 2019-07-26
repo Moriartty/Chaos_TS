@@ -1,5 +1,6 @@
 export default {
     APP_LOGIN:'/login',
+    APP_LOGOUT:'/logout',
     APP_ISEXPIRATION:'/isExpiration',
     APP_REFRESHTOKEN:'/refreshToken',
     TRACK_TYPE_GETALL:'/event/trackType/all',
@@ -18,6 +19,12 @@ export default {
     TRACK_INFO_BATCHREMOVE:'/event/trackInfo/batchRemove',
     TRACK_INFO_REMOVE:'/event/trackInfo/remove',
     TRACK_INFO_SAVE:'/event/trackInfo/save',
+    FIELDTRANS_GETALL:'/translate/loadTranslate',
+    FIELDTRANS_CREATE:'/translate/createTranslate',
+    FIELDTRANS_BATCH_CREATE:'/translate/multipleCreateTranslates',
+    FIELDTRANS_MODIFY:'/translate/modifyTranslate',
+    FIELDTRANS_REMOVE:'/translate/removeTranslate',
+    FIELDTRANS_BATCHREMOVE:'/translate/multipleRemoveTranslates',
 
 }
 

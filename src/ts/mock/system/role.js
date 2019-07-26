@@ -242,6 +242,42 @@ module.exports = [
                     display:1,
                     url:'ccc'
                 },
+                {
+                    oid:9030,
+                    pid:903,
+                    type:'4',
+                    name:'fieldTranslation_operation_view',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
+                    oid:9031,
+                    pid:903,
+                    type:'4',
+                    name:'fieldTranslation_operation_add',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
+                    oid:9032,
+                    pid:903,
+                    type:'4',
+                    name:'fieldTranslation_operation_modify',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
+                    oid:9033,
+                    pid:903,
+                    type:'4',
+                    name:'fieldTranslation_operation_delete',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
             ]
         }
     },

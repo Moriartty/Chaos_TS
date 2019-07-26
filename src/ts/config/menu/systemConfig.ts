@@ -37,4 +37,15 @@ export default {
         ],
         page: (cb:Function) => { require.ensure([], require => { cb(require('pages/User')); }, null , 'user'); }
     },
+    'systemConfig/fieldTranslation': {
+        name: 'menuName_systemConfig_fieldTranslation',
+        icon: 'contacts',
+        operations: [
+            { name: 'fieldTranslation_operation_view' },
+            { name: 'fieldTranslation_operation_add' },
+            { name: 'fieldTranslation_operation_modify' },
+            { name: 'fieldTranslation_operation_delete' }
+        ],
+        page: (cb:Function) => { require.ensure([], require => { cb(require('pages/FieldTranslation')); }, null , 'fieldTranslation'); }
+    },
 };

@@ -9,7 +9,8 @@ export default {
     'menuName_systemConfig_role': '角色管理',
     'menuName_systemConfig_menu': '菜单管理',
     'menuName_systemConfig_user': '用户管理',
+    'menuName_systemConfig_fieldTranslation':'字段翻译管理',
     'menuName_track_trackInfo': '埋点详情',
     'menuName_track_trackType': '埋点类型',
-    'menuName_track_trackDemand': '埋点需求'
+    'menuName_track_trackDemand': '埋点需求',
 };

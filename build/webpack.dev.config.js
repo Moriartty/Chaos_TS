@@ -83,7 +83,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
                 pathRewrite:{"^/sx/":''}
             },
             "/fj/":{
-                target:'http://10.92.36.11:8011',
+                target:'http://10.92.36.11:8012',
                 pathRewrite:{"^/fj/":''}
             },
             "/yl/":{

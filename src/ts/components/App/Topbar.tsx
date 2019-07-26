@@ -164,7 +164,7 @@ const TopbarComp = connect((state:any) => {
      * 退出
      */
     onLogout () {
-        dispatch(action.logout()).then(() => {
+        dispatch(action.logout()).then((data:any) => {
             location.href = 'login.html';
         });
     }

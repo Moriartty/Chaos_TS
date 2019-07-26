@@ -81,9 +81,6 @@ export default (state:any, action:_Object) => {
         case 'TRACK_TYPE_LOADING':
             newState.trackType_loading = action.loading;
             break;
-        case 'TRACK_TYPE_SEARCHPARAM':
-            newState.trackType_searchParams = action.params;
-            break;
         case 'TRACK_TYPE_SEARCHPARAM_CHANGE':
             newState.trackType_searchParams = action.params;
             break;

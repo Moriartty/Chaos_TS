@@ -1,6 +1,6 @@
 import {ExTable} from 'components/index';
 import { connect } from 'react-redux';
-import action from 'actions/track';
+import action from 'actions/fieldTranslation';
 import {Divider,Popconfirm,Button} from 'antd';
 import * as React from 'react';
 import { _Object } from 'customInterface';
@@ -47,8 +47,10 @@ class Table extends React.Component<CompProps,CompState> {
         const paginationOptions = { pageNo, pageSize: searchParams.pageSize, dataCount, onPageChange, onPageSizeChange };
         let rowSelection;
         this.columns = [
-            { title: 'name', dataIndex: 'name' },
-            { title: 'trackId', dataIndex:'trackId'},
+            { title: 'strKey', dataIndex: 'strKey' },
+            { title: 'strVal', dataIndex:'strVal'},
+            { title: 'system', dataIndex:'systemId'},
+            { title: 'language', dataIndex:'language'},
         ];
         if(isBatchDelState){
             rowSelection = {
@@ -61,12 +63,12 @@ class Table extends React.Component<CompProps,CompState> {
                     return (
                         <span>
                             {
-                                operations.indexOf('trackType_operation_modify')>-1&&
+                                operations.indexOf('fieldTranslation_operation_modify')>-1&&
                                 <a href={'javascript:;'} onClick={this.props.handleEdit.bind(this,data)}>
-                                    <FormattedMessage id={'trackType_operation_modify'}/></a>
+                                    <FormattedMessage id={'fieldTranslation_operation_modify'}/></a>
                             }
                             {
-                                operations.indexOf('trackType_operation_delete')>-1&&
+                                operations.indexOf('fieldTranslation_operation_delete')>-1&&
                                 <React.Fragment>
                                     <Divider type={'vertical'}/>
                                     <Popconfirm
@@ -75,7 +77,7 @@ class Table extends React.Component<CompProps,CompState> {
                                         onCancel={(e)=>e.stopPropagation()}
                                     >
                                         <a href={'javascript:;'} onClick={(e)=>{e.stopPropagation()}}>
-                                            <FormattedMessage id={'trackType_operation_delete'}/></a>
+                                            <FormattedMessage id={'fieldTranslation_operation_delete'}/></a>
                                     </Popconfirm>
                                 </React.Fragment>
                             }
@@ -110,30 +112,30 @@ class Table extends React.Component<CompProps,CompState> {
 }
 //这里有一个需要注意的问题，关于HOC组件使用ref无法获得真实组件的问题，添加withRef
 let TableComp = connect((state:any) => {
-    const operations = state.app.menuObj['track/trackType'].functions;
-    const { trackType_loading:loading, trackType_list:list, trackType_page:page, trackType_searchParams:searchParams } = state['track'];
+    const operations = state.app.menuObj['systemConfig/fieldTranslation'].functions;
+    const { loading, list, page, searchParams } = state['fieldTranslation'];
     return { loading, list, ...page, searchParams,operations };
 }, dispatch => ({
     onPageSizeChange ( pageSize:number) {
-        dispatch({ type: 'TRACK_TYPE_SEARCHPARAM_CHANGE', params: { pageSize } });
+        dispatch({ type: 'FIELDTRANS_SEARCHPARAM', params: { pageSize } });
     },
     /**
      * 换页
      * @param pageNo
      */
     onPageChange (pageNo:number) {
-        dispatch(action.loadTrackType(pageNo));
+        dispatch(action.loadFieldsData(pageNo));
     },
     handleEdit(data:_Object,e:any){
         e.stopPropagation();
-        dispatch({type:'TRACK_TYPE_EDITMODAL_SHOW',show:true});
-        dispatch({type:'TRACK_TYPE_EDITMODAL_DATA',data:data});
+        dispatch({type:'FIELDTRANS_EDITMODAL_SHOW',show:true});
+        dispatch({type:'FIELDTRANS_EDITMODAL_DATA',data:data});
     },
     handleDelete(id:number){
-        dispatch(action.deleteTrack(id));
+        dispatch(action.delete(id));
     },
     onBatch(keys:Array<number>){
-        dispatch(action.batchDeleteTrack(keys))
+        dispatch(action.batchDelete(keys))
     }
 }), null, {withRef: true})(Table);
 export default TableComp;

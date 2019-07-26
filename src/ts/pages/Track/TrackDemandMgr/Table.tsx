@@ -88,7 +88,7 @@ class Table extends React.Component<CompProps,CompState> {
                 }
             });
         }
-        console.log(this.props.operations)
+       
         return (
             <ExTable
                 {...paginationOptions}

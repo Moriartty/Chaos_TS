@@ -57,6 +57,7 @@ function createHttpHeader(opts:_Object,method:string){
         delete header["Content-Type"];
     return new Headers(header);
 }
+
 /**
  * 刷新token,并继续上次的请求
  */
@@ -88,6 +89,10 @@ function refreshToken(reqParams:requestParams){
 
 }
 
+/**
+ * Fetch请求封装
+ * @param reqParams 
+ */
 function _Fetch(reqParams:requestParams){
     require('../mock')(reqParams.url);
     let {method,url,params,opts} = reqParams;

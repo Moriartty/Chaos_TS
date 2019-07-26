@@ -166,13 +166,14 @@ action.register = (username:string,password:string) => {
  * @param autoLogin
  * @returns {Function}
  */
-action.login = (loginName:string, password:string, autoLogin:number) => (dispatch:any) => {
+action.login = (loginName:string, password:string, section:string,autoLogin:number) => (dispatch:any) => {
     return Fetch.post(API.APP_LOGIN, {
-        username: loginName,
-        password: password,
+        loginName: loginName,
+        loginPwd: password,
+        section:section,
         auto: autoLogin ? 1 : 0
     },{
-        baseUrl: config.accountBaseUrl
+        // baseUrl: config.accountBaseUrl
     }).then((json:_Object) => {
         if(!isEmpty(json)){
             setCookie('access_token',json.accessToken);
@@ -187,17 +188,24 @@ action.login = (loginName:string, password:string, autoLogin:number) => (dispatc
  * @returns {Function}
  */
 action.logout = () => (dispatch:any) => {
-    delCookie('access_token');
-    delCookie('refresh_token');
-    dispatch({ type: 'APP_LOGOUT' });
-    return Promise.resolve();
+    return Fetch.post(API.APP_LOGOUT,{},{
+        tokenType:'refresh_token',
+        withCookie:true
+    }).then(()=>{
+        delCookie('access_token');
+        delCookie('refresh_token');
+        dispatch({ type: 'APP_LOGOUT' });
+        return Promise.resolve();
+    }).catch((err:any)=>{
+        return Promise.reject(err);
+    })
 }
 /**
  * 判断access_token是否过期
  */
 action.isExpiration = () => (dispatch:any) => 
     Fetch.get(API.APP_ISEXPIRATION,{},{
-        baseUrl:config.accountBaseUrl,
+        // baseUrl:config.accountBaseUrl,
         tokenType:'refresh_token',
         withCookie:true
     }).then((json:any)=>{

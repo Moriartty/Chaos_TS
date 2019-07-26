@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import action from 'actions/app';
 import { Form, Icon, Input, Button, Checkbox, Tabs, Alert,Row,Col } from 'antd';
 // import ReactCanvasNest from 'components/react-canvas-nest';
-import {EvanYou,LocaleToggle} from 'components/index';
+import {EvanYou,LocaleToggle,ExFormItem} from 'components/index';
 const headerIcon = require('img/bg2.png');
 import { FormattedMessage, injectIntl } from 'react-intl';
 
@@ -16,7 +16,8 @@ interface CompProps {
     onRegister:Function,
     locale:string,
     intl:any,
-    authenticate:Function
+    authenticate:Function,
+    section?:Array<_Object>
 }
 interface CompState {
     showIncorrect?: boolean,
@@ -61,7 +62,7 @@ class Login extends React.Component<CompProps,CompState> {
 
     render () {
         const { getFieldDecorator } = this.props.form;
-        const {locale} = this.props;
+        const {locale,section} = this.props;
         const intl = this.props.intl;
         return (
             <div style={{ height: '100%' }}>
@@ -109,14 +110,31 @@ class Login extends React.Component<CompProps,CompState> {
                                     {this.state.showIncorrect && <Alert message={<FormattedMessage id={'login_index_msg6'}/>} type="error" showIcon />}
                                 </TabPane>
                             </Tabs>
-                            <FormItem>
-                                {getFieldDecorator('remember', {
-                                    valuePropName: 'checked',
-                                    initialValue: true
-                                })(
-                                    <Checkbox><FormattedMessage id={'login_index_msg7'}/></Checkbox>
-                                )}
-                            </FormItem>
+                            <div>
+                                <Row>
+                                    <Col span={12}>
+                                        <FormItem>
+                                            {getFieldDecorator('remember', {
+                                                valuePropName: 'checked',
+                                                initialValue: true
+                                            })(
+                                                <Checkbox><FormattedMessage id={'login_index_msg7'}/></Checkbox>
+                                            )}
+                                        </FormItem>
+                                    </Col>
+                                    <Col span={12}>
+                                        <ExFormItem  
+                                            type={'select'} 
+                                            list={section} 
+                                            placeholder={intl.formatMessage({id:"login_index_msg9"})}
+                                            name={'section'} 
+                                            style={{width:232}}
+                                            getFieldDecorator={getFieldDecorator} 
+                                            required
+                                            />
+                                    </Col>
+                                </Row>
+                            </div>
                             <div>
                                 <Row>
                                     <Col span={24}>
@@ -138,8 +156,8 @@ class Login extends React.Component<CompProps,CompState> {
 }
 
 let LoginComp = connect((state:any)=>{
-    const {locale} = state.app;
-    return {locale}
+    const {locale,section} = state.app;
+    return {locale,section}
 }, dispatch => ({
     /**
      * 登录
@@ -148,7 +166,7 @@ let LoginComp = connect((state:any)=>{
     onLogin (data:any) {
         this.setState({ showIncorrect: false });
         //登陆后再验证cookie，然后跳转
-        dispatch(action.login(data.username, data.password, data.remember)).
+        dispatch(action.login(data.username, data.password,data.section, data.remember)).
             then(()=>{
                 //登陆完再进行一次验证
                 return dispatch(action.isExpiration())

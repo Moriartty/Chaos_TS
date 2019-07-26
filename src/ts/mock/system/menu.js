@@ -70,6 +70,13 @@ module.exports = [
                             pid:9,
                             type:'3', 
                         },
+                        { 
+                            oid: 903, 
+                            name: 'menuName_systemConfig_fieldTranslation', 
+                            module: 'systemConfig/fieldTranslation',
+                            pid:9,
+                            type:'3', 
+                        },
                     ]
                 }
             ]
@@ -478,6 +485,52 @@ module.exports = [
                                             pid:902,
                                             type:'4',
                                             name:'user_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                    ] 
+                                },
+                                { 
+                                    oid: 903, 
+                                    pid:9,
+                                    type:'3',
+                                    name: 'menuName_systemConfig_fieldTranslation', 
+                                    module: 'systemConfig/fieldTranslation', 
+                                    display: 1,
+                                    list:[
+                                        {
+                                            oid:9030,
+                                            pid:903,
+                                            type:'4',
+                                            name:'fieldTranslation_operation_view',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:9031,
+                                            pid:903,
+                                            type:'4',
+                                            name:'fieldTranslation_operation_add',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:9032,
+                                            pid:903,
+                                            type:'4',
+                                            name:'fieldTranslation_operation_modify',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
+                                        {
+                                            oid:9033,
+                                            pid:903,
+                                            type:'4',
+                                            name:'fieldTranslation_operation_delete',
                                             module:'',
                                             display:1,
                                             url:'ccc'
