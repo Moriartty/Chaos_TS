@@ -7,6 +7,12 @@ import { _Object } from 'customInterface';
 const defaultState:_Object = {
     loading: false,
     searchParams: {}, // 当前查询参数
+    page:{
+        pageNo:1,
+        pageSize:10,
+        dataCount:''
+    },
+    roleList:[],
     orgData: [],
     orgList: [], // orgData的列表形式
     orgSelectedId: -1,
@@ -32,6 +38,9 @@ export default (state:_Object, action:_Object) => {
         break;
     case 'USER_SEARCH_PARAMS':
         newState.searchParams = action.params;
+        break;
+    case 'USER_ROLE_DATA':
+        newState.roleList = action.list;
         break;
     case 'USER_ORG_DATA':
         newState.orgData = action.data;
@@ -60,9 +69,14 @@ export default (state:_Object, action:_Object) => {
         newState.userSearchKey = action.value;
         break;
     case 'USER_PAGE_LOAD':
-        newState.userPageNo = action.no;
-        newState.userPageCount = action.count;
-        newState.dataCount = action.dataCount;
+        // newState.userPageNo = action.no;
+        // newState.userPageCount = action.count;
+        // newState.dataCount = action.dataCount;
+        newState.page = {
+            pageNo: action.pageNo,
+            pageSize: action.pageSize,
+            dataCount: action.dataCount
+        }
         newState.userPageList = action.list;
         break;
     case 'USER_INFO_SHOW':
@@ -75,7 +89,7 @@ export default (state:_Object, action:_Object) => {
         newState.userEditShow = true;
         newState.userEditData = {
             isNew: true,
-            loginName: '',
+            username: '',
             password: '',
             name: '',
             roleIds: [],
@@ -88,8 +102,8 @@ export default (state:_Object, action:_Object) => {
     case 'USER_EDIT':
         (() => {
             newState.userEditShow = true;
-            const { id, name, loginName, roleIds, no, orgId, email, phone } = action.data;
-            newState.userEditData = { id, name, loginName, roleIds, no, orgId, email, phone };
+            const { uid, name, username, roleIds, no, orgId, email, phone } = action.data;
+            newState.userEditData = { uid, name, username, roleIds, no, orgId, email, phone };
         })();
         break;
     case 'USER_EDIT_CLOSE':

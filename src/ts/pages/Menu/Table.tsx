@@ -25,7 +25,7 @@ class Table extends React.Component<CompProps> {
         const { operations, onMove, onSubAdd, onSubEdit, onDelete } = this.props;
         this.columns = [
             { title: '根菜单',
-                dataIndex: 'name',
+                dataIndex: 'name',  
                 render: (value:any, data:_Object) => (
                     <div>
                         {
@@ -88,9 +88,7 @@ const TableComp = connect((state:any) => {
      * @param id
      */
     onDelete (id:any) {
-        dispatch(action.deleteMenu(id)).then(() => {
-            dispatch(action.loadList());
-        });
+        dispatch(action.deleteMenu(id));
     },
     /**
      * 菜单排序

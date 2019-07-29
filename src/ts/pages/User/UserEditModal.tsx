@@ -26,24 +26,24 @@ const EditForm:any = Form.create()((props:formProps) => {
     const { getFieldDecorator } = form;
     return (
         <Form>
-            {/*
-                data.id>0?(
+            {
+                data.uid>0?(
                     <ExFormItem label="账号"
                                 type="static"
-                                initialValue={data.loginName}/>
+                                initialValue={data.username}/>
                 ):(
                     <ExFormItem label="账号"
-                                name="loginName"
-                                initialValue={data.loginName}
+                                name="username"
+                                initialValue={data.username}
                                 required
                                 getFieldDecorator={getFieldDecorator}/>
                 )
-            */}
+            }
+           
             <ExFormItem label="手机号"
                 name="phone"
                 initialValue={data.phone}
                 placeholder="输入11位手机号码"
-                required
                 getFieldDecorator={getFieldDecorator}/>
             {
                 !data.id && (
@@ -62,14 +62,13 @@ const EditForm:any = Form.create()((props:formProps) => {
             <ExFormItem label="姓名"
                 name="name"
                 initialValue={data.name}
-                required
                 getFieldDecorator={getFieldDecorator}/>
             <ExFormItem label="角色"
                 type="select"
                 mode="multiple"
                 name="roleIds"
                 initialValue={data.roleIds}
-                list={roleList}
+                list={roleList.map(o=>({id:o.rid,name:o.name}))}
                 placeholder="请选择"
                 required
                 getFieldDecorator={getFieldDecorator}/>
@@ -81,22 +80,22 @@ const EditForm:any = Form.create()((props:formProps) => {
                         offText="否"
                         required
                         getFieldDecorator={getFieldDecorator}/> */}
-            <ExFormItem label="组织"
+            {/* <ExFormItem label="组织"
                 type="select"
                 name="orgId"
                 initialValue={data.orgId}
                 list={orgList.map(o => ({ id: o.id, name: o.indents.join(' ') + ' ' + o.name }))}
                 placeholder="请选择"
                 required
-                getFieldDecorator={getFieldDecorator}/>
+                getFieldDecorator={getFieldDecorator}/> */}
             <ExFormItem label="邮箱"
                 type="email"
                 name="email"
                 initialValue={data.email}
                 getFieldDecorator={getFieldDecorator}/>
             <ExFormItem type="hidden"
-                name="id"
-                initialValue={data.id}
+                name="uid"
+                initialValue={data.uid}
                 getFieldDecorator={getFieldDecorator}/>
         </Form>
     );
@@ -149,8 +148,9 @@ const UserEditModalComp = connect((state:any) => {
      */
     onSubmit (data:_Object) {
         // data.isPic=data.isPic?1:0;
-        data.roleIds = data.roleIds.join(',');
-        if (data.id > 0) {
+        // data.roleIds = data.roleIds.join(',');
+        console.log(data);
+        if (data.uid > 0) {
             dispatch(action.updateUser(data)).then(() => {
                 this.props.onClose();
                 // 重新加载列表

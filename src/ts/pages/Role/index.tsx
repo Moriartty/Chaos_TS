@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 import action from 'actions/role';
-import { Button, Popconfirm, Icon } from 'antd';
+import menuAction from 'actions/menu';
+import appAction from 'actions/app';
+import { Button, Popconfirm, Icon,Select } from 'antd';
 import EditModal from './EditModal';
 import RoleList from './RoleList';
 import RoleMenu from './RoleMenu';
@@ -8,6 +10,7 @@ import { FormattedMessage } from 'react-intl';
 import * as React from 'react';
 import 'less/role';
 import { _Object } from 'customInterface';
+const Option = Select.Option;
 
 interface CompProps {
     init?:Function,
@@ -16,7 +19,11 @@ interface CompProps {
     roleInfo?: _Object, 
     onAdd?:Function, 
     onEdit?:Function, 
-    onDelete?:Function
+    onDelete?:Function,
+    roleAuth?:Array<any>,
+    systemList?:Array<_Object>,
+    searchParams?:_Object,
+    onSelectedSystemChanged?:any
 }
 
 class Role extends React.Component<CompProps> {
@@ -29,7 +36,8 @@ class Role extends React.Component<CompProps> {
     }
 
     render () {
-        const { operations, roleInfo: role, onAdd, onEdit, onDelete } = this.props;
+        const { operations, roleInfo: role, onAdd, onEdit, onDelete,roleAuth,systemList,onSelectedSystemChanged } = this.props;
+        const {selectedSystem} = this.props.searchParams;
         return (
             <div className="page-component">
                 <EditModal/>
@@ -44,9 +52,20 @@ class Role extends React.Component<CompProps> {
                     <RoleList/>
                 </div>
                 {
-                    role.id ? (
+                    role.rid ? (
                         <div className="role-right">
                             <div className="header">
+                            <Select 
+                                value={selectedSystem} 
+                                style={{ marginRight:20,width:100 }} 
+                                onChange={onSelectedSystemChanged}
+                                >
+                                {
+                                    systemList.map((o:_Object)=>{
+                                        return <Option value={o.oid} key={o.oid}><FormattedMessage id={o.name}/></Option>
+                                    })
+                                }
+                            </Select>
                                 <div className="desc"><span className="am-badge">角色描述</span>：{role.desc}</div>
                                 {
                                     !['系统管理员'].include(role.name) && (
@@ -65,7 +84,7 @@ class Role extends React.Component<CompProps> {
                                     )
                                 }
                             </div>
-                            <RoleMenu/>
+                            <RoleMenu roleAuth={roleAuth}/>
                         </div>
                     ) : (
                         <div className="role-right">
@@ -82,12 +101,20 @@ class Role extends React.Component<CompProps> {
 
 const RoleComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/role'].functions;
-    const { roleInfo } = state.role;
-    return { operations, roleInfo };
+    const {systemList} = state.menu;
+    const { roleInfo,roleAuth,searchParams } = state.role;
+    return { operations, roleInfo,roleAuth,systemList,searchParams };
 }, dispatch => ({
     init () {
-        dispatch(action.loadList());
-        dispatch(action.loadMenuTree());
+        dispatch(appAction.getSearchParamsFromLocalStorage()).then(()=>{
+            dispatch(action.loadList());
+            dispatch(action.loadMenuTree());
+            dispatch(menuAction.loadSystemList());
+        })
+    },
+    onSelectedSystemChanged(id:number){
+        dispatch({type:'ROLE_SEARCHPARAMS_CHANGE',params:{selectedSystem:id}});
+        dispatch(action.loadMenuTree(id));
     },
     onLeave () {
         dispatch({ type: 'ROLE_PAGE_LEAVE' });

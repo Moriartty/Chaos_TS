@@ -1,6 +1,7 @@
 
 import Fetch from 'utils/fetch';
-import menuConfig from 'config/menu';
+import API from 'config/const';
+import appAction from 'actions/app';
 import { _Object } from 'customInterface';
 let action:_Object = {};
 
@@ -8,7 +9,7 @@ let action:_Object = {};
  * 加载角色列表
  * @returns {Function}
  */
-action.loadList = () => (dispatch:any) => Fetch.get('/role').then((list:any) => {
+action.loadList = () => (dispatch:any) => Fetch.get(API.ROLE_ALLDATA_LOAD,{}).then((list:any) => {
     dispatch({ type: 'ROLE_LIST', list: list });
 });
 
@@ -16,11 +17,13 @@ action.loadList = () => (dispatch:any) => Fetch.get('/role').then((list:any) => 
  * 加载菜单树状结构数据
  * @returns {Function}
  */
-function loadMenuTree () {
-    return (dispatch:any) => {
-        return Fetch.get('/menu').then((data:any) => {
+function loadMenuTree (systemId:number) {
+    return (dispatch:any,getState:any) => {
+        const searchParams = getState().role.searchParams;
+        const target = systemId||searchParams.selectedSystem;
+        return Fetch.get(API.MENU_TREE_LOAD,{systemId:target}).then((data:any) => {
             let treeData = [
-                { oid: '0', name: 'menuName_permission', icon: 'am-icon-home', list: data }
+                { oid: '', name: 'menuName_permission', icon: 'am-icon-home', list: [data] }
             ];
             // 递归添加<tr>
             const recursive = function (item:_Object) {
@@ -55,6 +58,7 @@ function loadMenuTree () {
             });
 
             dispatch({ type: 'ROLE_MENU_TREE', data: treeData });
+            dispatch(appAction.setSearchParamsInLocalStorage(searchParams,'ROLE_SEARCHPARAMS_CHANGE'));
         });
     };
 }
@@ -68,8 +72,8 @@ action.loadMenuTree = loadMenuTree;
 function selectRole (role:_Object) {
     return (dispatch:any) => {
         dispatch({ type: 'ROLE_SELECT', role: role });
-        return Fetch.get('/role/auth', {
-            id: role.id
+        return Fetch.get(API.ROLE_OPERATIONS_LOAD, {
+            rid: role.rid
         }).then((data:Array<any>) => {
             let roleAuth:Array<any> = [];
             // // 只要有一个勾上，则顶级节点（非实际菜单）也得勾上
@@ -86,13 +90,14 @@ function selectRole (role:_Object) {
             //     });
             // }
             if(data.length){
-                roleAuth.push('0');
+                // roleAuth.push('0');
                 data.forEach((o:_Object)=>{
                     roleAuth.push(String(o.oid));
                 })
                 roleAuth = Array.from(new Set(roleAuth));
             }
             dispatch({ type: 'ROLE_MENU_LOADED', roleAuth });
+            dispatch({ type: 'ROLE_SEARCHPARAMS_CHANGE',params:{selectedRole:role.rid}})
         });
     };
 }
@@ -104,16 +109,12 @@ action.selectRole = selectRole;
  * @param data
  * @returns {Function}
  */
-function updateRoleMenu (roleId:string|number, data:any) {
-    return (dispatch:any) => {
-        return Fetch.post('/role/auth-update', {
-            id: roleId,
-            data: JSON.stringify(data)
-        });
-    };
+action.updateRoleMenu = (roleId:number,data:any) => (dispatch:any) => {
+    return Fetch.post(API.ROLE_OPREATION_ASSIGN, {
+        rid: roleId,
+        ...data
+    });
 }
-action.updateRoleMenu = updateRoleMenu;
-
 /**
  * 添加角色
  * @param data

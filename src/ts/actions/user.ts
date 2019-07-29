@@ -1,6 +1,7 @@
 
 import Fetch from 'utils/fetch';
 import { _Object } from 'customInterface';
+import API from 'config/const';
 let action:_Object = {};
 
 /**
@@ -109,28 +110,24 @@ function loadUserPage (orgId:number|string, pageNo = 1) {
         dispatch({ type: 'USER_LOADING', loading: true });
         const state = getState().user;
         const params = state.searchParams;
-        return Fetch.get('/user', {
-            pageNo: pageNo,
-            pageSize: params.pageSize,
-            name: state.userSearchKey,
-            orgId: orgId || state.orgSelectedId
+        const page = state.page;
+        return Fetch.get(API.USER_ALLDATA_LOAD, {
+            currentPage: pageNo||page.pageNo,
+            pageSize: page.pageSize,
+            // name: state.userSearchKey,
+            // orgId: orgId || state.orgSelectedId
         }).then((data:any) => {
             dispatch({
                 type: 'USER_PAGE_LOAD',
-                no: data.pageNo,
-                count: data.totalPages,
-                dataCount: data.totalCount,
-                list: data.result.map((user:_Object) => {
-                    user.role = user.roles.map((role:_Object) => role.roleCode);
-                    // if(user.isPic==1){
-                    //     user.role.push('微信管理员');
-                    // }
-                    user.role = user.role.join(',');
-                    // if(!user.org){
-                    //     user.org='公司';
-                    // }
-                    return user;
-                })
+                pageNo: data.currentPage,
+                pageSize:data.pageSize,
+                dataCount: data.numberOfTotalDatas,
+                // list: data.data.map((user:_Object) => {
+                //     user.role = user.roles.map((role:_Object) => role.roleCode);
+                //     user.role = user.role.join(',');
+                //     return user;
+                // })
+                list:data.data
             });
             dispatch({ type: 'USER_LOADING' });
         });
@@ -189,7 +186,12 @@ action.addUser = addUser;
  */
 function updateUser (data:any) {
     return (dispatch:any) => {
-        return Fetch.post('/user/update', data);
+        return Promise.all([
+            Fetch.post(API.USER_UPDATEINFO, data),
+            Fetch.post(API.USER_ROLE_ASSIGN,{uid:data.uid,addRids:data.roleIds})
+        ]).then(()=>{
+
+        })
     };
 }
 action.updateUser = updateUser;

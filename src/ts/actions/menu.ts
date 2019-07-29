@@ -1,5 +1,8 @@
 import { _Object } from 'customInterface';
 import Fetch from 'utils/fetch';
+import API from 'config/const';
+import { message } from 'antd';
+import appAction from 'actions/app';
 
 let action:_Object = {};
 
@@ -7,7 +10,7 @@ let action:_Object = {};
  * 获取系统列表
  */
 action.loadSystemList = () => (dispatch:any) => {
-    return Fetch.get('/menu/systems').then((data:Array<_Object>)=>{
+    return Fetch.get(API.APP_GETALLSYSTEM,{}).then((data:Array<_Object>)=>{
         dispatch({type:'MENU_SYSTEMLIST_LOAD',systemList:data});
         return data;
     })
@@ -17,13 +20,23 @@ action.loadSystemList = () => (dispatch:any) => {
  * 获取菜单列表
  * @returns {Function}
  */
-function loadList () {
-    return (dispatch:any) => {
+function loadList (id:number) {
+    return (dispatch:any,getState:any) => {
+        const searchParams = getState().menu.searchParams;
+        let targetSystem = id||searchParams.selectedSystem;
+        //先加载系统列表，如果不为空，就选择第一个作为默认值,并且没有搜索记录，并加载该系统的目录
+        if(!targetSystem){
+            const systemList = getState().menu.systemList;
+            targetSystem = systemList[0].oid
+            dispatch({type:'MENU_SEARCHPARAMS_CHANGE',params:{selectedSystem:targetSystem}});
+        }
+
         dispatch({ type: 'MENU_LOADING', loading: true });
-        return Fetch.get('/menu').then((data:any) => {
+        return Fetch.get(API.MENU_TREE_LOAD,{systemId:targetSystem}).then((data:any) => {
+           
             let menuList:Array<any> = [];
             let treeData = [
-                { name: '(根目录)', list: data }
+                { name: '(根目录)', list: [data] }
             ];
 
             // 递归添加<tr>
@@ -32,7 +45,7 @@ function loadList () {
                 if (item.level > 0) {
                     menuList.push(item);
                 }
-
+                item.id = item.oid;
                 if (item.list && item.list.length) {
                     item.list.forEach(function (o:_Object, i:number, list:Array<any>) {
                         o.level = item.level + 1;
@@ -52,10 +65,12 @@ function loadList () {
                 item.indents = []; // 体现菜单关系的缩进符
                 item.level = 0; // 菜单深度级别，从0级开始
                 item.last = i === list.length - 1; // 是否为当前级别的最后一个
+                item.id = item.oid;
                 recursive(item);
             });
             dispatch({ type: 'MENU_LIST', list: menuList });
             dispatch({ type: 'MENU_LOADING' });
+            dispatch(appAction.setSearchParamsInLocalStorage(searchParams,'MENU_SEARCHPARAMS_CHANGE'));
         });
     };
 }
@@ -66,7 +81,14 @@ action.loadList = loadList;
  * @param data
  * @returns {Function}
  */
-action.addMenu = (data:any) => (dispatch:any) => Fetch.post('/menu/create', data);
+action.addMenu = (data:any) => (dispatch:any) => {
+    return Fetch.post(API.MENU_NODE_CREATE, data).then((data:any)=>{
+        dispatch(action.loadList())
+        message.success('操作成功');
+    }).catch((err:any)=>{
+        message.success('操作失败');
+    });
+}
 
 /**
  * 更新菜单
@@ -80,7 +102,13 @@ action.updateMenu = (data:any) => (dispatch:any) => Fetch.post('/menu/update', d
  * @param id
  * @returns {Function}
  */
-action.deleteMenu = (id:any) => (dispatch:any) => Fetch.post('/menu/delete', { id });
+action.deleteMenu = (id:any) => (dispatch:any) => 
+    Fetch.post(API.MENU_OPERATION_REMOVE, { oid:id }).then(()=>{
+        dispatch(action.loadList())
+        message.success('操作成功');
+    }).catch((err:any)=>{
+        message.success('操作失败');
+    });
 
 /**
  * 移动菜单

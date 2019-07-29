@@ -3,6 +3,7 @@ export default {
     APP_LOGOUT:'/logout',
     APP_ISEXPIRATION:'/isExpiration',
     APP_REFRESHTOKEN:'/refreshToken',
+    APP_GETALLSYSTEM:'/operation/loadSystemsList',
     TRACK_TYPE_GETALL:'/event/trackType/all',
     TRACK_TYPE_GETALL_BYPAGE:'/event/trackType/find',
     TRACK_TYPE_BATCHREMOVE:'/event/trackType/batchRemove',
@@ -25,6 +26,15 @@ export default {
     FIELDTRANS_MODIFY:'/translate/modifyTranslate',
     FIELDTRANS_REMOVE:'/translate/removeTranslate',
     FIELDTRANS_BATCHREMOVE:'/translate/multipleRemoveTranslates',
+    MENU_NODE_CREATE:'/operation/createOperation',
+    MENU_TREE_LOAD:'/operation/loadInitialOperationTreeBySystemId',
+    MENU_OPERATION_REMOVE:'/operation/removeOperationByOid',
+    USER_ROLE_ASSIGN:'/user/assigningRoles',
+    USER_ALLDATA_LOAD:'/user/loadUserList',
+    USER_UPDATEINFO:'/user/updateUserInfo',
+    ROLE_ALLDATA_LOAD:'/role/loadRoleList',
+    ROLE_OPERATIONS_LOAD:'/operation/loadOperationsOfRoleByRid',
+    ROLE_OPREATION_ASSIGN:'/role/assigningOperations',
 
 }
 

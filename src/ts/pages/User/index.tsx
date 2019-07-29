@@ -54,7 +54,7 @@ const UserComp = connect(null, dispatch => ({
     },
     onLeave () {
         dispatch({ type: 'USER_PAGE_LEAVE' });
-    }
+    },
 }))(User);
 
 module.exports = UserComp;

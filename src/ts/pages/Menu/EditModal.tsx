@@ -100,7 +100,7 @@ const EditForm:any = Form.create({
                         name='urls'
                         initialValue={data.urls}
                         placeholder='请填写该操作对应的url'
-                        required
+                      
                         getFieldDecorator={getFieldDecorator}
                     />
                 )
@@ -192,14 +192,10 @@ const EditModalComp:any = connect((state:any) => {
         if (data.oid) {
             dispatch(action.updateMenu(data)).then(() => {
                 this.props.onClose();
-                // 重新加载列表
-                dispatch(action.loadList());
             });
         } else {
             dispatch(action.addMenu(data)).then(() => {
                 this.props.onClose();
-                // 重新加载列表
-                dispatch(action.loadList());
             });
         }
     },

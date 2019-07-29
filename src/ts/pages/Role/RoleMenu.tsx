@@ -9,15 +9,38 @@ import { hasChildInTree } from 'utils/index';
 const levelColors = ['#eb2f96', '#fa8c16', '#13c2c2', '#2f54eb', '#fa541c'];
 
 interface CompProps {
-    roleAuth?:Array<any>,
+    roleAuth:Array<any>,
     onCheckChange?:Function,
     operations?:Array<any>, 
     menuTree?:any, 
     roleInfo?:_Object,  
     onSave?:Function
 }
+interface CompState {
+    roleAuth:Array<any>
+}
 
-class RoleMenu extends React.Component<CompProps> {
+class RoleMenu extends React.Component<CompProps,CompState> {
+    constructor(props:CompProps){
+        super(props);
+        this.state = {
+            roleAuth:props.roleAuth.concat()
+        }
+        
+    }
+    componentWillReceiveProps(nextProps:CompProps){
+        //新props不同于旧props时需要更新state
+        if(nextProps.roleAuth.length===this.props.roleAuth.length){
+            let flag:boolean = true;
+            nextProps.roleAuth.forEach(o=>{
+                if(this.props.roleAuth.indexOf(o)<0)
+                    flag = false;
+            })
+            !flag&&this.setState({roleAuth:nextProps.roleAuth.concat()});
+        }else{
+            this.setState({roleAuth:nextProps.roleAuth.concat()});
+        }
+    }
     /**
      * 折叠/展开
      * @param e
@@ -43,7 +66,7 @@ class RoleMenu extends React.Component<CompProps> {
      * @param e
      */
     handleCheckChange (e:any) {
-        let roleAuth = this.props.roleAuth.concat();
+        let roleAuth = this.state.roleAuth.concat();
         const t = e.currentTarget;
         const $this = $(t);
         let changedMenuIds = [t.value]; // 有改变的菜单
@@ -91,7 +114,8 @@ class RoleMenu extends React.Component<CompProps> {
                 }
             });
         }
-        this.props.onCheckChange(roleAuth);
+        // this.props.onCheckChange(roleAuth);
+        this.setState({roleAuth})
     }
 
     /**
@@ -102,7 +126,7 @@ class RoleMenu extends React.Component<CompProps> {
     renderItem (item:_Object) {
         const indents = item.indents;
         const list = item.list;
-        const roleMenuIds = this.props.roleAuth;
+        const roleMenuIds = this.state.roleAuth;
         return (
             <li key={item.index}>
                 <div className="no-select menu-name">
@@ -124,7 +148,8 @@ class RoleMenu extends React.Component<CompProps> {
                     <label className="cursor-pointer">
                         <input type="checkbox"
                             checked={hasChildInTree(item,roleMenuIds)}
-                            value={item.id}
+                            //因为后端只需要记录操作的变化，所以为了方便筛选，这里我们只为type==4的赋值value
+                            value={item.type==4?item.id:''}
                             onChange={this.handleCheckChange.bind(this)}/>
                         {/* eslint-disable-next-line */}
                         <span style={{ color: item.type == '4' ? '#666' : levelColors[indents.length] }}>
@@ -149,7 +174,8 @@ class RoleMenu extends React.Component<CompProps> {
     }
 
     render () {
-        const { operations, menuTree, roleInfo, roleAuth, onSave } = this.props;
+        const { operations, menuTree, roleInfo,  onSave } = this.props;
+        const {roleAuth} = this.state;
         return (
             <div className="role-menu">
                 <ul className="unstyled">
@@ -162,7 +188,7 @@ class RoleMenu extends React.Component<CompProps> {
                 </ul>
                 {
                     operations.indexOf('role_operation_modify') >= 0 && (
-                        <Button type="primary" icon="save" className="save" onClick={onSave.bind(this, roleInfo.id, roleAuth)}>保存</Button>
+                        <Button type="primary" icon="save" className="save" onClick={onSave.bind(this, roleInfo.rid, roleAuth,this.props.roleAuth)}>保存</Button>
                     )
                 }
             </div>
@@ -172,54 +198,58 @@ class RoleMenu extends React.Component<CompProps> {
 
 const RoleMenuComp = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/role'].functions;
-    const { menuTree, roleInfo, roleAuth } = state.role;
-    return { operations, menuTree, roleInfo, roleAuth };
+    const { menuTree, roleInfo } = state.role;
+    return { operations, menuTree, roleInfo };
 }, dispatch => ({
-    /**
-     * 改变复选框
-     * @param roleAuth
-     */
-    onCheckChange (roleAuth:Array<any>) {
-        console.log('roleAuth',roleAuth);
-        dispatch({ type: 'ROLE_MENU_CHK_CHANGE', roleAuth });
-    },
     /**
      * 保存
      * @param roleId
      * @param roleAuth
      */
-    onSave (roleId:number, roleAuth:Array<any>) {
+    onSave (roleId:number, roleAuth:Array<any>,preRoleAuth:Array<any>) {
         // 格式转化
-        let obj:_Object = {}; // {6:[], 9:["CREATE","UPDATE"]}
-        roleAuth.forEach((id:any) => {
-            // eslint-disable-next-line
-            if (id != '0') { // 排除手动添加的
-                const index = id.indexOf('_');
-                if (~index) {
-                    // 操作权限类型
-                    const menuId = id.slice(0, index);
-                    if (!obj[menuId]) {
-                        obj[menuId] = [];
-                    }
-                    obj[menuId].push(id.slice(index + 1));
-                } else {
-                    if (!obj[id]) {
-                        obj[id] = [];
-                    }
-                }
-            }
-        });
-        // 对象转数组
-        let data = [];
-        for (let menuId in obj) {
-            data.push({
-                menuId: menuId,
-                functions: obj[menuId].length ? obj[menuId] : undefined
-            });
+        // let obj:_Object = {}; // {6:[], 9:["CREATE","UPDATE"]}
+        // roleAuth.forEach((id:any) => {
+        //     // eslint-disable-next-line
+        //     if (id != '0') { // 排除手动添加的
+        //         const index = id.indexOf('_');
+        //         if (~index) {
+        //             // 操作权限类型
+        //             const menuId = id.slice(0, index);
+        //             if (!obj[menuId]) {
+        //                 obj[menuId] = [];
+        //             }
+        //             obj[menuId].push(id.slice(index + 1));
+        //         } else {
+        //             if (!obj[id]) {
+        //                 obj[id] = [];
+        //             }
+        //         }
+        //     }
+        // });
+        // // 对象转数组
+        // let data = [];
+        // for (let menuId in obj) {
+        //     data.push({
+        //         menuId: menuId,
+        //         functions: obj[menuId].length ? obj[menuId] : undefined
+        //     });
+        // }
+        // console.log(data);
+        // dispatch(action.updateRoleMenu(roleId, data)).then(() => {
+        //     message.success('权限更改成功！');
+        // });
+        const curRoleAuth = roleAuth.filter(item=>item);
+        const intersection = curRoleAuth.filter(item=>preRoleAuth.indexOf(item)>-1);
+        const addOids = curRoleAuth.filter(item=>!intersection.some(i=>item===i));
+        const delOids = preRoleAuth.filter(item=>!intersection.some(i=>item===i));
+        const params = {
+            addOids,delOids
         }
-        dispatch(action.updateRoleMenu(roleId, data)).then(() => {
+        dispatch(action.updateRoleMenu(roleId, params)).then(() => {
             message.success('权限更改成功！');
         });
+
     }
 }))(RoleMenu);
 

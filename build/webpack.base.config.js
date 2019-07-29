@@ -110,7 +110,7 @@ module.exports = {
         //给require.ensure用；webpack-dev-server的网站名
         publicPath:isProd ? './' : '/',
         //js的发布路径,是相对于package.json文件而言
-        path: pathResolve('./dist'),
+        path: pathResolve('./chaos'),
         //对应与entry中要打包出来分文件
         filename: isProd ? '[name].[chunkhash:8].js' : '[name].js',
         //对应于非entry中但仍需要打包出来的文件，比如按需加载require,ensure

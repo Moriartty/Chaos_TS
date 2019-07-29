@@ -26,9 +26,9 @@ class RoleList extends React.Component<CompProps> {
                         <Menu onClick={this.handleClick}>
                             {
                                 list.map((o) => {
-                                    this.roleObj[o.id] = o;
+                                    this.roleObj[o.rid] = o;
                                     return (
-                                        <Menu.Item key={o.id}>
+                                        <Menu.Item key={o.rid}>
                                             <Icon type="solution"/>{o.name}
                                         </Menu.Item>
                                     );

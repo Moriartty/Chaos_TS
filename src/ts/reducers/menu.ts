@@ -22,6 +22,9 @@ const defaultState:_Object = {
         oid:'',
         pid:0,
         systemName:''
+    },
+    searchParams:{
+        selectedSystem:''
     }
 };
 
@@ -33,6 +36,9 @@ export default (state:_Object, action:_Object) => {
             break;
         case 'MENU_LOADING':
             newState.loading = action.loading;
+            break;
+        case 'MENU_SYSTEMEDITMODAL_SHOW':
+            newState.systemEditModalShow = action.show;
             break;
         case 'MENU_SYSTEMEDITMODAL_ADD':
             newState.systemEditModalShow = true;
@@ -75,6 +81,9 @@ export default (state:_Object, action:_Object) => {
             break;
         case 'MENU_PAGE_LEAVE':
             return defaultState;
+        case 'MENU_SEARCHPARAMS_CHANGE':
+            newState.searchParams = action.params;
+            break;
         default:return state || defaultState;
     }
     return objectAppend(newState, state);

@@ -40,7 +40,7 @@ class Toolbar extends React.Component<CompProps,CompState> {
         return (
             <Row gutter={16} className="toolbar">
                 {
-                    operations.include('CREATE') && (
+                    operations.include('user_operation_add') && (
                         <Col span={6}>
                             <Button type="primary" onClick={()=>onOrgAdd()} icon="usergroup-add" disabled={orgSelectedId == -1}><FormattedMessage id={'user_operation_addOrg'}/></Button>
                             <Button type="primary" onClick={()=>onUserAdd()} icon="user-add" className="margin-left" disabled={orgSelectedId == -1}><FormattedMessage id={'user_operation_addStaff'}/></Button>

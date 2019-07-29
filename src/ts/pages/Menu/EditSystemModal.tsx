@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {ExModal,ExFormItem} from 'components/index';
 import {Form} from 'antd';
 import { _Object } from 'customInterface';
+import action from 'actions/menu';
 
 interface CompProps {
     show?:boolean,
@@ -19,8 +20,8 @@ const EditForm = Form.create({
         const params = props.data;
         return {
             oid: Form.createFormField({ value : params.oid }),
-            pid: Form.createFormField({ value : params.pid }),
-            systemName: Form.createFormField({ value : params.systemName })
+            pid: Form.createFormField({ value : null }),
+            name: Form.createFormField({ value : params.systemName })
         };
     }
 })((props:EditFormProps)=>{
@@ -30,7 +31,7 @@ const EditForm = Form.create({
         <Form>
             <ExFormItem type='hidden' name='oid' getFieldDecorator={getFieldDecorator}/>
             <ExFormItem type='hidden' name='pid' getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem label='SystemName' name='systemName' getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem label='SystemName' name='name' getFieldDecorator={getFieldDecorator}/>
         </Form>
     );
 })
@@ -44,6 +45,8 @@ class EditSystemModal extends React.Component<CompProps>{
             if (err) {
                 return;
             }
+            data.type = 1;
+            data.display = 1;
             this.props.onSubmit.call(this, data);
         });
     };
@@ -75,8 +78,9 @@ const EditSystemModalComp = connect((state:any)=>{
     return {show,data};
 },dispatch=>({
     onSubmit(data:_Object){
-        console.log(data);
-        this.onClose();
+        dispatch(action.addMenu(data)).then(()=>{
+            this.props.onClose();
+        });
     },
     onClose(){
         dispatch({type:'MENU_SYSTEMEDITMODAL_CLOSE'});

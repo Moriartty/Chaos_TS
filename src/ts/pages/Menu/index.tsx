@@ -24,48 +24,50 @@ interface CompProps {
     onAddSystem?:Function,
     onRefresh?:Function,
     operations?:Array<string>,
-    systemList?:Array<Object>
-}
-interface CompState {
-    selectedSystem?:any
+    systemList?:Array<Object>,
+    searchParams?:_Object,
+    onSelectedSystemChanged?:any
 }
 
-class Menu extends React.Component<CompProps,CompState> {
+
+class Menu extends React.Component<CompProps> {
     constructor(props:CompProps){
         super(props);
-        this.state = {
-            selectedSystem:''
-        }
     }
-    componentWillMount () {
-        this.props.init(this.changeState);
+    componentDidMount () {
+        this.props.init();
     }
 
     componentWillUnmount () {
         this.props.onLeave();
     }
 
-    handleChange = (value:any) => {
-        this.setState({selectedSystem:value},()=>{
-            this.props.onLoad(this.state.selectedSystem)
-        });
-    }
+    // handleChange = (value:any) => {
+    //     this.setState({selectedSystem:value},()=>{
+    //         this.props.onLoad(this.state.selectedSystem)
+    //     });
+    // }
     /**
      * 给外界改变state的钩子函数
      */
-    changeState = (newState:CompState) => {
-        this.setState(newState);
-    };
+    // changeState = (newState:CompState) => {
+    //     this.setState(newState);
+    // };
 
     render () {
-        const { onAdd,onEdit,onAddSystem, onRefresh,operations,systemList } = this.props;
+        const { onAdd,onEdit,onAddSystem, onRefresh,operations,systemList,onSelectedSystemChanged } = this.props;
+        const {selectedSystem} = this.props.searchParams;
         return (
             <div className="page-component menu">
                 <EditModal/>
                 <EditSystemModal/>
                 <Toolbar onRefresh={onRefresh}>
                     <div className="toolbar">
-                        <Select value={this.state.selectedSystem} style={{ marginRight:20,width:100 }} onChange={this.handleChange}>
+                        <Select 
+                            value={selectedSystem} 
+                            style={{ marginRight:20,width:100 }} 
+                            onChange={onSelectedSystemChanged}
+                            >
                             {
                                 systemList.map((o:_Object)=>{
                                     return <Option value={o.oid} key={o.oid}><FormattedMessage id={o.name}/></Option>
@@ -88,21 +90,19 @@ class Menu extends React.Component<CompProps,CompState> {
 
 const MenuComponent = connect((state:any) => {
     const operations = state.app.menuObj['systemConfig/menu'].functions;
-    const {systemList} = state['menu'];
-    return { operations,systemList };
+    const {systemList,searchParams} = state['menu'];
+    return { operations,systemList,searchParams };
 }, dispatch => ({
-    init (cb:any) {
-        dispatch(action.loadSystemList()).then((data:Array<_Object>)=>{
-            //先加载系统列表，如果不为空，就选择第一个作为默认值，并加载该系统的目录
-            if(!isEmpty(data)){
-                const targetSystem:_Object = data[0];
-                cb({selectedSystem:targetSystem.oid});
-                this.onLoad(targetSystem.oid);
-            }
-        });
+    init () {
+        dispatch(appAction.getSearchParamsFromLocalStorage()).then(()=>{
+            dispatch(action.loadSystemList()).then((data:Array<_Object>)=>{
+                dispatch(action.loadList());
+            });
+        }) 
     },
-    onLoad(oid:string|number){
-        dispatch(action.loadList(oid));
+    onSelectedSystemChanged(id:number){
+        dispatch({type:'MENU_SEARCHPARAMS_CHANGE',params:{selectedSystem:id}});
+        dispatch(action.loadList(id));
     },
     onLeave () {
         dispatch({ type: 'MENU_PAGE_LEAVE' });
