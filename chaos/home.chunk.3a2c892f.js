@@ -1,6 +1,6 @@
 webpackJsonp([7],{
 
-/***/ 1609:
+/***/ 1610:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -59,7 +59,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var antd_1 = __webpack_require__(43);
 var react_redux_1 = __webpack_require__(77);
-var home_1 = __importDefault(__webpack_require__(1609));
+var home_1 = __importDefault(__webpack_require__(1610));
 var React = __importStar(__webpack_require__(0));
 var Home = /** @class */ (function (_super) {
     __extends(Home, _super);

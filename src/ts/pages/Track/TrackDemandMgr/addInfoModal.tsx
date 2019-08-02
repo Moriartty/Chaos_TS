@@ -13,7 +13,7 @@ interface EditFormProps {
 interface CompProps extends EditFormProps {
     show?:boolean,
     onClose?:Function,
-    editData?:_Object,
+    addInfoData?:_Object,
     loading?:boolean,
     onChange?:Function,
     onSubmit?:Function,
@@ -26,18 +26,18 @@ const EditForm:any = Form.create({
             obj[o] = changeFields[o].value;
             return obj;
         });
-        // props.onChange(props.editData,changed[0]);
+        // props.onChange(props.addInfoData,changed[0]);
     },
     mapPropsToFields:(props)=> {
-        const {editData,eventTypeCodes} = props;
-        const eventTypeCode = eventTypeCodes.find((o:_Object)=>o.name==editData.eventType)
+        const {addInfoData,eventTypeCodes} = props;
+        const eventTypeCode = eventTypeCodes.find((o:_Object)=>o.name==addInfoData.eventType)
         return {
-            id:Form.createFormField({value:editData.id}),
-            eventId:Form.createFormField({value:editData.eventId}),
+            id:Form.createFormField({value:addInfoData.id}),
+            eventId:Form.createFormField({value:addInfoData.eventId}),
             eventTypeCode:Form.createFormField({value:eventTypeCode?eventTypeCode.id:''}),
-            param:Form.createFormField({value:editData.param}),
-            paramDescribe:Form.createFormField({value:editData.paramDescribe}),
-            demandId:Form.createFormField({value:editData.demandId}),
+            param:Form.createFormField({value:addInfoData.param}),
+            paramDescribe:Form.createFormField({value:addInfoData.paramDescribe}),
+            demandId:Form.createFormField({value:addInfoData.demandId}),
         }
     }
 })((props:EditFormProps)=>{
@@ -55,7 +55,7 @@ const EditForm:any = Form.create({
     )
 });
 
-class EditModal extends React.Component<CompProps>{
+class AddInfoModal extends React.Component<CompProps>{
     public form:any;
 
     handleSave = () => {
@@ -68,6 +68,7 @@ class EditModal extends React.Component<CompProps>{
                 return o.id = data.demandId;
             }).trackType
             this.props.onSubmit(data);
+            this.props.onClose();
         })
     };
     fieldsOnChange = (props:_Object,changeFields:_Object) => {
@@ -79,19 +80,19 @@ class EditModal extends React.Component<CompProps>{
     }
 
     render(){
-        const {show,onClose,editData,loading,eventTypeCodes,trackDemand_allData} = this.props;
+        const {show,onClose,addInfoData,loading,eventTypeCodes,trackDemand_allData} = this.props;
         return (
             <ExModal
                 visible={show}
                 confirmLoading={loading}
-                title={editData.id?'Edit':'Add'}
+                title={'Add Info'}
                 onCancel={onClose}
                 onOk={this.handleSave}
                 width={600}
             >
                 <EditForm
                     ref={this.saveFormRef}
-                    editData={editData}
+                    addInfoData={addInfoData}
                     onChange={this.fieldsOnChange}
                     eventTypeCodes={eventTypeCodes}
                     trackDemand_allData={trackDemand_allData}
@@ -101,24 +102,24 @@ class EditModal extends React.Component<CompProps>{
     }
 }
 
-const EditModalComp = connect((state:any)=>{
+const AddInfoModalComp = connect((state:any)=>{
     const {
-        trackInfo_editModalShow:show,
-        trackInfo_editData:editData,
-        trackInfo_editModalLoading:editModalLoading,
+        trackDemand_addInfoModalShow:show,
+        trackDemand_addInfoData:addInfoData,
+        trackDemand_addInfoModalLoading:addInfoModalLoading,
         eventTypeCodes,
         trackDemand_allData
     } = state['track'];
-    return {show,editData,loading:editModalLoading,eventTypeCodes,trackDemand_allData};
+    return {show,addInfoData,loading:addInfoModalLoading,eventTypeCodes,trackDemand_allData};
 },dispatch=>({
     
     onSubmit(data:_Object){
         dispatch(action.addOrEditTrackInfo(data));
     },
     onClose(){
-        dispatch({type:'TRACK_INFO_EDITMODAL_SHOW',show:false});
+        dispatch({type:'TRACK_DEMAND_ADDINFOMODAL_SHOW',show:false});
     }
-}))(EditModal);
+}))(AddInfoModal);
 
-export default EditModalComp;
+export default AddInfoModalComp;
 

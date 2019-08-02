@@ -18,7 +18,8 @@ const SearchForm:any = Form.create({
     mapPropsToFields: (props:EditFormProps) => {
         const params = props.searchParams;
         return {
-            title: Form.createFormField({ value: params.title })
+            name: Form.createFormField({ value: params.name }),
+            trackId: Form.createFormField({ value: params.trackId })
         };
     }
 })(props => {
@@ -26,7 +27,8 @@ const SearchForm:any = Form.create({
     const { getFieldDecorator } = form;
     return (
         <Form>
-            <ExFormItem  label={'Title'} name={'title'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem  label={'Name'} name={'name'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem  label={'TrackId'} name={'trackId'} getFieldDecorator={getFieldDecorator}/>
         </Form>
     );
 });

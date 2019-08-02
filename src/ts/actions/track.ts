@@ -15,7 +15,10 @@ let actions:_Object = {};
 actions.loadTrackType = (pageNo:number, pageSize:number) => (dispatch:any, getState:any) => {
     dispatch({ type: 'TRACK_TYPE_LOADING', loading: true });
     const state = getState()['track'],page = state.trackType_page,params = state.trackType_searchParams;
-    const dataParam = {};
+    let dataParam:_Object = {}
+    Object.keys(params).forEach((o:string)=>{
+        dataParam['LIKE_'+o] = params[o];
+    })
     const pageParam = {
         page: pageNo || page.pageNo,
         size: pageSize || page.pageSize
@@ -83,8 +86,12 @@ actions.batchDeleteTrack = (keys:Array<number>) => {
 actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, getState:any) => {
     dispatch({ type: 'TRACK_DEMAND_LOADING', loading: true });
     const state = getState()['track'],page = state.trackDemand_page,params = state.trackDemand_searchParams;
-    const dataParam:_Object = {};
-    (~~state.trackDemand_searchParams.viewState===1)?dataParam['EQ_state']=0:'';
+    let dataParam:_Object = {
+        'LIKE_name':params['name'],
+        'EQ_trackType':params['trackType'],
+        'EQ_state':params['viewState']
+    };
+    // (state.trackDemand_searchParams.viewState===0)?dataParam['EQ_state']=0:'';
     const pageParam = {
         page: pageNo || page.pageNo,
         size: pageSize || page.pageSize
@@ -168,7 +175,14 @@ actions.verifyTrackDemand = (state:number,data:_Object) => (dispatch:any) => {
 actions.loadTrackInfo = (pageNo:number, pageSize:number) => (dispatch:any, getState:any) => {
     dispatch({ type: 'TRACK_INFO_LOADING', loading: true });
     const state = getState()['track'],page = state.trackInfo_page,params = state.trackInfo_searchParams;
-    const dataParam = {};
+    let dataParam:_Object = {
+        'LIKE_eventId':params['eventId'],
+        'EQ_eventType':params['eventType'],
+        'EQ_trackType':params['trackType']
+    };
+    // Object.keys(params).forEach((o:string)=>{
+    //     dataParam['EQ_'+o] = params[o];
+    // });
     const pageParam = {
         page: pageNo || page.pageNo,
         size: pageSize || page.pageSize

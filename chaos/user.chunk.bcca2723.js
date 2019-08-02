@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var fetch_1 = __importDefault(__webpack_require__(256));
+var const_1 = __importDefault(__webpack_require__(123));
 var action = {};
 /**
  * 加载组织数据
@@ -111,28 +112,22 @@ function loadUserPage(orgId, pageNo) {
         dispatch({ type: 'USER_LOADING', loading: true });
         var state = getState().user;
         var params = state.searchParams;
-        return fetch_1.default.get('/user', {
-            pageNo: pageNo,
-            pageSize: params.pageSize,
-            name: state.userSearchKey,
-            orgId: orgId || state.orgSelectedId
+        var page = state.page;
+        return fetch_1.default.get(const_1.default.USER_ALLDATA_LOAD, {
+            currentPage: pageNo || page.pageNo,
+            pageSize: page.pageSize,
         }).then(function (data) {
             dispatch({
                 type: 'USER_PAGE_LOAD',
-                no: data.pageNo,
-                count: data.totalPages,
-                dataCount: data.totalCount,
-                list: data.result.map(function (user) {
-                    user.role = user.roles.map(function (role) { return role.roleCode; });
-                    // if(user.isPic==1){
-                    //     user.role.push('微信管理员');
-                    // }
-                    user.role = user.role.join(',');
-                    // if(!user.org){
-                    //     user.org='公司';
-                    // }
-                    return user;
-                })
+                pageNo: data.currentPage,
+                pageSize: data.pageSize,
+                dataCount: data.totalDataCount,
+                // list: data.data.map((user:_Object) => {
+                //     user.role = user.roles.map((role:_Object) => role.roleCode);
+                //     user.role = user.role.join(',');
+                //     return user;
+                // })
+                list: data.list
             });
             dispatch({ type: 'USER_LOADING' });
         });
@@ -185,9 +180,13 @@ action.addUser = addUser;
  * @param data
  * @returns {Function}
  */
-function updateUser(data) {
+function updateUser(data, addRids, delRids) {
     return function (dispatch) {
-        return fetch_1.default.post('/user/update', data);
+        return Promise.all([
+            fetch_1.default.post(const_1.default.USER_UPDATEINFO, data),
+            fetch_1.default.post(const_1.default.USER_ROLE_ASSIGN, { uid: data.uid, addRids: addRids, delRids: delRids })
+        ]).then(function () {
+        });
     };
 }
 action.updateUser = updateUser;
@@ -402,31 +401,47 @@ var react_redux_1 = __webpack_require__(77);
 var user_1 = __importDefault(__webpack_require__(1570));
 var ExTable_1 = __importDefault(__webpack_require__(873));
 var React = __importStar(__webpack_require__(0));
+var antd_1 = __webpack_require__(43);
+var react_intl_1 = __webpack_require__(160);
 var Table = /** @class */ (function (_super) {
     __extends(Table, _super);
     function Table(props) {
         var _this = _super.call(this, props) || this;
+        var operations = props.operations, onUserInfoShow = props.onUserInfoShow, onEdit = props.onEdit;
         _this.columns = [
-            // { title: '账号', dataIndex: 'loginName'},
+            { title: '账号', dataIndex: 'username' },
             { title: '姓名', dataIndex: 'name' },
             { title: '性别', dataIndex: 'sex' },
+            { title: '邮箱', dataIndex: 'email' },
             { title: '手机', dataIndex: 'phone' },
-            { title: '角色', dataIndex: 'role' },
-            { title: '组织', dataIndex: 'org' }
+            { title: '角色', dataIndex: 'roles', render: function (value, data) {
+                    return value.map(function (o) { return o.name; }).join(',');
+                } },
+            { title: '组织', dataIndex: 'org' },
+            { title: '操作', render: function (value, data) {
+                    var actions = [];
+                    actions.push(React.createElement("a", { key: "b1", onClick: onUserInfoShow.bind(_this, data) },
+                        React.createElement(react_intl_1.FormattedMessage, { id: 'user_operation_view' })));
+                    if (operations.include('user_operation_modify')) {
+                        actions.push(React.createElement("a", { key: "b2", onClick: onEdit.bind(_this, data) },
+                            React.createElement(react_intl_1.FormattedMessage, { id: 'user_operation_modify' })));
+                    }
+                    return React.createElement("div", null, actions.joinItem(function (i) { return React.createElement(antd_1.Divider, { key: i, type: "vertical" }); }));
+                } }
         ];
         return _this;
     }
     Table.prototype.render = function () {
         var _this = this;
-        var _a = this.props, loading = _a.loading, list = _a.userPageList, pageNo = _a.userPageNo, dataCount = _a.dataCount, searchParams = _a.searchParams, onRowClick = _a.onRowClick, onPageChange = _a.onPageChange, onPageSizeChange = _a.onPageSizeChange;
-        var paginationOptions = { pageSize: searchParams.pageSize, pageNo: pageNo, dataCount: dataCount, onPageChange: onPageChange, onPageSizeChange: onPageSizeChange };
-        return (React.createElement(ExTable_1.default, __assign({}, paginationOptions, { loading: loading, columns: this.columns, onRow: function (record) { return ({ onClick: onRowClick.bind(_this, record.id) }); }, dataSource: list })));
+        var _a = this.props, loading = _a.loading, list = _a.userPageList, pageNo = _a.pageNo, dataCount = _a.dataCount, pageSize = _a.pageSize, searchParams = _a.searchParams, onRowClick = _a.onRowClick, onPageChange = _a.onPageChange, onPageSizeChange = _a.onPageSizeChange;
+        var paginationOptions = { pageSize: pageSize, pageNo: pageNo, dataCount: dataCount, onPageChange: onPageChange, onPageSizeChange: onPageSizeChange };
+        return (React.createElement(ExTable_1.default, __assign({}, paginationOptions, { loading: loading, columns: this.columns, rowKey: 'uid', onRow: function (record) { return ({ onClick: onRowClick.bind(_this, record.id) }); }, dataSource: list })));
     };
     return Table;
 }(React.Component));
 var TableComp = react_redux_1.connect(function (state) {
-    var _a = state['user'], userPageList = _a.userPageList, userPageNo = _a.userPageNo, dataCount = _a.dataCount, searchParams = _a.searchParams, loading = _a.loading;
-    return { userPageList: userPageList, userPageNo: userPageNo, dataCount: dataCount, searchParams: searchParams, loading: loading };
+    var _a = state['user'], userPageList = _a.userPageList, page = _a.page, searchParams = _a.searchParams, loading = _a.loading;
+    return __assign({ userPageList: userPageList }, page, { searchParams: searchParams, loading: loading });
 }, function (dispatch) { return ({
     onPageSizeChange: function (current, pageSize) {
         dispatch({ type: 'USER_SEARCH_PARAMS', params: { pageSize: pageSize } });
@@ -446,7 +461,7 @@ var TableComp = react_redux_1.connect(function (state) {
     onRowClick: function (id) {
         dispatch({ type: 'USER_INFO_SHOW', show: true });
         dispatch(user_1.default.loadUserInfo(id));
-    }
+    },
 }); })(Table);
 exports.default = TableComp;
 
@@ -596,17 +611,19 @@ var ExModal_1 = __importDefault(__webpack_require__(871));
 var ExFormItem_1 = __importDefault(__webpack_require__(872));
 var antd_1 = __webpack_require__(43);
 var React = __importStar(__webpack_require__(0));
+var index_1 = __webpack_require__(29);
 var EditForm = antd_1.Form.create()(function (props) {
     var data = props.data, orgList = props.orgList, roleList = props.roleList, form = props.form;
     var getFieldDecorator = form.getFieldDecorator;
+    var roles = !index_1.isEmpty(data.roles) ? data.roles.map(function (o) { return o.rid; }) : [];
     return (React.createElement(antd_1.Form, null,
-        React.createElement(ExFormItem_1.default, { label: "\u624B\u673A\u53F7", name: "phone", initialValue: data.phone, placeholder: "\u8F93\u516511\u4F4D\u624B\u673A\u53F7\u7801", required: true, getFieldDecorator: getFieldDecorator }),
+        data.uid > 0 ? (React.createElement(ExFormItem_1.default, { label: "\u8D26\u53F7", type: "static", initialValue: data.username })) : (React.createElement(ExFormItem_1.default, { label: "\u8D26\u53F7", name: "username", initialValue: data.username, required: true, getFieldDecorator: getFieldDecorator })),
+        React.createElement(ExFormItem_1.default, { label: "\u624B\u673A\u53F7", name: "phone", initialValue: data.phone, placeholder: "\u8F93\u516511\u4F4D\u624B\u673A\u53F7\u7801", getFieldDecorator: getFieldDecorator }),
         !data.id && (React.createElement(ExFormItem_1.default, { label: "\u767B\u5F55\u5BC6\u7801", name: "password", initialValue: data.password, placeholder: "\u4E0D\u586B\u5219\u9ED8\u8BA4\u4E3A\uFF1A123456", getFieldDecorator: getFieldDecorator })),
-        React.createElement(ExFormItem_1.default, { label: "\u59D3\u540D", name: "name", initialValue: data.name, required: true, getFieldDecorator: getFieldDecorator }),
-        React.createElement(ExFormItem_1.default, { label: "\u89D2\u8272", type: "select", mode: "multiple", name: "roleIds", initialValue: data.roleIds, list: roleList, placeholder: "\u8BF7\u9009\u62E9", required: true, getFieldDecorator: getFieldDecorator }),
-        React.createElement(ExFormItem_1.default, { label: "\u7EC4\u7EC7", type: "select", name: "orgId", initialValue: data.orgId, list: orgList.map(function (o) { return ({ id: o.id, name: o.indents.join(' ') + ' ' + o.name }); }), placeholder: "\u8BF7\u9009\u62E9", required: true, getFieldDecorator: getFieldDecorator }),
+        React.createElement(ExFormItem_1.default, { label: "\u59D3\u540D", name: "name", initialValue: data.name, getFieldDecorator: getFieldDecorator }),
+        React.createElement(ExFormItem_1.default, { label: "\u89D2\u8272", type: "select", mode: "multiple", name: "roles", initialValue: roles, list: roleList.map(function (o) { return ({ id: o.rid, name: o.name }); }), placeholder: "\u8BF7\u9009\u62E9", required: true, getFieldDecorator: getFieldDecorator }),
         React.createElement(ExFormItem_1.default, { label: "\u90AE\u7BB1", type: "email", name: "email", initialValue: data.email, getFieldDecorator: getFieldDecorator }),
-        React.createElement(ExFormItem_1.default, { type: "hidden", name: "id", initialValue: data.id, getFieldDecorator: getFieldDecorator })));
+        React.createElement(ExFormItem_1.default, { type: "hidden", name: "uid", initialValue: data.uid, getFieldDecorator: getFieldDecorator })));
 });
 var UserEditModal = /** @class */ (function (_super) {
     __extends(UserEditModal, _super);
@@ -644,9 +661,13 @@ var UserEditModalComp = react_redux_1.connect(function (state) {
     onSubmit: function (data) {
         var _this = this;
         // data.isPic=data.isPic?1:0;
-        data.roleIds = data.roleIds.join(',');
-        if (data.id > 0) {
-            dispatch(user_1.default.updateUser(data)).then(function () {
+        // data.roleIds = data.roleIds.join(',');
+        var preRoles = this.props.userEditData.roles.map(function (o) { return o.rid; });
+        var intersection = index_1.getIntersection(data.roles, preRoles);
+        var addRids = index_1.getAddition(data.roles, intersection);
+        var delRids = index_1.getReduction(preRoles, intersection);
+        if (data.uid > 0) {
+            dispatch(user_1.default.updateUser(data, addRids, delRids)).then(function () {
                 _this.props.onClose();
                 // 重新加载列表
                 dispatch(user_1.default.selectOrg(data.orgId));
@@ -708,6 +729,7 @@ var antd_1 = __webpack_require__(43);
 var react_intl_1 = __webpack_require__(160);
 var defaultAvatar = __webpack_require__(1591);
 var React = __importStar(__webpack_require__(0));
+var utils_1 = __webpack_require__(29);
 var DetailModal = /** @class */ (function (_super) {
     __extends(DetailModal, _super);
     function DetailModal() {
@@ -715,12 +737,17 @@ var DetailModal = /** @class */ (function (_super) {
     }
     DetailModal.prototype.render = function () {
         var _a = this.props, operations = _a.operations, info = _a.userInfoData, userInfoShow = _a.userInfoShow, onEdit = _a.onEdit, onDismiss = _a.onDismiss, onPasswordReset = _a.onPasswordReset, onClose = _a.onClose;
+        var roles = !utils_1.isEmpty(info) ? info.roles.map(function (o) { return o.name; }) : [];
         return (React.createElement(ExModal_1.default, { className: "user-info", visible: userInfoShow, footer: null, onCancel: onClose },
             React.createElement("div", { className: "hd" },
                 React.createElement(antd_1.Avatar, { shape: "square", src: defaultAvatar }),
                 React.createElement("div", { className: "hd-content" },
                     React.createElement("strong", { className: "text-xl" }, info.name),
-                    React.createElement(antd_1.Tag, { color: "cyan", style: { marginLeft: 8 } }, info.role),
+                    React.createElement(antd_1.Tag, { color: "cyan", style: { marginLeft: 8 } }, roles.join(',')),
+                    React.createElement("div", null,
+                        "Email\uFF1A",
+                        React.createElement("span", null, info.email),
+                        " "),
                     React.createElement("div", null,
                         "\u624B\u673A\uFF1A",
                         React.createElement("span", null, info.phone),
@@ -865,14 +892,13 @@ var Toolbar = /** @class */ (function (_super) {
         var _a = this.props, operations = _a.operations, orgSelectedId = _a.orgSelectedId, onOrgAdd = _a.onOrgAdd, onUserAdd = _a.onUserAdd, onSearch = _a.onSearch;
         var searchKey = this.state.searchKey;
         var suffix = searchKey && React.createElement(antd_1.Icon, { key: "1", type: "close-circle", onClick: this.handleClear, style: { color: '#ddd', marginRight: 5 } });
-        return (React.createElement(antd_1.Row, { gutter: 16, className: "toolbar" },
-            operations.include('CREATE') && (React.createElement(antd_1.Col, { span: 6 },
+        return (React.createElement("div", { className: "toolbar" },
+            operations.include('user_operation_add') && (React.createElement("div", null,
                 React.createElement(antd_1.Button, { type: "primary", onClick: function () { return onOrgAdd(); }, icon: "usergroup-add", disabled: orgSelectedId == -1 },
                     React.createElement(react_intl_1.FormattedMessage, { id: 'user_operation_addOrg' })),
                 React.createElement(antd_1.Button, { type: "primary", onClick: function () { return onUserAdd(); }, icon: "user-add", className: "margin-left", disabled: orgSelectedId == -1 },
                     React.createElement(react_intl_1.FormattedMessage, { id: 'user_operation_addStaff' })))),
-            React.createElement(antd_1.Col, { span: 18 },
-                React.createElement(antd_1.Input.Search, { placeholder: "\u8F93\u5165\u59D3\u540D\u6216\u89D2\u8272\u641C\u7D22\u5458\u5DE5", value: searchKey, onChange: this.handleChange, onSearch: onSearch.bind(this), style: { maxWidth: 500 }, suffix: suffix, enterButton: true }))));
+            React.createElement(antd_1.Input.Search, { placeholder: "\u8F93\u5165\u59D3\u540D\u6216\u89D2\u8272\u641C\u7D22\u5458\u5DE5", value: searchKey, onChange: this.handleChange, onSearch: onSearch.bind(this), style: { maxWidth: 300 }, suffix: suffix, enterButton: true })));
     };
     return Toolbar;
 }(React.Component));
@@ -947,7 +973,7 @@ exports = module.exports = __webpack_require__(175)(false);
 
 
 // module
-exports.push([module.i, ".user {\n  background: #fff;\n  padding: 20px 10px;\n}\n.user .block-right {\n  margin-left: 300px;\n}\n.user .block-right .header {\n  position: relative;\n}\n.user .block-right .header .desc {\n  margin-right: 100px;\n}\n.user .block-right .header .actions {\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n.user .clear {\n  font-size: 14px;\n  top: 5px;\n  left: -30px;\n  z-index: 10;\n  position: absolute;\n  width: 30px;\n  color: #bbb;\n  text-align: center;\n}\n.user-info {\n  font-size: 14px;\n}\n.user-info .hd {\n  position: relative;\n}\n.user-info .hd .ant-avatar {\n  width: 72px;\n  height: 72px;\n  float: left;\n}\n.user-info .hd-content {\n  margin-left: 80px;\n}\n.user-info .detail-list > li {\n  padding: 6px 0;\n  border-bottom: 1px dashed #CCC;\n}\n.user-info .detail-list > li label {\n  color: #888;\n  font-weight: normal;\n  margin-bottom: 0;\n}\n.user-org {\n  width: 300px;\n  overflow: auto;\n  position: relative;\n  font-size: 14px;\n}\n.user-org li {\n  border-top: 1px dashed #ccc;\n}\n.user-org .node-name {\n  position: relative;\n  line-height: 2;\n  padding-left: 10px;\n}\n.user-org .node-name .actions {\n  position: absolute;\n  top: 0;\n  right: 3px;\n  display: none;\n}\n.user-org .node-name:hover {\n  background: #f2f6f9;\n}\n.user-org .node-name:hover .actions {\n  display: block;\n}\n.user-org .node-name.selected {\n  background: #D3E6F5;\n  color: #5b9bd1;\n}\n.user-org .indent {\n  display: inline-block;\n  width: 20px;\n  text-align: right;\n  margin-right: 3px;\n  color: #aaa;\n}\n.user-org .indent a {\n  color: #aaa;\n}\n.user-org .cover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 10;\n  background: rgba(255, 255, 255, 0.6);\n}\n", ""]);
+exports.push([module.i, ".user {\n  background: #fff;\n  padding: 20px 10px;\n}\n.user .block-right {\n  margin-left: 200px;\n}\n.user .block-right .header {\n  position: relative;\n}\n.user .block-right .header .desc {\n  margin-right: 100px;\n}\n.user .block-right .header .actions {\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n.user .clear {\n  font-size: 14px;\n  top: 5px;\n  left: -30px;\n  z-index: 10;\n  position: absolute;\n  width: 30px;\n  color: #bbb;\n  text-align: center;\n}\n.user-info {\n  font-size: 14px;\n}\n.user-info .hd {\n  position: relative;\n}\n.user-info .hd .ant-avatar {\n  width: 72px;\n  height: 72px;\n  float: left;\n}\n.user-info .hd-content {\n  margin-left: 80px;\n}\n.user-info .detail-list > li {\n  padding: 6px 0;\n  border-bottom: 1px dashed #CCC;\n}\n.user-info .detail-list > li label {\n  color: #888;\n  font-weight: normal;\n  margin-bottom: 0;\n}\n.user-org {\n  width: 200px;\n  overflow: auto;\n  position: relative;\n  font-size: 14px;\n}\n.user-org li {\n  border-top: 1px dashed #ccc;\n}\n.user-org .node-name {\n  position: relative;\n  line-height: 2;\n  padding-left: 10px;\n}\n.user-org .node-name .actions {\n  position: absolute;\n  top: 0;\n  right: 3px;\n  display: none;\n}\n.user-org .node-name:hover {\n  background: #f2f6f9;\n}\n.user-org .node-name:hover .actions {\n  display: block;\n}\n.user-org .node-name.selected {\n  background: #D3E6F5;\n  color: #5b9bd1;\n}\n.user-org .indent {\n  display: inline-block;\n  width: 20px;\n  text-align: right;\n  margin-right: 3px;\n  color: #aaa;\n}\n.user-org .indent a {\n  color: #aaa;\n}\n.user-org .cover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 10;\n  background: rgba(255, 255, 255, 0.6);\n}\n", ""]);
 
 // exports
 
@@ -1006,6 +1032,7 @@ var User = /** @class */ (function (_super) {
         this.props.onLeave();
     };
     User.prototype.render = function () {
+        var _a = this.props, onEdit = _a.onEdit, onUserInfoShow = _a.onUserInfoShow, operations = _a.operations;
         return (React.createElement("div", { className: "user" },
             React.createElement(OrgEditModal_1.default, null),
             React.createElement(UserEditModal_1.default, null),
@@ -1014,11 +1041,14 @@ var User = /** @class */ (function (_super) {
             React.createElement("div", { className: "display-flex" },
                 React.createElement(OrgTree_1.default, null),
                 React.createElement("div", { className: "flex-grow-1" },
-                    React.createElement(Table_1.default, null)))));
+                    React.createElement(Table_1.default, { onEdit: onEdit, onUserInfoShow: onUserInfoShow, operations: operations })))));
     };
     return User;
 }(React.Component));
-var UserComp = react_redux_1.connect(null, function (dispatch) { return ({
+var UserComp = react_redux_1.connect(function (state) {
+    var operations = state.app.menuObj['systemConfig/user'].functions;
+    return { operations: operations };
+}, function (dispatch) { return ({
     init: function () {
         // 加载组织树
         dispatch(user_1.default.loadOrgData()).then(function (treeData) {
@@ -1030,6 +1060,15 @@ var UserComp = react_redux_1.connect(null, function (dispatch) { return ({
     },
     onLeave: function () {
         dispatch({ type: 'USER_PAGE_LEAVE' });
+    },
+    onEdit: function (data, e) {
+        e.stopPropagation();
+        dispatch({ type: 'USER_EDIT', data: data });
+    },
+    onUserInfoShow: function (data, e) {
+        e.stopPropagation();
+        dispatch({ type: 'USER_INFO_LOAD', data: data });
+        dispatch({ type: 'USER_INFO_SHOW', show: true });
     }
 }); })(User);
 module.exports = UserComp;

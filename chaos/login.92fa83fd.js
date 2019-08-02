@@ -242,6 +242,33 @@ function hasChildInTree(treeData, nodeList, curNode) {
 }
 exports.hasChildInTree = hasChildInTree;
 /**
+ * 求两个数组的差集
+ * @param arr1
+ * @param arr2
+ */
+function getIntersection(arr1, arr2) {
+    return arr1.filter(function (item) { return arr2.indexOf(item) > -1; });
+}
+exports.getIntersection = getIntersection;
+/**
+ * 求新数组的新增项
+ * @param newArr
+ * @param intersection
+ */
+function getAddition(newArr, intersection) {
+    return newArr.filter(function (item) { return !intersection.some(function (i) { return item === i; }); });
+}
+exports.getAddition = getAddition;
+/**
+ * 求新数组的删除项
+ * @param preArr
+ * @param intersection
+ */
+function getReduction(preArr, intersection) {
+    return preArr.filter(function (item) { return !intersection.some(function (i) { return item === i; }); });
+}
+exports.getReduction = getReduction;
+/**
  * 判断传入数据是否为空
  * @param val
  * @returns {*}
@@ -3565,6 +3592,12 @@ exports.default = {
     MENU_NODE_CREATE: '/operation/createOperation',
     MENU_TREE_LOAD: '/operation/loadInitialOperationTreeBySystemId',
     MENU_OPERATION_REMOVE: '/operation/removeOperationByOid',
+    USER_ROLE_ASSIGN: '/user/assigningRoles',
+    USER_ALLDATA_LOAD: '/user/loadUserList',
+    USER_UPDATEINFO: '/user/updateUserInfo',
+    ROLE_ALLDATA_LOAD: '/role/loadRoleList',
+    ROLE_OPERATIONS_LOAD: '/operation/loadOperationsOfRoleByRid',
+    ROLE_OPREATION_ASSIGN: '/role/assigningOperations',
 };
 var menuTypes = [{ id: 1, name: '系统' }, { id: 2, name: '目录' }, { id: 3, name: '菜单' }, { id: 4, name: '操作' }];
 exports.menuTypes = menuTypes;
@@ -3654,9 +3687,9 @@ var proAccountBaseUrl = 'https://www.test-teye.com/sso'; //个人测试用帐号
 exports.proAccountBaseUrl = proAccountBaseUrl;
 var devAccountBaseUrl = 'https://www.test-teye.com/sso'; //个人测试用帐号系统后端：本地
 exports.devAccountBaseUrl = devAccountBaseUrl;
-var proBaseUrl = 'http://' + location.host;
+var proBaseUrl = 'http://18.139.226.56:8080';
 exports.proBaseUrl = proBaseUrl;
-var devBaseUrl = 'http://' + location.host;
+var devBaseUrl = 'http://18.139.226.56:8080';
 exports.devBaseUrl = devBaseUrl;
 exports.default = (function () {
     var config = {};
@@ -10303,6 +10336,7 @@ function refreshToken(reqParams) {
 function _Fetch(reqParams) {
     __webpack_require__(374)(reqParams.url);
     var method = reqParams.method, url = reqParams.url, params = reqParams.params, opts = reqParams.opts;
+    opts = __assign({ withCookie: true }, opts);
     var fetchOpts = {
         method: method,
         headers: createHttpHeader(opts, method)
@@ -10355,20 +10389,17 @@ function handleException(err) {
     return Promise.reject({ error: { message: " ExceptionMessage = " + err } });
 }
 Fetch.get = function (url, params, opts) {
-    if (opts === void 0) { opts = {}; }
     // console.log('get',arguments)
     // _Fetch({method:'get',...([].slice.call(arguments))});
     return _Fetch({ method: 'get', url: url, params: params, opts: opts });
 };
 Fetch.post = function (url, params, opts) {
     if (params === void 0) { params = {}; }
-    if (opts === void 0) { opts = {}; }
     // console.log('post',[].slice.call(arguments));
     // _Fetch({method:'post',...([].slice.call(arguments))});
     return _Fetch({ method: 'post', url: url, params: params, opts: opts });
 };
 Fetch.postFile = function (url, params, opts) {
-    if (opts === void 0) { opts = {}; }
     _Fetch({ method: 'post', url: url, params: params, opts: opts });
     // return newFetch(API.baseUrl+url, {
     //     method: 'POST',
@@ -10459,18 +10490,23 @@ var LanguageMap = {
 var LocaleToggle = /** @class */ (function (_super) {
     __extends(LocaleToggle, _super);
     function LocaleToggle(props) {
-        return _super.call(this, props) || this;
+        var _this = _super.call(this, props) || this;
+        _this.handleClick = function (item, e) {
+            _this.props.changeLocale(item.key);
+            e.stopPropagation();
+        };
+        return _this;
     }
     LocaleToggle.prototype.render = function () {
         var _this = this;
         var curLocale = this.props.locale;
-        var menu = (React.createElement(antd_1.Menu, { onClick: function (item) { return _this.props.changeLocale(item.key); } },
+        var menu = (React.createElement(antd_1.Menu, { onClick: function (item) { return _this.handleClick.call(_this, item); } },
             React.createElement(antd_1.Menu.Item, { key: 'en-US' },
                 React.createElement("a", null, LanguageMap['en-US'])),
             React.createElement(antd_1.Menu.Item, { key: 'zh-CN' },
                 React.createElement("a", null, LanguageMap['zh-CN']))));
         return (React.createElement(antd_1.Dropdown, { overlay: menu },
-            React.createElement("a", { className: "ant-dropdown-link", href: "#" },
+            React.createElement("a", { className: "ant-dropdown-link", href: "javascript:;" },
                 LanguageMap[curLocale],
                 " ",
                 React.createElement(antd_1.Icon, { type: "down" }))));
@@ -10591,6 +10627,7 @@ exports.default = {
     'trackDemand_operation_modify': common['common_operation_modify'],
     'trackDemand_operation_delete': common['common_operation_delete'],
     'trackDemand_operation_verify': '审核',
+    'trackDemand_operation_addInfo': '新增详情',
     'fieldTranslation_operation_view': common['common_operation_view'],
     'fieldTranslation_operation_add': common['common_operation_add'],
     'fieldTranslation_operation_modify': common['common_operation_modify'],
@@ -10756,6 +10793,7 @@ exports.default = {
     'trackDemand_operation_modify': common['common_operation_modify'],
     'trackDemand_operation_delete': common['common_operation_delete'],
     'trackDemand_operation_verify': 'verify',
+    'trackDemand_operation_addInfo': 'add Info',
     'fieldTranslation_operation_view': common['common_operation_view'],
     'fieldTranslation_operation_add': common['common_operation_add'],
     'fieldTranslation_operation_modify': common['common_operation_modify'],
@@ -11034,6 +11072,17 @@ exports.default = (function (state, action) {
 
 "use strict";
 
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = __webpack_require__(29);
 /**
@@ -11046,11 +11095,18 @@ var defaultState = {
     roleAuth: [],
     editShow: false,
     editData: {},
-    menuTree: []
+    menuTree: [],
+    searchParams: {
+        selectedRole: '',
+        selectedSystem: ''
+    }
 };
 exports.default = (function (state, action) {
     var newState = {};
     switch (action.type) {
+        case 'ROLE_SEARCHPARAMS_CHANGE':
+            newState.searchParams = __assign({}, state.searchParams, action.params);
+            break;
         case 'ROLE_ADD':
             newState.editShow = true;
             newState.editData = {
@@ -11206,6 +11262,12 @@ var index_1 = __webpack_require__(29);
 var defaultState = {
     loading: false,
     searchParams: {},
+    page: {
+        pageNo: 1,
+        pageSize: 10,
+        dataCount: ''
+    },
+    roleList: [],
     orgData: [],
     orgList: [],
     orgSelectedId: -1,
@@ -11230,6 +11292,9 @@ exports.default = (function (state, action) {
             break;
         case 'USER_SEARCH_PARAMS':
             newState.searchParams = action.params;
+            break;
+        case 'USER_ROLE_DATA':
+            newState.roleList = action.list;
             break;
         case 'USER_ORG_DATA':
             newState.orgData = action.data;
@@ -11258,9 +11323,14 @@ exports.default = (function (state, action) {
             newState.userSearchKey = action.value;
             break;
         case 'USER_PAGE_LOAD':
-            newState.userPageNo = action.no;
-            newState.userPageCount = action.count;
-            newState.dataCount = action.dataCount;
+            // newState.userPageNo = action.no;
+            // newState.userPageCount = action.count;
+            // newState.dataCount = action.dataCount;
+            newState.page = {
+                pageNo: action.pageNo,
+                pageSize: action.pageSize,
+                dataCount: action.dataCount
+            };
             newState.userPageList = action.list;
             break;
         case 'USER_INFO_SHOW':
@@ -11273,10 +11343,10 @@ exports.default = (function (state, action) {
             newState.userEditShow = true;
             newState.userEditData = {
                 isNew: true,
-                loginName: '',
+                username: '',
                 password: '',
                 name: '',
-                roleIds: [],
+                roles: [],
                 no: '',
                 orgId: state.orgSelectedId,
                 email: '',
@@ -11286,8 +11356,8 @@ exports.default = (function (state, action) {
         case 'USER_EDIT':
             (function () {
                 newState.userEditShow = true;
-                var _a = action.data, id = _a.id, name = _a.name, loginName = _a.loginName, roleIds = _a.roleIds, no = _a.no, orgId = _a.orgId, email = _a.email, phone = _a.phone;
-                newState.userEditData = { id: id, name: name, loginName: loginName, roleIds: roleIds, no: no, orgId: orgId, email: email, phone: phone };
+                var _a = action.data, uid = _a.uid, name = _a.name, username = _a.username, roles = _a.roles, no = _a.no, orgId = _a.orgId, email = _a.email, phone = _a.phone;
+                newState.userEditData = { uid: uid, name: name, username: username, roles: roles, no: no, orgId: orgId, email: email, phone: phone };
             })();
             break;
         case 'USER_EDIT_CLOSE':
@@ -11374,12 +11444,16 @@ var defaultState = {
         dataCount: 0
     },
     trackType_searchParams: {
-        title: ''
+        name: '',
+        trackId: ''
     },
     trackType_editData: {
         id: '',
-        name: '',
-        trackId: ''
+        eventTypeCode: '',
+        eventId: '',
+        param: '',
+        paramDescribe: '',
+        demandId: ''
     },
     trackType_editModalShow: false,
     trackType_editModalLoading: false,
@@ -11392,16 +11466,25 @@ var defaultState = {
         dataCount: 0
     },
     trackDemand_searchParams: {
-        viewState: 0,
+        name: '',
+        trackType: '',
+        viewState: '',
     },
     trackDemand_editData: {
         id: '',
         name: '',
         trackId: ''
     },
-    trackDemand_verifyModalShow: false,
     trackDemand_editModalShow: false,
     trackDemand_editModalLoading: false,
+    trackDemand_addInfoData: {
+        id: '',
+        eventId: '',
+        trackId: ''
+    },
+    trackDemand_addInfoModalShow: false,
+    trackDemand_addInfoModalLoading: false,
+    trackDemand_verifyModalShow: false,
     trackDemand_list: [],
     trackDemand_allData: [],
     trackInfo_loading: false,
@@ -11411,11 +11494,13 @@ var defaultState = {
         dataCount: 0
     },
     trackInfo_searchParams: {
-        title: ''
+        eventId: '',
+        eventType: '',
+        trackType: ''
     },
     trackInfo_editData: {
         id: '',
-        name: '',
+        eventId: '',
         trackId: ''
     },
     trackInfo_editModalShow: false,
@@ -11503,6 +11588,18 @@ exports.default = (function (state, action) {
             break;
         case 'TRACK_DEMAND_EDITMODAL_RESET':
             newState.trackDemand_editData = defaultState.trackDemand_editData;
+            break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_SHOW':
+            newState.trackDemand_addInfoModalShow = action.show;
+            break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_LOADING':
+            newState.trackDemand_addInfoModalLoading = action.loading;
+            break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_DATA':
+            newState.trackDemand_addInfoData = action.data;
+            break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_RESET':
+            newState.trackDemand_addInfoData = defaultState.trackDemand_addInfoData;
             break;
         case 'TRACK_INFO_LOADING':
             newState.trackInfo_loading = action.loading;
@@ -11766,7 +11863,7 @@ exports.default = {
             { name: 'menu_operation_edit' },
             { name: 'menu_operation_delete' }
         ],
-        page: function (cb) { Promise.all/* require.ensure */([__webpack_require__.e(11), __webpack_require__.e(1)]).then((function (require) { cb(__webpack_require__(882)); }).bind(null, __webpack_require__)).catch(null); }
+        page: function (cb) { Promise.all/* require.ensure */([__webpack_require__.e(11), __webpack_require__.e(3)]).then((function (require) { cb(__webpack_require__(882)); }).bind(null, __webpack_require__)).catch(null); }
     },
     'systemConfig/user': {
         name: 'menuName_systemConfig_user',
@@ -29622,6 +29719,15 @@ module.exports = [
                                             display:1,
                                             url:'ccc'
                                         },
+                                        {
+                                            oid:8025,
+                                            pid:802,
+                                            type:'4',
+                                            name:'trackDemand_operation_addInfo',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
                                     ] 
                                 },
                             ]
@@ -30043,10 +30149,28 @@ module.exports = [
                     url:'ccc'
                 },
                 {
+                    oid:8021,
+                    pid:802,
+                    type:'4',
+                    name:'trackDemand_operation_modify',
+                    module:'',
+                    display:1,
+                    url:'bbb'
+                },
+                {
                     oid:8024,
                     pid:802,
                     type:'4',
                     name:'trackDemand_operation_verify',
+                    module:'',
+                    display:1,
+                    url:'ccc'
+                },
+                {
+                    oid:8025,
+                    pid:802,
+                    type:'4',
+                    name:'trackDemand_operation_addInfo',
                     module:'',
                     display:1,
                     url:'ccc'
@@ -31079,8 +31203,9 @@ exports.default = {
             { name: 'trackDemand_operation_modify' },
             { name: 'trackDemand_operation_delete' },
             { name: 'trackDemand_operation_verify' },
+            { name: 'trackDemand_operation_addInfo' }
         ],
-        page: function (cb) { Promise.all/* require.ensure */([__webpack_require__.e(11), __webpack_require__.e(3)]).then((function (require) { cb(__webpack_require__(887)); }).bind(null, __webpack_require__)).catch(null); }
+        page: function (cb) { Promise.all/* require.ensure */([__webpack_require__.e(11), __webpack_require__.e(1)]).then((function (require) { cb(__webpack_require__(887)); }).bind(null, __webpack_require__)).catch(null); }
     },
 };
 

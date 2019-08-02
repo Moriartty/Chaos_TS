@@ -63,6 +63,31 @@ export function hasChildInTree(treeData:_Object,nodeList:Array<_Object>,curNode?
 }
 
 /**
+ * 求两个数组的差集
+ * @param arr1 
+ * @param arr2 
+ */
+export function getIntersection(arr1:Array<any>,arr2:Array<any>){
+    return arr1.filter(item=>arr2.indexOf(item)>-1);
+}
+/**
+ * 求新数组的新增项
+ * @param newArr 
+ * @param intersection 
+ */
+export function getAddition(newArr:Array<any>,intersection:Array<any>){
+    return newArr.filter(item=>!intersection.some(i=>item===i));
+}
+/**
+ * 求新数组的删除项
+ * @param preArr 
+ * @param intersection 
+ */
+export function getReduction(preArr:Array<any>,intersection:Array<any>){
+    return preArr.filter(item=>!intersection.some(i=>item===i));
+}
+
+/**
  * 判断传入数据是否为空
  * @param val
  * @returns {*}

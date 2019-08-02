@@ -1,136 +1,4 @@
-webpackJsonp([1],{
-
-/***/ 1573:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var fetch_1 = __importDefault(__webpack_require__(256));
-var const_1 = __importDefault(__webpack_require__(123));
-var antd_1 = __webpack_require__(43);
-var app_1 = __importDefault(__webpack_require__(78));
-var action = {};
-/**
- * 获取系统列表
- */
-action.loadSystemList = function () { return function (dispatch) {
-    return fetch_1.default.get(const_1.default.APP_GETALLSYSTEM, {}).then(function (data) {
-        dispatch({ type: 'MENU_SYSTEMLIST_LOAD', systemList: data });
-        return data;
-    });
-}; };
-/**
- * 获取菜单列表
- * @returns {Function}
- */
-function loadList(id) {
-    return function (dispatch, getState) {
-        var searchParams = getState().menu.searchParams;
-        var targetSystem = id || searchParams.selectedSystem;
-        //先加载系统列表，如果不为空，就选择第一个作为默认值,并且没有搜索记录，并加载该系统的目录
-        if (!targetSystem) {
-            var systemList = getState().menu.systemList;
-            targetSystem = systemList[0].oid;
-            dispatch({ type: 'MENU_SEARCHPARAMS_CHANGE', params: { selectedSystem: targetSystem } });
-        }
-        dispatch({ type: 'MENU_LOADING', loading: true });
-        return fetch_1.default.get(const_1.default.MENU_TREE_LOAD, { systemId: targetSystem }).then(function (data) {
-            var menuList = [];
-            var treeData = [
-                { name: '(根目录)', list: [data] }
-            ];
-            // 递归添加<tr>
-            function recursive(item) {
-                // 忽略根目录那行functionfunction
-                if (item.level > 0) {
-                    menuList.push(item);
-                }
-                item.id = item.oid;
-                if (item.list && item.list.length) {
-                    item.list.forEach(function (o, i, list) {
-                        o.level = item.level + 1;
-                        o.last = i === list.length - 1; // 是否为当前级别的最后一个
-                        o.indents = item.indents.slice(0, -1); // 包含父级菜单的前(n-1)个
-                        if (o.level > 1) {
-                            // 父菜单的第n个不一定跟子菜单同列的那个相同，这里结合图形看更直观
-                            o.indents.push(item.last ? '' : '│');
-                        }
-                        o.indents.push(o.last ? '└' : '├'); // 该级菜单的最后一个
-                        recursive(o);
-                    });
-                }
-            }
-            treeData.forEach(function (item, i, list) {
-                item.indents = []; // 体现菜单关系的缩进符
-                item.level = 0; // 菜单深度级别，从0级开始
-                item.last = i === list.length - 1; // 是否为当前级别的最后一个
-                item.id = item.oid;
-                recursive(item);
-            });
-            dispatch({ type: 'MENU_LIST', list: menuList });
-            dispatch({ type: 'MENU_LOADING' });
-            dispatch(app_1.default.setSearchParamsInLocalStorage(searchParams, 'MENU_SEARCHPARAMS_CHANGE'));
-        });
-    };
-}
-action.loadList = loadList;
-/**
- * 添加菜单
- * @param data
- * @returns {Function}
- */
-action.addMenu = function (data) { return function (dispatch) {
-    return fetch_1.default.post(const_1.default.MENU_NODE_CREATE, data).then(function (data) {
-        dispatch({ type: 'MENU_SYSTEMEDITMODAL_SHOW', show: false });
-        dispatch(action.loadList());
-        antd_1.message.success('操作成功');
-    }).catch(function (err) {
-        antd_1.message.success('操作失败');
-    });
-}; };
-action.addSystem = function (data) { return function (dispatch) {
-    return fetch_1.default.post(const_1.default.MENU_NODE_CREATE, data).then(function (data) {
-        dispatch({ type: 'MENU_SYSTEMEDITMODAL_SHOW', show: false });
-        dispatch(action.loadList());
-        antd_1.message.success('操作成功');
-    }).catch(function (err) {
-        antd_1.message.success('操作失败');
-    });
-}; };
-/**
- * 更新菜单
- * @param data
- * @returns {Function}
- */
-action.updateMenu = function (data) { return function (dispatch) { return fetch_1.default.post('/menu/update', data); }; };
-/**
- * 删除菜单
- * @param id
- * @returns {Function}
- */
-action.deleteMenu = function (id) { return function (dispatch) {
-    return fetch_1.default.post(const_1.default.MENU_OPERATION_REMOVE, { oid: id }).then(function () {
-        dispatch(action.loadList());
-        antd_1.message.success('操作成功');
-    }).catch(function (err) {
-        antd_1.message.success('操作失败');
-    });
-}; };
-/**
- * 移动菜单
- * @param id
- * @param isUp 是否上移，否则下移
- * @returns {Function}
- */
-action.moveMenu = function (id, isUp) { return function (dispatch) { return fetch_1.default.post(isUp ? '/menu/up' : '/menu/down', { id: id }); }; };
-exports.default = action;
-
-
-/***/ }),
+webpackJsonp([3],{
 
 /***/ 1581:
 /***/ (function(module, exports, __webpack_require__) {
@@ -162,7 +30,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_redux_1 = __webpack_require__(77);
-var menu_1 = __importDefault(__webpack_require__(1573));
+var menu_1 = __importDefault(__webpack_require__(1572));
 var antd_1 = __webpack_require__(43);
 var index_1 = __webpack_require__(870);
 var react_intl_1 = __webpack_require__(160);
@@ -201,7 +69,7 @@ var EditForm = antd_1.Form.create({
         //module字段一旦填写就不能再修改，这和前端加载页面有关，不要轻易动
         type === 3 && (React.createElement(index_1.ExFormItem, { label: "\u83DC\u5355\u6807\u7B7E", name: "module", initialValue: data.module, disabled: data.oid, placeholder: "\u8BF7\u586B\u5199", required: true, getFieldDecorator: getFieldDecorator })),
         //当item为操作类型时，需要填写url
-        type === 4 && (React.createElement(index_1.ExFormItem, { type: 'textarea', label: 'Urls', name: 'urls', initialValue: data.urls, placeholder: '\u8BF7\u586B\u5199\u8BE5\u64CD\u4F5C\u5BF9\u5E94\u7684url', required: true, getFieldDecorator: getFieldDecorator })),
+        type === 4 && (React.createElement(index_1.ExFormItem, { type: 'textarea', label: 'Urls', name: 'urls', initialValue: data.urls, placeholder: '\u8BF7\u586B\u5199\u8BE5\u64CD\u4F5C\u5BF9\u5E94\u7684url', getFieldDecorator: getFieldDecorator })),
         React.createElement(index_1.ExFormItem, { label: "\u72B6\u6001", type: "switch", name: "display", initialValue: data.display === 1, onText: "\u663E\u793A", offText: "\u9690\u85CF", required: true, getFieldDecorator: getFieldDecorator }),
         React.createElement(index_1.ExFormItem, { type: "hidden", name: "oid", initialValue: data.oid, getFieldDecorator: getFieldDecorator })));
 });
@@ -312,7 +180,7 @@ var React = __importStar(__webpack_require__(0));
 var react_redux_1 = __webpack_require__(77);
 var index_1 = __webpack_require__(870);
 var antd_1 = __webpack_require__(43);
-var menu_1 = __importDefault(__webpack_require__(1573));
+var menu_1 = __importDefault(__webpack_require__(1572));
 var EditForm = antd_1.Form.create({
     mapPropsToFields: function (props) {
         var params = props.data;
@@ -362,7 +230,10 @@ var EditSystemModalComp = react_redux_1.connect(function (state) {
     return { show: show, data: data };
 }, function (dispatch) { return ({
     onSubmit: function (data) {
-        dispatch(menu_1.default.addSystem(data));
+        var _this = this;
+        dispatch(menu_1.default.addMenu(data)).then(function () {
+            _this.props.onClose();
+        });
     },
     onClose: function () {
         dispatch({ type: 'MENU_SYSTEMEDITMODAL_CLOSE' });
@@ -403,7 +274,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_redux_1 = __webpack_require__(77);
-var menu_1 = __importDefault(__webpack_require__(1573));
+var menu_1 = __importDefault(__webpack_require__(1572));
 var ExTable_1 = __importDefault(__webpack_require__(873));
 var antd_1 = __webpack_require__(43);
 var index_1 = __webpack_require__(870);
@@ -430,7 +301,6 @@ var Table = /** @class */ (function (_super) {
             _this.columns.push({
                 title: '操作',
                 render: function (value, data) {
-                    console.log(data);
                     var actions = [];
                     if (operations.include('menu_operation_update')) {
                         actions.push(React.createElement("a", { key: "b1", onClick: onSubEdit.bind(_this, data) },
@@ -558,12 +428,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_redux_1 = __webpack_require__(77);
-var menu_1 = __importDefault(__webpack_require__(1573));
+var menu_1 = __importDefault(__webpack_require__(1572));
 var app_1 = __importDefault(__webpack_require__(78));
 var EditModal_1 = __importDefault(__webpack_require__(1581));
 var EditSystemModal_1 = __importDefault(__webpack_require__(1582));
 // import Toolbar from './Toolbar';
-var Toolbar_1 = __importDefault(__webpack_require__(1572));
+var Toolbar_1 = __importDefault(__webpack_require__(1573));
 var Table_1 = __importDefault(__webpack_require__(1583));
 var React = __importStar(__webpack_require__(0));
 __webpack_require__(1584);

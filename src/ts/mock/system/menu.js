@@ -297,6 +297,15 @@ module.exports = [
                                             display:1,
                                             url:'ccc'
                                         },
+                                        {
+                                            oid:8025,
+                                            pid:802,
+                                            type:'4',
+                                            name:'trackDemand_operation_addInfo',
+                                            module:'',
+                                            display:1,
+                                            url:'ccc'
+                                        },
                                     ] 
                                 },
                             ]

@@ -121,13 +121,13 @@ function loadUserPage (orgId:number|string, pageNo = 1) {
                 type: 'USER_PAGE_LOAD',
                 pageNo: data.currentPage,
                 pageSize:data.pageSize,
-                dataCount: data.numberOfTotalDatas,
+                dataCount: data.totalDataCount,
                 // list: data.data.map((user:_Object) => {
                 //     user.role = user.roles.map((role:_Object) => role.roleCode);
                 //     user.role = user.role.join(',');
                 //     return user;
                 // })
-                list:data.data
+                list:data.list
             });
             dispatch({ type: 'USER_LOADING' });
         });
@@ -184,11 +184,11 @@ action.addUser = addUser;
  * @param data
  * @returns {Function}
  */
-function updateUser (data:any) {
+function updateUser (data:any,addRids:Array<number>,delRids:Array<number>) {
     return (dispatch:any) => {
         return Promise.all([
             Fetch.post(API.USER_UPDATEINFO, data),
-            Fetch.post(API.USER_ROLE_ASSIGN,{uid:data.uid,addRids:data.roleIds})
+            Fetch.post(API.USER_ROLE_ASSIGN,{uid:data.uid,addRids:addRids,delRids:delRids})
         ]).then(()=>{
 
         })

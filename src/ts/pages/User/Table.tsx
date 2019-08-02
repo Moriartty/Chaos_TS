@@ -30,8 +30,11 @@ class Table extends React.Component<CompProps> {
             { title: '账号', dataIndex: 'username'},
             { title: '姓名', dataIndex: 'name' },
             { title: '性别', dataIndex: 'sex' },
+            { title: '邮箱', dataIndex: 'email'}, 
             { title: '手机', dataIndex: 'phone' },
-            { title: '角色', dataIndex: 'role' },
+            { title: '角色', dataIndex: 'roles',render:(value:any,data:any)=>{
+                return value.map((o:_Object)=>o.name).join(',')
+            } },
             { title: '组织', dataIndex: 'org' },
             { title: '操作', render:(value:any, data:any) => {
                 let actions:Array<any> = [];
@@ -51,6 +54,7 @@ class Table extends React.Component<CompProps> {
             <ExTable {...paginationOptions}
                 loading={loading}
                 columns={this.columns}
+                rowKey={'uid'}
                 onRow={(record:_Object) => ({ onClick: onRowClick.bind(this, record.id) })}
                 dataSource={list}/>
         );
@@ -58,9 +62,8 @@ class Table extends React.Component<CompProps> {
 }
 
 const TableComp = connect((state:any) => {
-    const operations = state.app.menuObj['systemConfig/user'].functions;
     const { userPageList, page, searchParams, loading } = state['user'];
-    return { userPageList, ...page, searchParams, loading,operations };
+    return { userPageList, ...page, searchParams, loading };
 }, dispatch => ({
     onPageSizeChange (current:any, pageSize:number) {
         dispatch({ type: 'USER_SEARCH_PARAMS', params: { pageSize } });
@@ -81,14 +84,7 @@ const TableComp = connect((state:any) => {
         dispatch({ type: 'USER_INFO_SHOW', show: true });
         dispatch(action.loadUserInfo(id));
     },
-    onEdit(data:_Object,e:any){
-        e.stopPropagation();
-        dispatch({type:'USER_EDIT',data});
-    },
-    onUserInfoShow(data:any,e:any){
-        e.stopPropagation();
-        dispatch({type:'USER_INFO_SHOW',show:true});
-    }
+    
 }))(Table);
 
 export default TableComp;

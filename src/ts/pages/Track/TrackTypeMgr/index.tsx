@@ -50,7 +50,6 @@ class TrackTypeMgr extends React.Component<CompProps,CompState> {
 
     render () {
         const {onRefresh,onSearch,operations} = this.props;
-        console.log('aa',operations)
         return (
             <div className='trackTypeContainer'>
                 <Toolbar onRefresh={onRefresh}>
@@ -62,7 +61,7 @@ class TrackTypeMgr extends React.Component<CompProps,CompState> {
                             </React.Fragment>
                         ):(
                             <React.Fragment>
-                                {/* <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button> */}
+                                <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button>
                                 {
                                     operations.indexOf('trackType_operation_add')>-1&&
                                     <Button onClick={()=>this.props.onAdd()} style={{marginLeft:20}} icon={'plus'}>

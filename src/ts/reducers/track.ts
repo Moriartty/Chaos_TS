@@ -9,12 +9,16 @@ const defaultState:_Object = {
         dataCount: 0
     },
     trackType_searchParams: {
-        title:''
+        name:'',
+        trackId:''
     },
     trackType_editData:{
         id:'',
-        name:'',
-        trackId:''
+        eventTypeCode:'',
+        eventId:'',
+        param:'',
+        paramDescribe:'',
+        demandId:''
     },
     trackType_editModalShow:false,
     trackType_editModalLoading:false,
@@ -29,16 +33,25 @@ const defaultState:_Object = {
         dataCount: 0
     },
     trackDemand_searchParams: {
-        viewState:0,//描述当前的查看状态，0：正常查看，1:查看我的待审核
+        name:'',
+        trackType:'',
+        viewState:'',//0-未审核,1-审核通过,2-审核不通过,3-重新审核,4-已指派,5-已完成
     },
     trackDemand_editData:{
         id:'',
         name:'',
         trackId:''
     },
-    trackDemand_verifyModalShow:false,
     trackDemand_editModalShow:false,
     trackDemand_editModalLoading:false,
+    trackDemand_addInfoData:{
+        id:'',
+        eventId:'',
+        trackId:''
+    },
+    trackDemand_addInfoModalShow:false,
+    trackDemand_addInfoModalLoading:false,
+    trackDemand_verifyModalShow:false,
     trackDemand_list: [],
     trackDemand_allData:[],
 
@@ -50,11 +63,13 @@ const defaultState:_Object = {
         dataCount: 0
     },
     trackInfo_searchParams: {
-        title:''
+        eventId:'',
+        eventType:'',
+        trackType:''
     },
     trackInfo_editData:{
         id:'',
-        name:'',
+        eventId:'',
         trackId:''
     },
     trackInfo_editModalShow:false,
@@ -149,6 +164,19 @@ export default (state:any, action:_Object) => {
         case 'TRACK_DEMAND_EDITMODAL_RESET':
             newState.trackDemand_editData = defaultState.trackDemand_editData;
             break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_SHOW':
+            newState.trackDemand_addInfoModalShow = action.show;
+            break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_LOADING':
+            newState.trackDemand_addInfoModalLoading = action.loading;
+            break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_DATA':
+            newState.trackDemand_addInfoData = action.data;
+            break;
+        case 'TRACK_DEMAND_ADDINFOMODAL_RESET':
+            newState.trackDemand_addInfoData = defaultState.trackDemand_addInfoData;
+            break;
+    
 
 
         case 'TRACK_INFO_LOADING':

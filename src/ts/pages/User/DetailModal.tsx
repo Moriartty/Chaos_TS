@@ -6,6 +6,7 @@ import { FormattedMessage } from 'react-intl';
 const defaultAvatar = require('img/avatar-default.png');
 import * as React from 'react';
 import { _Object } from 'customInterface';
+import { isEmpty } from 'utils/';
 
 interface CompProps {
     operations?:Array<any>, 
@@ -20,13 +21,15 @@ interface CompProps {
 class DetailModal extends React.Component<CompProps> {
     render () {
         const { operations, userInfoData: info, userInfoShow, onEdit, onDismiss, onPasswordReset, onClose } = this.props;
+        const roles = !isEmpty(info)?info.roles.map((o:_Object)=>o.name):[];
         return (
             <ExModal className="user-info" visible={userInfoShow} footer={null} onCancel={onClose}>
                 <div className="hd">
                     <Avatar shape="square" src={defaultAvatar}/>
                     <div className="hd-content">
                         <strong className="text-xl">{info.name}</strong>
-                        <Tag color="cyan" style={{ marginLeft: 8 }}>{info.role}</Tag>
+                        <Tag color="cyan" style={{ marginLeft: 8 }}>{roles.join(',')}</Tag>
+                        <div>Email：<span>{info.email}</span> </div>
                         <div>手机：<span>{info.phone}</span> </div>
                         <div>所属组织：<span>{info.org}</span> </div>
                     </div>

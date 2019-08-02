@@ -48,6 +48,7 @@ export default {
     'trackDemand_operation_modify':common['common_operation_modify'],
     'trackDemand_operation_delete':common['common_operation_delete'],
     'trackDemand_operation_verify':'verify',
+    'trackDemand_operation_addInfo':'add Info',
 
     'fieldTranslation_operation_view':common['common_operation_view'],
     'fieldTranslation_operation_add':common['common_operation_add'],

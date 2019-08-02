@@ -59,7 +59,7 @@ class TrackInfoMgr extends React.Component<CompProps,CompState> {
                             </React.Fragment>
                         ):(
                             <React.Fragment>
-                                {/* <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button> */}
+                                <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button>
                                 <Button onClick={()=>this.props.onAdd()} style={{marginLeft:20}} icon={'plus'}>新增</Button>
                                 <Button type={'primary'} style={{marginLeft:20}} onClick={()=>this.setState({isBatchDelState:true})} icon={'trash'}>{'批量删除'}</Button>
                             </React.Fragment>
@@ -84,6 +84,7 @@ const TrackInfoMgrComp = connect(null, dispatch => ({
      */
     init () {
         dispatch(appAction.getSearchParamsFromLocalStorage()).then(()=>{
+            dispatch(action.loadAllTrackType());
             dispatch(action.loadAllTrackDemand());
             dispatch(action.loadTrackInfo());
         })

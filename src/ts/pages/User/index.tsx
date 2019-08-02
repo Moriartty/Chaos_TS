@@ -9,10 +9,15 @@ import DetailModal from './DetailModal';
 import Toolbar from './Toolbar';
 import * as React from 'react';
 import 'less/user';
+import { _Object } from 'customInterface';
+import operations from 'config/language/zhCN/chaos/operations';
 
 interface CompProps {
     init:Function,
-    onLeave:Function
+    onLeave:Function,
+    onEdit:Function,
+    onUserInfoShow:Function,
+    operations:Array<string>
 }
 
 class User extends React.Component<CompProps> {
@@ -25,6 +30,7 @@ class User extends React.Component<CompProps> {
     }
 
     render () {
+        const {onEdit,onUserInfoShow,operations} = this.props;
         return (
             <div className="user">
                 <OrgEditModal/>
@@ -34,7 +40,7 @@ class User extends React.Component<CompProps> {
                 <div className="display-flex">
                     <OrgTree/>
                     <div className="flex-grow-1">
-                        <Table/>
+                        <Table onEdit={onEdit} onUserInfoShow={onUserInfoShow} operations={operations}/>
                     </div>
                 </div>
             </div>
@@ -42,7 +48,10 @@ class User extends React.Component<CompProps> {
     }
 }
 
-const UserComp = connect(null, dispatch => ({
+const UserComp = connect((state:any)=>{
+    const operations = state.app.menuObj['systemConfig/user'].functions;
+    return {operations}
+}, dispatch => ({
     init () {
         // 加载组织树
         dispatch(action.loadOrgData()).then((treeData:any) => {
@@ -55,6 +64,15 @@ const UserComp = connect(null, dispatch => ({
     onLeave () {
         dispatch({ type: 'USER_PAGE_LEAVE' });
     },
+    onEdit(data:_Object,e:any){
+        e.stopPropagation();
+        dispatch({type:'USER_EDIT',data});
+    },
+    onUserInfoShow(data:any,e:any){
+        e.stopPropagation();
+        dispatch({type:'USER_INFO_LOAD',data});
+        dispatch({type:'USER_INFO_SHOW',show:true});
+    }
 }))(User);
 
 module.exports = UserComp;

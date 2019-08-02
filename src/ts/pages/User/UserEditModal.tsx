@@ -5,6 +5,7 @@ import ExFormItem from 'components/ExFormItem';
 import { Form } from 'antd';
 import * as React from 'react';
 import { _Object } from 'customInterface';
+import { isEmpty, getIntersection, getAddition, getReduction } from 'utils/index';
 
 interface modalProps {
     onSubmit?:Function,
@@ -24,6 +25,7 @@ interface formProps {
 const EditForm:any = Form.create()((props:formProps) => {
     const { data, orgList, roleList, form } = props;
     const { getFieldDecorator } = form;
+    const roles = !isEmpty(data.roles)?data.roles.map((o:_Object)=>o.rid):[];
     return (
         <Form>
             {
@@ -66,8 +68,8 @@ const EditForm:any = Form.create()((props:formProps) => {
             <ExFormItem label="角色"
                 type="select"
                 mode="multiple"
-                name="roleIds"
-                initialValue={data.roleIds}
+                name="roles"
+                initialValue={roles}
                 list={roleList.map(o=>({id:o.rid,name:o.name}))}
                 placeholder="请选择"
                 required
@@ -149,9 +151,12 @@ const UserEditModalComp = connect((state:any) => {
     onSubmit (data:_Object) {
         // data.isPic=data.isPic?1:0;
         // data.roleIds = data.roleIds.join(',');
-        console.log(data);
+        const preRoles = this.props.userEditData.roles.map((o:_Object)=>o.rid)
+        const intersection = getIntersection(data.roles,preRoles);
+        const addRids = getAddition(data.roles,intersection);
+        const delRids = getReduction(preRoles,intersection);
         if (data.uid > 0) {
-            dispatch(action.updateUser(data)).then(() => {
+            dispatch(action.updateUser(data,addRids,delRids)).then(() => {
                 this.props.onClose();
                 // 重新加载列表
                 dispatch(action.selectOrg(data.orgId));

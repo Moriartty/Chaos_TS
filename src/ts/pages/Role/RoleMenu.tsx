@@ -4,7 +4,7 @@ import { Button, Icon, message } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import * as React from 'react';
 import { _Object } from 'customInterface';
-import { hasChildInTree } from 'utils/index';
+import { hasChildInTree, getIntersection, getAddition, getReduction } from 'utils/index';
 
 const levelColors = ['#eb2f96', '#fa8c16', '#13c2c2', '#2f54eb', '#fa541c'];
 
@@ -240,9 +240,12 @@ const RoleMenuComp = connect((state:any) => {
         //     message.success('权限更改成功！');
         // });
         const curRoleAuth = roleAuth.filter(item=>item);
-        const intersection = curRoleAuth.filter(item=>preRoleAuth.indexOf(item)>-1);
-        const addOids = curRoleAuth.filter(item=>!intersection.some(i=>item===i));
-        const delOids = preRoleAuth.filter(item=>!intersection.some(i=>item===i));
+        // const intersection = curRoleAuth.filter(item=>preRoleAuth.indexOf(item)>-1);
+        // const addOids = curRoleAuth.filter(item=>!intersection.some(i=>item===i));
+        // const delOids = preRoleAuth.filter(item=>!intersection.some(i=>item===i));
+        const intersection = getIntersection(curRoleAuth,preRoleAuth);
+        const addOids = getAddition(curRoleAuth,intersection);
+        const delOids = getReduction(preRoleAuth,intersection);
         const params = {
             addOids,delOids
         }

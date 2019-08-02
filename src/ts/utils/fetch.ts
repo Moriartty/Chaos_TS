@@ -96,6 +96,7 @@ function refreshToken(reqParams:requestParams){
 function _Fetch(reqParams:requestParams){
     require('../mock')(reqParams.url);
     let {method,url,params,opts} = reqParams;
+    opts = {withCookie:true,...opts};
     let fetchOpts:_Object = {
         method:method,
         headers:createHttpHeader(opts,method)
@@ -149,19 +150,19 @@ function handleException(err:Object){
     return Promise.reject({error: {message: ` ExceptionMessage = ${err}`}});
 }
 
-Fetch.get = function (url:string,params:Object,opts:any={}) {
+Fetch.get = function (url:string,params:Object,opts:any) {
     // console.log('get',arguments)
     // _Fetch({method:'get',...([].slice.call(arguments))});
     return _Fetch({method:'get',url,params,opts});
 }
 
-Fetch.post = function (url:string, params:Object={},opts:any={}) {
+Fetch.post = function (url:string, params:Object={},opts:any) {
     // console.log('post',[].slice.call(arguments));
     // _Fetch({method:'post',...([].slice.call(arguments))});
     return _Fetch({method:'post',url,params,opts});
 }
 
-Fetch.postFile = function (url:string, params:Object,opts:any={}) {
+Fetch.postFile = function (url:string, params:Object,opts:any) {
     _Fetch({method:'post',url,params,opts});
     // return newFetch(API.baseUrl+url, {
     //     method: 'POST',

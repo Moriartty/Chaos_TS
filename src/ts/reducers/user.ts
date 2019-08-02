@@ -92,7 +92,7 @@ export default (state:_Object, action:_Object) => {
             username: '',
             password: '',
             name: '',
-            roleIds: [],
+            roles: [],
             no: '',
             orgId: state.orgSelectedId,
             email: '',
@@ -102,8 +102,8 @@ export default (state:_Object, action:_Object) => {
     case 'USER_EDIT':
         (() => {
             newState.userEditShow = true;
-            const { uid, name, username, roleIds, no, orgId, email, phone } = action.data;
-            newState.userEditData = { uid, name, username, roleIds, no, orgId, email, phone };
+            const { uid, name, username, roles, no, orgId, email, phone } = action.data;
+            newState.userEditData = { uid, name, username, roles, no, orgId, email, phone };
         })();
         break;
     case 'USER_EDIT_CLOSE':

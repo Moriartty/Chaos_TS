@@ -6,7 +6,10 @@ import * as React from 'react';
 import { _Object } from 'customInterface';
 
 interface EditFormProps {
-    searchParams?:_Object
+    searchParams?:_Object,
+    trackType_allData?:Array<_Object>
+    form?:any,
+    verifyStates?:Array<_Object>
 }
 interface CompProps extends EditFormProps {
     onSearch:Function,
@@ -18,15 +21,19 @@ const SearchForm:any = Form.create({
     mapPropsToFields: (props:EditFormProps) => {
         const params = props.searchParams;
         return {
-            title: Form.createFormField({ value: params.title })
+            name: Form.createFormField({ value: params.name }),
+            trackType: Form.createFormField({ value: params.trackType }),
+            viewState: Form.createFormField({ value: params.viewState })
         };
     }
-})(props => {
-    const { form } = props;
+})((props:EditFormProps) => {
+    const { form,trackType_allData,verifyStates } = props;
     const { getFieldDecorator } = form;
     return (
         <Form>
-            <ExFormItem  label={'Title'} name={'title'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem  label={'Name'} name={'name'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem  type={'select'} list={trackType_allData.map(o=>({id:o.trackId,name:o.name}))} label={'TrackType'} name={'trackType'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem  type={'select'} list={verifyStates.map(o=>({id:o.state,name:o.stateMsg}))} label={'ViewState'} name={'viewState'} getFieldDecorator={getFieldDecorator}/>
         </Form>
     );
 });
@@ -45,7 +52,7 @@ class SearchModal extends React.Component<CompProps> {
         this.form = form;
     }
     render () {
-        const { show, onClose,searchParams} = this.props;
+        const { show, onClose,searchParams,trackType_allData,verifyStates} = this.props;
         return (
             <ExModal
                 visible={show}
@@ -53,15 +60,20 @@ class SearchModal extends React.Component<CompProps> {
                 onCancel={onClose}
                 onOk={this.handleSave}
             >
-                <SearchForm ref={this.saveFormRef} searchParams={searchParams}/>
+                <SearchForm 
+                    ref={this.saveFormRef} 
+                    searchParams={searchParams}
+                    trackType_allData={trackType_allData}
+                    verifyStates={verifyStates}
+                    />
             </ExModal>
         );
     }
 }
 
 const SearchModalComp = connect((state:any) => {
-    const { trackDemand_searchParams:searchParams } = state['track'];
-    return { searchParams };
+    const { trackDemand_searchParams:searchParams,trackType_allData,verifyStates } = state['track'];
+    return { searchParams,trackType_allData,verifyStates };
 }, null)(SearchModal);
 
 export default SearchModalComp;

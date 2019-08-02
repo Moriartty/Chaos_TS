@@ -2,8 +2,8 @@ import CONST from './const';
 import { _Object } from 'customInterface';
 const proAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐号系统后端：服务器
 const devAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐号系统后端：本地
-const proBaseUrl = 'http://'+location.host;
-const devBaseUrl:string = 'http://'+location.host;
+const proBaseUrl = 'http://18.139.226.56:8080';
+const devBaseUrl:string = 'http://18.139.226.56:8080';
 
 interface conf {
     baseUrl?:string,

@@ -2,7 +2,6 @@ import {connect} from 'react-redux';
 import {ExFormItem,ExModal} from 'components/index';
 import {Form,message} from 'antd';
 import action from 'actions/track';
-import moment from 'moment';
 import { _Object } from 'customInterface';
 import * as React from 'react';
 
@@ -47,7 +46,7 @@ const EditForm:any = Form.create({
         <Form>
             <ExFormItem type={'hidden'} name={'id'} getFieldDecorator={getFieldDecorator}/>
             <ExFormItem name={'name'} label={'name'} getFieldDecorator={getFieldDecorator} required/>
-            <ExFormItem name={'trackType'} label={'trackType'} type={'select'} list={trackType_allData.map(o=>({id:o.name,name:o.name}))} getFieldDecorator={getFieldDecorator} required/>
+            <ExFormItem name={'trackType'} label={'trackType'} type={'select'} list={trackType_allData.map(o=>({id:o.trackId,name:o.name}))} getFieldDecorator={getFieldDecorator} required/>
             {/* <ExFormItem name={'state'} label={'state'} getFieldDecorator={getFieldDecorator}/> */}
             <ExFormItem name={'testPath'} label={'testPath'} getFieldDecorator={getFieldDecorator}/>
             <ExFormItem name={'description'} label={'description'} getFieldDecorator={getFieldDecorator}/>

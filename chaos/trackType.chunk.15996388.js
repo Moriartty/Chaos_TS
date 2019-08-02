@@ -1,6 +1,6 @@
-webpackJsonp([6],{
+webpackJsonp([5],{
 
-/***/ 1598:
+/***/ 1602:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45,6 +45,7 @@ var react_redux_1 = __webpack_require__(77);
 var track_1 = __importDefault(__webpack_require__(1569));
 var antd_1 = __webpack_require__(43);
 var React = __importStar(__webpack_require__(0));
+var react_intl_1 = __webpack_require__(160);
 var Table = /** @class */ (function (_super) {
     __extends(Table, _super);
     function Table(props) {
@@ -65,17 +66,13 @@ var Table = /** @class */ (function (_super) {
     }
     Table.prototype.render = function () {
         var _this = this;
-        var _a = this.props, loading = _a.loading, list = _a.list, pageNo = _a.pageNo, dataCount = _a.dataCount, searchParams = _a.searchParams, onPageChange = _a.onPageChange, onPageSizeChange = _a.onPageSizeChange, isBatchDelState = _a.isBatchDelState;
+        var _a = this.props, loading = _a.loading, list = _a.list, pageNo = _a.pageNo, dataCount = _a.dataCount, searchParams = _a.searchParams, onPageChange = _a.onPageChange, onPageSizeChange = _a.onPageSizeChange, isBatchDelState = _a.isBatchDelState, operations = _a.operations;
         var selectedRowKeys = this.state.selectedRowKeys;
         var paginationOptions = { pageNo: pageNo, pageSize: searchParams.pageSize, dataCount: dataCount, onPageChange: onPageChange, onPageSizeChange: onPageSizeChange };
         var rowSelection;
         this.columns = [
-            { title: 'eventId', dataIndex: 'eventId' },
-            { title: 'eventType', dataIndex: 'eventType' },
-            { title: 'insertDate', dataIndex: 'insertDate' },
-            { title: 'param', dataIndex: 'param' },
-            { title: 'paramDescribe', dataIndex: 'paramDescribe' },
-            { title: 'trackType', dataIndex: 'trackType' },
+            { title: 'name', dataIndex: 'name' },
+            { title: 'trackId', dataIndex: 'trackId' },
         ];
         if (isBatchDelState) {
             rowSelection = {
@@ -87,10 +84,15 @@ var Table = /** @class */ (function (_super) {
             this.columns.push({
                 title: 'Action', dataIndex: '', key: '', render: function (data) {
                     return (React.createElement("span", null,
-                        React.createElement("a", { href: 'javascript:;', onClick: _this.props.handleEdit.bind(_this, data) }, "Edit"),
-                        React.createElement(antd_1.Divider, { type: 'vertical' }),
-                        React.createElement(antd_1.Popconfirm, { title: '确认删除？', onConfirm: function (e) { e.stopPropagation(); _this.props.handleDelete(data.id); }, onCancel: function (e) { return e.stopPropagation(); } },
-                            React.createElement("a", { href: 'javascript:;', onClick: function (e) { e.stopPropagation(); } }, "Delete"))));
+                        operations.indexOf('trackType_operation_modify') > -1 &&
+                            React.createElement("a", { href: 'javascript:;', onClick: _this.props.handleEdit.bind(_this, data) },
+                                React.createElement(react_intl_1.FormattedMessage, { id: 'trackType_operation_modify' })),
+                        operations.indexOf('trackType_operation_delete') > -1 &&
+                            React.createElement(React.Fragment, null,
+                                React.createElement(antd_1.Divider, { type: 'vertical' }),
+                                React.createElement(antd_1.Popconfirm, { title: '确认删除？', onConfirm: function (e) { e.stopPropagation(); _this.props.handleDelete(data.id); }, onCancel: function (e) { return e.stopPropagation(); } },
+                                    React.createElement("a", { href: 'javascript:;', onClick: function (e) { e.stopPropagation(); } },
+                                        React.createElement(react_intl_1.FormattedMessage, { id: 'trackType_operation_delete' }))))));
                 }
             });
         }
@@ -107,29 +109,30 @@ var Table = /** @class */ (function (_super) {
 }(React.Component));
 //这里有一个需要注意的问题，关于HOC组件使用ref无法获得真实组件的问题，添加withRef
 var TableComp = react_redux_1.connect(function (state) {
-    var _a = state['track'], loading = _a.trackInfo_loading, list = _a.trackInfo_list, page = _a.trackInfo_page, searchParams = _a.trackInfo_searchParams;
-    return __assign({ loading: loading, list: list }, page, { searchParams: searchParams });
+    var operations = state.app.menuObj['track/trackType'].functions;
+    var _a = state['track'], loading = _a.trackType_loading, list = _a.trackType_list, page = _a.trackType_page, searchParams = _a.trackType_searchParams;
+    return __assign({ loading: loading, list: list }, page, { searchParams: searchParams, operations: operations });
 }, function (dispatch) { return ({
     onPageSizeChange: function (pageSize) {
-        dispatch({ type: 'TRACK_INFO_SEARCHPARAM', params: { pageSize: pageSize } });
+        dispatch({ type: 'TRACK_TYPE_SEARCHPARAM_CHANGE', params: { pageSize: pageSize } });
     },
     /**
      * 换页
      * @param pageNo
      */
     onPageChange: function (pageNo) {
-        dispatch(track_1.default.loadTrackInfo(pageNo));
+        dispatch(track_1.default.loadTrackType(pageNo));
     },
     handleEdit: function (data, e) {
         e.stopPropagation();
-        dispatch({ type: 'TRACK_INFO_EDITMODAL_SHOW', show: true });
-        dispatch({ type: 'TRACK_INFO_EDITMODAL_DATA', data: data });
+        dispatch({ type: 'TRACK_TYPE_EDITMODAL_SHOW', show: true });
+        dispatch({ type: 'TRACK_TYPE_EDITMODAL_DATA', data: data });
     },
     handleDelete: function (id) {
-        dispatch(track_1.default.deleteTrackInfo(id));
+        dispatch(track_1.default.deleteTrack(id));
     },
     onBatch: function (keys) {
-        dispatch(track_1.default.batchDeleteTrackInfo(keys));
+        dispatch(track_1.default.batchDeleteTrack(keys));
     }
 }); }, null, { withRef: true })(Table);
 exports.default = TableComp;
@@ -137,7 +140,7 @@ exports.default = TableComp;
 
 /***/ }),
 
-/***/ 1599:
+/***/ 1603:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -175,14 +178,16 @@ var SearchForm = antd_1.Form.create({
     mapPropsToFields: function (props) {
         var params = props.searchParams;
         return {
-            title: antd_1.Form.createFormField({ value: params.title })
+            name: antd_1.Form.createFormField({ value: params.name }),
+            trackId: antd_1.Form.createFormField({ value: params.trackId })
         };
     }
 })(function (props) {
     var form = props.form;
     var getFieldDecorator = form.getFieldDecorator;
     return (React.createElement(antd_1.Form, null,
-        React.createElement(ExFormItem_1.default, { label: 'Title', name: 'title', getFieldDecorator: getFieldDecorator })));
+        React.createElement(ExFormItem_1.default, { label: 'Name', name: 'name', getFieldDecorator: getFieldDecorator }),
+        React.createElement(ExFormItem_1.default, { label: 'TrackId', name: 'trackId', getFieldDecorator: getFieldDecorator })));
 });
 var SearchModal = /** @class */ (function (_super) {
     __extends(SearchModal, _super);
@@ -211,7 +216,7 @@ var SearchModal = /** @class */ (function (_super) {
     return SearchModal;
 }(React.Component));
 var SearchModalComp = react_redux_1.connect(function (state) {
-    var searchParams = state['track'].trackInfo_searchParams;
+    var searchParams = state['track'].trackType_searchParams;
     return { searchParams: searchParams };
 }, null)(SearchModal);
 exports.default = SearchModalComp;
@@ -219,7 +224,7 @@ exports.default = SearchModalComp;
 
 /***/ }),
 
-/***/ 1600:
+/***/ 1604:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -274,26 +279,20 @@ var EditForm = antd_1.Form.create({
         // props.onChange(props.editData,changed[0]);
     },
     mapPropsToFields: function (props) {
-        var editData = props.editData, eventTypeCodes = props.eventTypeCodes;
+        var params = props.editData;
         return {
-            id: antd_1.Form.createFormField({ value: editData.id }),
-            eventId: antd_1.Form.createFormField({ value: editData.eventId }),
-            eventTypeCode: antd_1.Form.createFormField({ value: eventTypeCodes.find(function (o) { return o.name == editData.eventType; }).id }),
-            param: antd_1.Form.createFormField({ value: editData.param }),
-            paramDescribe: antd_1.Form.createFormField({ value: editData.paramDescribe }),
-            demandId: antd_1.Form.createFormField({ value: editData.demandId }),
+            id: antd_1.Form.createFormField({ value: params.id }),
+            name: antd_1.Form.createFormField({ value: params.name }),
+            trackId: antd_1.Form.createFormField({ value: params.trackId })
         };
     }
 })(function (props) {
-    var form = props.form, eventTypeCodes = props.eventTypeCodes, trackDemand_allData = props.trackDemand_allData;
+    var form = props.form;
     var getFieldDecorator = form.getFieldDecorator;
     return (React.createElement(antd_1.Form, null,
         React.createElement(index_1.ExFormItem, { type: 'hidden', name: 'id', getFieldDecorator: getFieldDecorator }),
-        React.createElement(index_1.ExFormItem, { name: 'eventId', label: 'eventId', getFieldDecorator: getFieldDecorator, required: true }),
-        React.createElement(index_1.ExFormItem, { type: 'select', list: eventTypeCodes, name: 'eventTypeCode', label: 'eventTypeCode', getFieldDecorator: getFieldDecorator, required: true }),
-        React.createElement(index_1.ExFormItem, { type: 'select', list: trackDemand_allData, showSearch: true, name: 'demandId', label: 'demandId', getFieldDecorator: getFieldDecorator, required: true }),
-        React.createElement(index_1.ExFormItem, { type: 'textarea', name: 'paramDescribe', label: 'paramDescribe', getFieldDecorator: getFieldDecorator }),
-        React.createElement(index_1.ExFormItem, { type: 'textarea', name: 'param', label: 'param', getFieldDecorator: getFieldDecorator })));
+        React.createElement(index_1.ExFormItem, { name: 'name', label: 'name', getFieldDecorator: getFieldDecorator }),
+        React.createElement(index_1.ExFormItem, { name: 'trackId', label: 'trackId', getFieldDecorator: getFieldDecorator })));
 });
 var EditModal = /** @class */ (function (_super) {
     __extends(EditModal, _super);
@@ -305,9 +304,6 @@ var EditModal = /** @class */ (function (_super) {
                 if (err) {
                     return;
                 }
-                data.trackType = _this.props.trackDemand_allData.find(function (o) {
-                    return o.id = data.demandId;
-                }).trackType;
                 _this.props.onSubmit(data);
             });
         };
@@ -320,21 +316,21 @@ var EditModal = /** @class */ (function (_super) {
         return _this;
     }
     EditModal.prototype.render = function () {
-        var _a = this.props, show = _a.show, onClose = _a.onClose, editData = _a.editData, loading = _a.loading, eventTypeCodes = _a.eventTypeCodes, trackDemand_allData = _a.trackDemand_allData;
-        return (React.createElement(index_1.ExModal, { visible: show, confirmLoading: loading, title: editData.id ? 'Edit' : 'Add', onCancel: onClose, onOk: this.handleSave, width: 600 },
-            React.createElement(EditForm, { ref: this.saveFormRef, editData: editData, onChange: this.fieldsOnChange, eventTypeCodes: eventTypeCodes, trackDemand_allData: trackDemand_allData })));
+        var _a = this.props, show = _a.show, onClose = _a.onClose, editData = _a.editData, loading = _a.loading;
+        return (React.createElement(index_1.ExModal, { visible: show, confirmLoading: loading, title: editData.id ? 'Edit' : 'Add', onCancel: onClose, onOk: this.handleSave },
+            React.createElement(EditForm, { ref: this.saveFormRef, editData: editData, onChange: this.fieldsOnChange })));
     };
     return EditModal;
 }(React.Component));
 var EditModalComp = react_redux_1.connect(function (state) {
-    var _a = state['track'], show = _a.trackInfo_editModalShow, editData = _a.trackInfo_editData, editModalLoading = _a.trackInfo_editModalLoading, eventTypeCodes = _a.eventTypeCodes, trackDemand_allData = _a.trackDemand_allData;
-    return { show: show, editData: editData, loading: editModalLoading, eventTypeCodes: eventTypeCodes, trackDemand_allData: trackDemand_allData };
+    var _a = state['track'], show = _a.trackType_editModalShow, editData = _a.trackType_editData, editModalLoading = _a.trackType_editModalLoading;
+    return { show: show, editData: editData, loading: editModalLoading };
 }, function (dispatch) { return ({
     onSubmit: function (data) {
-        dispatch(track_1.default.addOrEditTrackInfo(data));
+        dispatch(track_1.default.addOrEditTrackType(data));
     },
     onClose: function () {
-        dispatch({ type: 'TRACK_INFO_EDITMODAL_SHOW', show: false });
+        dispatch({ type: 'TRACK_TYPE_EDITMODAL_SHOW', show: false });
     }
 }); })(EditModal);
 exports.default = EditModalComp;
@@ -342,7 +338,7 @@ exports.default = EditModalComp;
 
 /***/ }),
 
-/***/ 885:
+/***/ 886:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -375,16 +371,17 @@ var track_1 = __importDefault(__webpack_require__(1569));
 var app_1 = __importDefault(__webpack_require__(78));
 var react_redux_1 = __webpack_require__(77);
 // import Toolbar from './Toolbar';
-var Table_1 = __importDefault(__webpack_require__(1598));
-var Toolbar_1 = __importDefault(__webpack_require__(1572));
-var SearchModal_1 = __importDefault(__webpack_require__(1599));
+var Table_1 = __importDefault(__webpack_require__(1602));
+var Toolbar_1 = __importDefault(__webpack_require__(1573));
+var SearchModal_1 = __importDefault(__webpack_require__(1603));
 var antd_1 = __webpack_require__(43);
-var EditModal_1 = __importDefault(__webpack_require__(1600));
+var EditModal_1 = __importDefault(__webpack_require__(1604));
+var react_intl_1 = __webpack_require__(160);
 var React = __importStar(__webpack_require__(0));
 __webpack_require__(1575);
-var TrackInfoMgr = /** @class */ (function (_super) {
-    __extends(TrackInfoMgr, _super);
-    function TrackInfoMgr(props) {
+var TrackTypeMgr = /** @class */ (function (_super) {
+    __extends(TrackTypeMgr, _super);
+    function TrackTypeMgr(props) {
         var _this = _super.call(this, props) || this;
         _this.onCancelBatchDel = function () {
             _this.setState({ isBatchDelState: false });
@@ -401,54 +398,61 @@ var TrackInfoMgr = /** @class */ (function (_super) {
         _this.table = React.createRef();
         return _this;
     }
-    TrackInfoMgr.prototype.componentDidMount = function () {
+    TrackTypeMgr.prototype.componentDidMount = function () {
         this.props.init();
     };
-    TrackInfoMgr.prototype.render = function () {
+    TrackTypeMgr.prototype.render = function () {
         var _this = this;
-        var _a = this.props, onRefresh = _a.onRefresh, onSearch = _a.onSearch;
+        var _a = this.props, onRefresh = _a.onRefresh, onSearch = _a.onSearch, operations = _a.operations;
         return (React.createElement("div", { className: 'trackTypeContainer' },
             React.createElement(Toolbar_1.default, { onRefresh: onRefresh }, this.state.isBatchDelState ? (React.createElement(React.Fragment, null,
                 React.createElement(antd_1.Button, { onClick: this.onCancelBatchDel }, "\u53D6\u6D88"),
                 React.createElement(antd_1.Button, { onClick: this.onConfirmBatchDel, type: 'primary', style: { marginLeft: 20 } }, "\u786E\u5B9A\u5220\u9664"))) : (React.createElement(React.Fragment, null,
-                React.createElement(antd_1.Button, { onClick: function () { return _this.props.onAdd(); }, style: { marginLeft: 20 }, icon: 'plus' }, "\u65B0\u589E"),
-                React.createElement(antd_1.Button, { type: 'primary', style: { marginLeft: 20 }, onClick: function () { return _this.setState({ isBatchDelState: true }); }, icon: 'trash' }, '批量删除')))),
+                React.createElement(antd_1.Button, { onClick: function () { _this.setState({ showSearchModal: true }); }, icon: 'search' }, "\u67E5\u8BE2"),
+                operations.indexOf('trackType_operation_add') > -1 &&
+                    React.createElement(antd_1.Button, { onClick: function () { return _this.props.onAdd(); }, style: { marginLeft: 20 }, icon: 'plus' },
+                        React.createElement(react_intl_1.FormattedMessage, { id: 'trackType_operation_add' })),
+                operations.indexOf('trackType_operation_delete') > -1 &&
+                    React.createElement(antd_1.Button, { type: 'primary', style: { marginLeft: 20 }, onClick: function () { return _this.setState({ isBatchDelState: true }); }, icon: 'delete' },
+                        React.createElement(react_intl_1.FormattedMessage, { id: 'trackType_operation_batchDelete' }))))),
             React.createElement(EditModal_1.default, null),
             React.createElement(SearchModal_1.default, { show: this.state.showSearchModal, onSearch: onSearch, onClose: function () { _this.setState({ showSearchModal: false }); } }),
             React.createElement(Table_1.default, { isBatchDelState: this.state.isBatchDelState, ref: this.table })));
     };
-    return TrackInfoMgr;
+    return TrackTypeMgr;
 }(React.Component));
-var TrackInfoMgrComp = react_redux_1.connect(null, function (dispatch) { return ({
+var TrackTypeMgrComp = react_redux_1.connect(function (state) {
+    var operations = state.app.menuObj['track/trackType'].functions;
+    return { operations: operations };
+}, function (dispatch) { return ({
     /**
      * page数据初始化加载
      */
     init: function () {
         dispatch(app_1.default.getSearchParamsFromLocalStorage()).then(function () {
-            dispatch(track_1.default.loadAllTrackDemand());
-            dispatch(track_1.default.loadTrackInfo());
+            dispatch(track_1.default.loadTrackType());
         });
     },
     /**
      * 点击刷新或操作
      */
     onRefresh: function () {
-        dispatch(track_1.default.loadTrackInfo());
+        dispatch(track_1.default.loadTrackType());
     },
     /**
      * 查询
      * @param params
      */
     onSearch: function (params) {
-        dispatch({ type: 'TRACK_INFO_SEARCHPARAM_CHANGE', params: params });
-        dispatch(track_1.default.loadTrackInfo(1));
+        dispatch({ type: 'TRACK_TYPE_SEARCHPARAM_CHANGE', params: params });
+        dispatch(track_1.default.loadTrackType(1));
     },
     onAdd: function () {
-        dispatch({ type: 'TRACK_INFO_EDITMODAL_SHOW', show: true });
-        dispatch({ type: 'TRACK_INFO_EDITMODAL_RESET' });
+        dispatch({ type: 'TRACK_TYPE_EDITMODAL_SHOW', show: true });
+        dispatch({ type: 'TRACK_TYPE_EDITMODAL_RESET' });
     }
-}); })(TrackInfoMgr);
-module.exports = TrackInfoMgrComp;
+}); })(TrackTypeMgr);
+module.exports = TrackTypeMgrComp;
 
 
 /***/ })

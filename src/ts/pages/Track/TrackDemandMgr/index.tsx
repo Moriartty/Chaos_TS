@@ -8,6 +8,7 @@ import SearchModal from './SearchModal';
 import {Button} from "antd"
 import EditModal from './EditModal';
 import VerifyModal from './VerifyModal';
+import AddInfoModal from './addInfoModal';
 import * as React from 'react';
 import { _Object } from 'customInterface';
 require('less/track.less');
@@ -49,7 +50,7 @@ class TrackDemandMgr extends React.Component<CompProps,CompState> {
         this.table.current.wrappedInstance.onBatchDel();
     }
     handleToggle = () => {
-        this.props.onViewStateChange((~~this.props.viewState===0)?1:0);
+        this.props.onViewStateChange((this.props.viewState!==0)?0:null);
     }
 
     render () {
@@ -65,9 +66,9 @@ class TrackDemandMgr extends React.Component<CompProps,CompState> {
                             </React.Fragment>
                         ):(
                             <React.Fragment>
-                                {/* <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button> */}
+                                <Button onClick={() => { this.setState({ showSearchModal: true }); }} icon={'search'}>查询</Button>
                                 <Button onClick={()=>this.props.onAdd()} icon={'plus'}>新增</Button>
-                                <Button type={'primary'} onClick={this.handleToggle} style={{marginLeft:20}}>{~~viewState===1?'返回普通查看':'查看我的待审核'}</Button>
+                                <Button type={'primary'} onClick={this.handleToggle} style={{marginLeft:20}}>{viewState===0?'返回普通查看':'查看我的待审核'}</Button>
                                 {/* <Button type={'primary'} style={{marginLeft:20}} onClick={()=>this.setState({isBatchDelState:true})} icon={'trash'}>{'批量删除'}</Button> */}
                             </React.Fragment>
                         )
@@ -76,6 +77,7 @@ class TrackDemandMgr extends React.Component<CompProps,CompState> {
                 </Toolbar>
                 <EditModal/>
                 <VerifyModal/>
+                <AddInfoModal/>
                 <SearchModal
                     show={this.state.showSearchModal}
                     onSearch={onSearch}
@@ -97,6 +99,7 @@ const TrackDemandMgrComp = connect((state:any)=>{
         dispatch(appAction.getSearchParamsFromLocalStorage()).then(()=>{
             dispatch(action.loadAllTrackType());
             dispatch(action.loadTrackDemand());
+            dispatch(action.loadAllTrackDemand());
         })
     },
     /**

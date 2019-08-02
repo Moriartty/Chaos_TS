@@ -4,6 +4,7 @@ import action from 'actions/track';
 import {Divider,Popconfirm,Button, Tag} from 'antd';
 import * as React from 'react';
 import { _Object } from 'customInterface';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 interface CompProps {
     loading?:boolean, 
@@ -15,6 +16,7 @@ interface CompProps {
     onPageSizeChange?:Function,
     handleEdit?:Function,
     handleDelete?:Function,
+    handleAddInfo?:Function,
     isBatchDelState?:boolean,
     onBatch?:Function,
     handleVerify?:Function,
@@ -67,14 +69,20 @@ class Table extends React.Component<CompProps,CompState> {
         }else{
             this.columns.push( {
                 title:'Action',dataIndex:'',key:'',render:(data:_Object)=>{
+                    let _opt = [];
+                    if(~~data.state===0&&operations.indexOf('trackDemand_operation_verify')>-1)
+                            _opt.push(<a href={"javascript:;"} key={'verify'} onClick={this.props.handleVerify.bind(this,data)}><FormattedMessage id="trackDemand_operation_verify"/></a>);
+                    if(~~data.state===0&&operations.indexOf('trackDemand_operation_modify')>-1)
+                            _opt.push(<a href={"javascript:;"} key={'modify'} onClick={this.props.handleEdit.bind(this,data)}><FormattedMessage id="trackDemand_operation_modify"/></a>);
+                    if(~~data.state===1&&operations.indexOf('trackDemand_operation_addInfo')>-1)
+                        _opt.push(<a href={"javascript:;"} key={'addInfo'} onClick={this.props.handleAddInfo.bind(this,data.id)}><FormattedMessage id="trackDemand_operation_addInfo"/></a>)
                     return (
                         <span>
+                            
                             {
-                                ~~data.state===0&&operations.indexOf('trackDemand_operation_verify')>-1&&
-                                <a href={'javascript:;'} onClick={this.props.handleVerify.bind(this,data)}>审核</a>
+                                _opt.joinItem((i:any) => <Divider key={i} type="vertical"/>)
                             }
-
-                            {/* <a href={'javascript:;'} onClick={this.props.handleEdit.bind(this,data)}>Edit</a> */}
+                            
                             {/* <Divider type={'vertical'}/>
                             <Popconfirm
                                 title={'确认删除？'}
@@ -141,6 +149,11 @@ let TableComp = connect((state:any) => {
     },
     handleDelete(id:number){
         dispatch(action.deleteTrackDemand(id));
+    },
+    handleAddInfo(demandId:number,e:any){
+        e.stopPropagation();
+        dispatch({type:'TRACK_DEMAND_ADDINFOMODAL_SHOW',show:true});
+        dispatch({type:'TRACK_DEMAND_ADDINFOMODAL_DATA',data:{demandId}});
     },
     onBatch(keys:Array<number>){
         dispatch(action.batchDeleteTrackDemand(keys))
