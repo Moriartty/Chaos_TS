@@ -4,10 +4,6 @@ import { _Object } from 'customInterface';
 const defaultState:_Object = {
     loading:false,
     systemList:[],
-    langList:[
-        {id:0,name:'zh_CN'},
-        {id:1,name:'en_US'}
-    ],
     searchParams:{
         strKey:'',
         strVal:'',

@@ -2,9 +2,12 @@
 import Fetch from '../utils/fetch';
 import { _Object } from 'customInterface';
 import API from 'config/const';
+import {proBaseUrls} from 'config/api';
 import {message} from 'antd';
 import appAction from 'actions/app'
 let actions:_Object = {};
+
+const trackOpts = {baseUrl:proBaseUrls.baseUrl1};
 
 /**
  * 加载埋点类型列表(分页)
@@ -23,7 +26,7 @@ actions.loadTrackType = (pageNo:number, pageSize:number) => (dispatch:any, getSt
         page: pageNo || page.pageNo,
         size: pageSize || page.pageSize
     }
-    return Fetch.post(API.TRACK_TYPE_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
+    return Fetch.post(API.TRACK_TYPE_GETALL_BYPAGE,{data:dataParam,page:pageParam},trackOpts ).then((data:any) => {
         dispatch({ type: 'TRACK_TYPE_LOADING', loading: false });
         dispatch({
             type: 'TRACK_TYPE_LOAD',
@@ -39,7 +42,7 @@ actions.loadTrackType = (pageNo:number, pageSize:number) => (dispatch:any, getSt
  * 加载全部trackType数据
  */
 actions.loadAllTrackType = () => (dispatch:any) => {
-    return Fetch.get(API.TRACK_TYPE_GETALL,{}).then((data:Array<_Object>)=>{
+    return Fetch.get(API.TRACK_TYPE_GETALL,{},trackOpts).then((data:Array<_Object>)=>{
         dispatch({type:'TRACK_TYPE_ALLDATA',list:data});
     })
 }
@@ -49,7 +52,7 @@ actions.loadAllTrackType = () => (dispatch:any) => {
  * 新增或编辑track
  */
 actions.addOrEditTrackType = (data:_Object) => (dispatch:any) => {
-    Fetch.post(API.TRACK_TYPE_SAVE,data).then(()=>{
+    Fetch.post(API.TRACK_TYPE_SAVE,data,{},trackOpts).then(()=>{
         message.success('操作成功');
         dispatch({type:'TRACK_TYPE_EDITMODAL_SHOW',show:false})
         dispatch(actions.loadTrackType())
@@ -62,7 +65,7 @@ actions.addOrEditTrackType = (data:_Object) => (dispatch:any) => {
  * 删除一个埋点类型
  */
 actions.deleteTrack = (key:number) => (dispatch:any) => {
-    Fetch.get(API.TRACK_TYPE_REMOVE+'/'+key,{}).then(()=>{
+    Fetch.get(API.TRACK_TYPE_REMOVE+'/'+key,{},trackOpts).then(()=>{
         message.success('操作成功');
         dispatch(actions.loadTrackType())
     }).catch((err:any)=>{
@@ -73,7 +76,7 @@ actions.deleteTrack = (key:number) => (dispatch:any) => {
  * 批量删除埋点类型
  */
 actions.batchDeleteTrack = (keys:Array<number>) => {
-    Fetch.get(API.TRACK_TYPE_BATCHREMOVE,{ids:keys.join(',')}).then((data:any)=>{
+    Fetch.get(API.TRACK_TYPE_BATCHREMOVE,{ids:keys.join(',')},trackOpts).then((data:any)=>{
         message.success('操作成功');
     }).catch((err:any)=>{
         message.warn('操作失败');
@@ -96,7 +99,7 @@ actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, get
         page: pageNo || page.pageNo,
         size: pageSize || page.pageSize
     }
-    return Fetch.post(API.TRACK_DEMAND_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
+    return Fetch.post(API.TRACK_DEMAND_GETALL_BYPAGE,{data:dataParam,page:pageParam},trackOpts).then((data:any) => {
         dispatch({ type: 'TRACK_DEMAND_LOADING', loading: false });
         dispatch({
             type: 'TRACK_DEMAND_LOAD',
@@ -112,7 +115,7 @@ actions.loadTrackDemand = (pageNo:number, pageSize:number) => (dispatch:any, get
  * 加载全部trackDemand数据
  */
 actions.loadAllTrackDemand = () => (dispatch:any) => {
-    return Fetch.get(API.TRACK_DEMAND_GETALL,{}).then((data:Array<_Object>)=>{
+    return Fetch.get(API.TRACK_DEMAND_GETALL,{},trackOpts).then((data:Array<_Object>)=>{
         dispatch({type:'TRACK_DEMAND_ALLDATA',list:data});
     })
 }
@@ -121,7 +124,7 @@ actions.loadAllTrackDemand = () => (dispatch:any) => {
  * 新增或编辑trackDemand
  */
 actions.addOrEditTrackDemand = (data:_Object) => (dispatch:any) => {
-    Fetch.post(API.TRACK_DEMAND_SAVE,data).then(()=>{
+    Fetch.post(API.TRACK_DEMAND_SAVE,data,trackOpts).then(()=>{
         message.success('操作成功');
         dispatch({type:'TRACK_DEMAND_EDITMODAL_SHOW',show:false})
         dispatch(actions.loadTrackDemand())
@@ -134,7 +137,7 @@ actions.addOrEditTrackDemand = (data:_Object) => (dispatch:any) => {
  * 删除一个埋点需求
  */
 actions.deleteTrackDemand = (key:number) => (dispatch:any) => {
-    Fetch.get(API.TRACK_DEMAND_REMOVE+'/'+key,{}).then(()=>{
+    Fetch.get(API.TRACK_DEMAND_REMOVE+'/'+key,{},trackOpts).then(()=>{
         message.success('操作成功');
         dispatch(actions.loadTrackDemand())
     }).catch((err:any)=>{
@@ -145,7 +148,7 @@ actions.deleteTrackDemand = (key:number) => (dispatch:any) => {
  * 批量删除埋点需求
  */
 actions.batchDeleteTrackDemand = (keys:Array<number>) => () => {
-    Fetch.get(API.TRACK_DEMAND_BATCHREMOVE,{ids:keys.join(',')}).then((data:any)=>{
+    Fetch.get(API.TRACK_DEMAND_BATCHREMOVE,{ids:keys.join(',')},trackOpts).then((data:any)=>{
         message.success('操作成功');
     }).catch((err:any)=>{
         message.warn('操作失败');
@@ -160,7 +163,7 @@ actions.verifyTrackDemand = (state:number,data:_Object) => (dispatch:any) => {
         verifyResult:state,
         verifyMessage:data.verifyMessage
     }
-    Fetch.post(API.TRACK_DEMAND_VERIFY,{map:params}).then(()=>{
+    Fetch.post(API.TRACK_DEMAND_VERIFY,{map:params},trackOpts).then(()=>{
         dispatch({type:'TRACK_DEMAND_VERIFYMODAL_SHOW',show:false});
         dispatch(actions.loadTrackDemand());
         message.success('操作成功');
@@ -180,14 +183,11 @@ actions.loadTrackInfo = (pageNo:number, pageSize:number) => (dispatch:any, getSt
         'EQ_eventType':params['eventType'],
         'EQ_trackType':params['trackType']
     };
-    // Object.keys(params).forEach((o:string)=>{
-    //     dataParam['EQ_'+o] = params[o];
-    // });
     const pageParam = {
         page: pageNo || page.pageNo,
         size: pageSize || page.pageSize
     }
-    return Fetch.post(API.TRACK_INFO_GETALL_BYPAGE,{data:dataParam,page:pageParam} ).then((data:any) => {
+    return Fetch.post(API.TRACK_INFO_GETALL_BYPAGE,{data:dataParam,page:pageParam},trackOpts ).then((data:any) => {
         dispatch({ type: 'TRACK_INFO_LOADING', loading: false });
         dispatch({
             type: 'TRACK_INFO_LOAD',
@@ -204,7 +204,7 @@ actions.loadTrackInfo = (pageNo:number, pageSize:number) => (dispatch:any, getSt
  * 新增或编辑track
  */
 actions.addOrEditTrackInfo = (data:_Object) => (dispatch:any) => {
-    Fetch.post(API.TRACK_INFO_SAVE,data).then(()=>{
+    Fetch.post(API.TRACK_INFO_SAVE,data,trackOpts).then(()=>{
         message.success('操作成功');
         dispatch({type:'TRACK_INFO_EDITMODAL_SHOW',show:false})
         dispatch(actions.loadTrackInfo())

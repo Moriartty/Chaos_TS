@@ -27,7 +27,6 @@ const EditForm:any = Form.create()((props:formProps) => {
                 name="desc"
                 initialValue={data.desc}
                 placeholder="输入对角色的描述..."
-                required
                 getFieldDecorator={getFieldDecorator}/>
             <ExFormItem type="hidden"
                 name="id"

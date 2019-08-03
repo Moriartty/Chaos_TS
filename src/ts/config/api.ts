@@ -4,6 +4,9 @@ const proAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐�
 const devAccountBaseUrl = 'https://www.test-teye.com/sso';//个人测试用帐号系统后端：本地
 const proBaseUrl = 'http://18.139.226.56:8080';
 const devBaseUrl:string = 'http://18.139.226.56:8080';
+const proBaseUrls = {
+    baseUrl1:'http://18.139.226.56:8080'
+}
 
 interface conf {
     baseUrl?:string,
@@ -41,6 +44,7 @@ export {
     resourceBaseUrl,
     proBaseUrl,
     devBaseUrl,
+    proBaseUrls,
     proAccountBaseUrl,
     devAccountBaseUrl
 }

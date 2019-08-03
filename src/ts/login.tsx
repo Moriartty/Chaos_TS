@@ -5,8 +5,8 @@ import * as React from 'react';
 import { Provider, connect } from 'react-redux';
 
 // react 国际化
-import zhCN from 'config/language/zhCN';
-import enUS from 'config/language/enUS';
+// import zhCN from 'config/language/zhCN';
+// import enUS from 'config/language/enUS';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import * as intl from 'intl';
 import * as zh from 'react-intl/locale-data/zh';
@@ -16,6 +16,7 @@ import * as en from 'react-intl/locale-data/en';
 // 需要放入本地数据库
 import store from 'appStore';
 import App from 'components/App';
+import appAction from 'actions/app';
 //引入自定义类型
 import {RootProps, _Object} from 'customInterface';
 
@@ -23,6 +24,7 @@ import {RootProps, _Object} from 'customInterface';
 import 'less/app.less';
 
 import 'utils/polyfill';
+import { isEmpty } from './utils';
 
 const ReactDOM = require('react-dom');// react-intl语言包
 //en,zh都是对象数组，需要做下转换
@@ -33,16 +35,16 @@ addLocaleData([...EN.default, ...ZH.default]);
 
 const Login = require('pages/Login');
 
-function chooseLocale (lang:string) {
-    switch (lang.split('-')[0]) {
-    case 'en':
-        return enUS;
-    case 'zh':
-        return zhCN;
-    default:
-        return zhCN;
-    }
-}
+// function chooseLocale (lang:string) {
+//     switch (lang.split('-')[0]) {
+//     case 'en':
+//         return enUS;
+//     case 'zh':
+//         return zhCN;
+//     default:
+//         return zhCN;
+//     }
+// }
 
 /**
  * @param {String}  msg    错误信息
@@ -59,23 +61,31 @@ function chooseLocale (lang:string) {
 // };
 
 class Root extends React.Component<RootProps> {
+    componentDidMount(){
+        this.props.init();
+    }
     render () {
-        const lang = this.props.locale;
+        const {locale:lang,langs} = this.props;
         return (
-            <IntlProvider key={lang} locale={lang} messages={chooseLocale(lang)}>
+            !isEmpty(langs)?
+            <IntlProvider key={lang} locale={lang} messages={langs}>
                 <Provider store={this.props.store}>
                     <App>
                         <Login/>
                     </App>
                 </Provider>
-            </IntlProvider>
+            </IntlProvider>:''
         );
     }
 }
 const RootComponent = connect((state:any) => {
-    const { locale } = state.app;
-    return { locale };
-}, null)(Root);
+    const { locale,langs } = state.app;
+    return { locale,langs };
+}, dispatch=>({
+    init(){
+        dispatch(appAction.toggleLocale());
+    }
+}))(Root);
 
 ReactDOM.render(
     <RootComponent store={store}/>

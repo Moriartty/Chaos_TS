@@ -114,7 +114,8 @@ const FieldTranslationComp = connect((state:any)=>{
      * @param params
      */
     onSearch (params:_Object) {
-        dispatch({ type: 'FIELDTRANS_SEARCHPARAM_CHANGE', params });
+        console.log(params);
+        dispatch({ type: 'FIELDTRANS_SEARCHPARAMS_CHANGE', params });
         dispatch(action.loadFieldsData(1));
     },
     onAdd(){

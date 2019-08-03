@@ -6,7 +6,10 @@ import * as React from 'react';
 import { _Object } from 'customInterface';
 
 interface EditFormProps {
-    searchParams?:_Object
+    searchParams?:_Object,
+    systemList?:Array<_Object>,
+    langList?:Array<_Object>,
+    form?:any
 }
 interface CompProps extends EditFormProps {
     onSearch:Function,
@@ -24,15 +27,20 @@ const SearchForm:any = Form.create({
             language: Form.createFormField({ value: params.language })
         };
     }
-})(props => {
-    const { form } = props;
+})((props:EditFormProps) => {
+    const { form,systemList,langList } = props;
     const { getFieldDecorator } = form;
     return (
         <Form>
             <ExFormItem  label={'strKey'} name={'strKey'} getFieldDecorator={getFieldDecorator}/>
             <ExFormItem  label={'strVal'} name={'strVal'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem  label={'system'} name={'systemId'} getFieldDecorator={getFieldDecorator}/>
-            <ExFormItem  label={'language'} name={'language'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem  type={'select'} list={systemList.map(o=>{
+                return {
+                    id:o.oid,
+                    name:o.name
+                }
+            })} label={'system'} name={'systemId'} getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem  type={'select'} list={langList} label={'language'} name={'language'} getFieldDecorator={getFieldDecorator}/>
         </Form>
     );
 });
@@ -51,7 +59,7 @@ class SearchModal extends React.Component<CompProps> {
         this.form = form;
     }
     render () {
-        const { show, onClose,searchParams} = this.props;
+        const { show, onClose,searchParams,systemList,langList} = this.props;
         return (
             <ExModal
                 visible={show}
@@ -59,15 +67,21 @@ class SearchModal extends React.Component<CompProps> {
                 onCancel={onClose}
                 onOk={this.handleSave}
             >
-                <SearchForm ref={this.saveFormRef} searchParams={searchParams}/>
+                <SearchForm 
+                    ref={this.saveFormRef} 
+                    searchParams={searchParams}
+                    systemList={systemList}
+                    langList={langList}
+                    />
             </ExModal>
         );
     }
 }
 
 const SearchModalComp = connect((state:any) => {
-    const { searchParams } = state['fieldTranslation'];
-    return { searchParams };
+    const {langList} = state['app'];
+    const { searchParams,systemList } = state['fieldTranslation'];
+    return { searchParams,systemList,langList };
 }, null)(SearchModal);
 
 export default SearchModalComp;

@@ -122,7 +122,7 @@ action.updateRoleMenu = (roleId:number,data:any) => (dispatch:any) => {
  */
 function addRole (data:_Object) {
     return (dispatch:any) => {
-        return Fetch.post('/role/create', {
+        return Fetch.post(API.USER_CREATE, {
             name: data.name,
             desc: data.desc
         });
@@ -153,9 +153,7 @@ action.updateRole = updateRole;
  */
 function deleteRole (id:number|string) {
     return (dispatch:any) => {
-        return Fetch.post('/role/delete', {
-            id: id
-        }).then(() => {
+        return Fetch.post(API.USER_REMOVE, id).then(() => {
             // 取消当前选择的角色
             dispatch({ type: 'ROLE_SELECT', role: {} });
 

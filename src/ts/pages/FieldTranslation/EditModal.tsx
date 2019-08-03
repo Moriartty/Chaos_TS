@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 import {ExFormItem,ExModal} from 'components/index';
 import {Form,message} from 'antd';
 import action from 'actions/fieldTranslation';
+import appAction from 'actions/app';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { _Object } from 'customInterface';
 import * as React from 'react';
@@ -32,7 +33,12 @@ const EditForm:any = Form.create({
     },
     mapPropsToFields:(props:EditFormProps)=> {
         const params = props.editData;
-        const str = JSON.stringify({strKey:params.strKey,strVal:params.strVal});
+        let str:string = '';
+        if(params.strKey&&params.strVal){
+            let temp:_Object = {};
+            temp[params.strKey] = params.strVal;
+            str = JSON.stringify(temp);
+        }
         return {
             id:Form.createFormField({value:params.id}),
             str: Form.createFormField({ value: str }),
@@ -80,7 +86,6 @@ class EditModal extends React.Component<CompProps>{
 
     render(){
         const {editModalShow:show,onClose,editData,editModalLoading:loading,systemList,langList} = this.props;
-        console.log(this.props);
         return (
             <ExModal
                 visible={show}
@@ -102,25 +107,35 @@ class EditModal extends React.Component<CompProps>{
 }
 
 let EditModalComp = connect((state:any)=>{
-    const {editModalShow,editData,editModalLoading,systemList,langList} = state['fieldTranslation'];
+    const {langList} = state['app'];
+    const {editModalShow,editData,editModalLoading,systemList} = state['fieldTranslation'];
     return {editModalShow,editData,editModalLoading,systemList,langList};
 },dispatch=>({
     
     onSubmit(data:_Object){
         const str = JSON.parse(data.str);
-        if(Object.keys(str).length>1){
-            let arr:_Object = [];
-            Object.keys(str).forEach(o=>{
-                arr.push({
+        if(!data.id){
+            if(Object.keys(str).length>1){
+                let arr:_Object = [];
+                Object.keys(str).forEach(o=>{
+                    arr.push({
+                        systemId:data.systemId,
+                        language:data.language,
+                        strKey:o,
+                        strVal:str[o]
+                    })
+                })
+                dispatch(action.batchCreate(arr));
+            }else{
+                dispatch(action.create({
                     systemId:data.systemId,
                     language:data.language,
-                    strKey:o,
-                    strVal:str[o]
-                })
-            })
-            dispatch(action.batchCreate(data));
+                    strKey:Object.keys(str)[0],
+                    strVal:str[Object.keys(str)[0]]
+                }))
+            }
         }else{
-            dispatch(action.create({
+            dispatch(action.edit({
                 systemId:data.systemId,
                 language:data.language,
                 strKey:Object.keys(str)[0],

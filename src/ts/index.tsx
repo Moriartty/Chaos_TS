@@ -1,14 +1,3 @@
-// import * as React from "react";
-// import * as ReactDOM from "react-dom";
-
-// import { Hello } from "components/Hello";
-
-// ReactDOM.render(
-//     <Hello compiler="TypeScript" framework="React" />,
-//     document.getElementById("container")
-// );
-
-
 import * as React from 'react';
 import { Provider, connect } from 'react-redux';
 
@@ -17,8 +6,8 @@ import { Provider, connect } from 'react-redux';
 // import zhCN from 'antd/lib/locale-provider/zh_CN';
 
 // react 国际化
-import zhCN from 'config/language/zhCN';
-import enUS from 'config/language/enUS';
+// import zhCN from 'config/language/zhCN';
+// import enUS from 'config/language/enUS';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import * as intl from 'intl';
 import * as zh from 'react-intl/locale-data/zh';
@@ -39,6 +28,7 @@ import 'less/app.less';
 import 'utils/polyfill';
 // SVG字体
 import 'utils/iconfont';
+import { isEmpty } from './utils';
 const ReactDOM = require('react-dom');// react-intl语言包
 //en,zh都是对象数组，需要做下转换
 const EN:_Object = en,ZH:_Object = zh;
@@ -58,38 +48,41 @@ addLocaleData([...EN.default, ...ZH.default]);
 //    });
 // };
 
-function chooseLocale (lang:string) {
-    switch (lang.split('-')[0]) {
-    case 'en':
-        return enUS;
-    case 'zh':
-        return zhCN;
-    default:
-        return zhCN;
-    }
-}
-
+// function chooseLocale (lang:string) {
+//     switch (lang.split('-')[0]) {
+//     case 'en':
+//         return enUS;
+//     case 'zh':
+//         return zhCN;
+//     default:
+//         return zhCN;
+//     }
+// }
 class Root extends React.Component<RootProps> {
+    componentDidMount(){
+        this.props.init();
+    }
     render () {
-        const lang = this.props.locale;
-        this.props.loadLang();
+        const {locale:lang,langs} = this.props;
         return (
-            <IntlProvider key={lang} locale={lang} messages={chooseLocale(lang)}>
+            //加载好翻译再渲染组件
+            !isEmpty(langs)?
+            <IntlProvider key={lang} locale={lang} messages={langs}>
                 <Provider store={this.props.store}>
                     <App>
                         <MasterPage/>
                     </App>
                 </Provider>
-            </IntlProvider>
+            </IntlProvider>:''
         );
     }
 }
 const RootComponent = connect((state:any) => {
-    const { locale } = state.app;
-    return { locale };
+    const { locale,langs } = state.app;
+    return { locale,langs };
 }, dispatch=>({
-    loadLang(){
-        dispatch(appAction.loadUserInfo());
+    init(){
+        dispatch(appAction.toggleLocale());
     }
 }))(Root);
 

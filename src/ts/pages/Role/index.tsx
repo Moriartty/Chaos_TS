@@ -75,7 +75,7 @@ class Role extends React.Component<CompProps> {
                                             }
                                             {
                                                 operations.indexOf('role_operation_delete') >= 0 && (
-                                                    <Popconfirm placement="left" title="确定删除该角色？" onConfirm={onDelete.bind(this, role.id)}>
+                                                    <Popconfirm placement="left" title="确定删除该角色？" onConfirm={onDelete.bind(this, role.rid)}>
                                                         <Button ghost size="small" shape="circle" icon="delete" type="danger"/>
                                                     </Popconfirm>
                                                 )

@@ -6,6 +6,8 @@ import {_Object} from 'customInterface';
 import { isEmpty,getUriParams } from '.';
 import CONST from 'config/const';
 
+console.log(process.env.NODE_ENV);
+
 const ReactDOM = require('react-dom');
 const Err50x = (cb:Function) => { require.ensure([], require => { cb(require('pages/Error/50x')); }); };
 const Fetch:_Object = {};
@@ -111,7 +113,8 @@ function _Fetch(reqParams:requestParams){
             break;
         default: break;
     }
-    return newFetch((opts.baseUrl||API.baseUrl)+url , fetchOpts , opts ).then(response => {
+    const baseUrl = process.env.NODE_ENV==='production'?opts.baseUrl:API.baseUrl;
+    return newFetch(baseUrl+url , fetchOpts , opts ).then(response => {
         return handleResponse(reqParams, response);
     }).catch(handleException)
 }
@@ -157,8 +160,6 @@ Fetch.get = function (url:string,params:Object,opts:any) {
 }
 
 Fetch.post = function (url:string, params:Object={},opts:any) {
-    // console.log('post',[].slice.call(arguments));
-    // _Fetch({method:'post',...([].slice.call(arguments))});
     return _Fetch({method:'post',url,params,opts});
 }
 

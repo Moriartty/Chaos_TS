@@ -9,7 +9,12 @@ import { _Object } from 'customInterface';
  * 这里可以唯一知道新旧状态的地方
  */
 const defaultState:_Object = {
-    locale: 'en-US',
+    locale: navigator.language||'en-US',
+    langs:{},
+    langList:[
+        {id:0,name:'zh_CN'},
+        {id:1,name:'en_US'}
+    ],
     loadType:'browser',//网页打开方式，是在浏览器还是在webview中打开
     panes: [],
     activeTab: '',
@@ -44,6 +49,7 @@ export default (state:_Object, action:_Object) => {
     switch (action.type) {
         case 'APP_TOGGLE_LOCALE':
             newState.locale = action.locale;
+            newState.langs = action.langs;
             break;
         case 'APP_CHANGE_LOADTYPE':
             newState.loadType = action.loadType;

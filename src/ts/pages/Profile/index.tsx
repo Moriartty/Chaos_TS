@@ -46,12 +46,13 @@ class Profile extends React.Component<CompProps,CompState>{
                 <fieldset>
                     <legend><Icon type="tag-o"/> 基本信息</legend>
                     <div style={{ maxWidth: 800 }}>
-                        <ExFormItem label="姓名" type="static" initialValue={info.name}/>
+                        <ExFormItem label='帐户名' name='username' initialValue={info.username} getFieldDecorator={getFieldDecorator}/>
+                        <ExFormItem label="姓名" name='name' initialValue={info.name||''} getFieldDecorator={getFieldDecorator}/> 
                         <ExFormItem label="性别"
                             type="radio"
                             name="sex"
                             initialValue={info.sex}
-                            list={[{ id: '男', name: '男' }, { id: '女', name: '女' }]}
+                            list={[{ id: 0, name: '男' }, { id: 1, name: '女' }]}
                             getFieldDecorator={getFieldDecorator}/>
                         <ExFormItem label="生日"
                             type="date"
@@ -59,13 +60,13 @@ class Profile extends React.Component<CompProps,CompState>{
                             initialValue={info.birthday}
                             getFieldDecorator={getFieldDecorator}/>
                         <ExFormItem label="籍贯"
-                            name="nativePlace"
-                            initialValue={info.nativePlace}
+                            name="birthplace"
+                            initialValue={info.birthplace}
                             getFieldDecorator={getFieldDecorator}/>
                         <ExFormItem label="组织" type="static" initialValue={info.org}/>
-                        <ExFormItem label="上次登录时间" type="static" initialValue={info.lastLogin}/>
-                        <ExFormItem label="注册时间" type="static" initialValue={info.createTime}/>
-                        <ExFormItem label="用户角色" type='select' name='role' list={roleList} getFieldDecorator={getFieldDecorator}/>
+                        {/* <ExFormItem label="上次登录时间" type="static" initialValue={info.lastLogin}/>
+                        <ExFormItem label="注册时间" type="static" initialValue={info.createTime}/> */}
+                        <ExFormItem label="用户角色" type='select' name='role' list={roleList.map((o:_Object)=>({id:o.rid,name:o.name}))} getFieldDecorator={getFieldDecorator}/>
                     </div>
                 </fieldset>
                 <fieldset>
@@ -78,17 +79,16 @@ class Profile extends React.Component<CompProps,CompState>{
                         <ExFormItem label="电话"
                             name="phone"
                             initialValue={info.phone}
-                            required
                             getFieldDecorator={getFieldDecorator}/>
-                        <ExFormItem label="座机"
+                        {/* <ExFormItem label="座机"
                             name="tel"
                             initialValue={info.tel}
-                            getFieldDecorator={getFieldDecorator}/>
+                            getFieldDecorator={getFieldDecorator}/> 
                         <ExFormItem label="住址"
                             type="textarea"
                             name="address"
                             initialValue={info.address}
-                            getFieldDecorator={getFieldDecorator}/>
+                            getFieldDecorator={getFieldDecorator}/> */}
                     </div>
                 </fieldset>
                 <hr/>
@@ -117,6 +117,7 @@ const ProfileComp = connect((state:any) => {
      * @param data
      */
     onSubmit (data:_Object) {
+        console.log(data);
         this.setState({ loading: true });
         dispatch(action.update(data)).then(() => {
             message.success('保存成功!');

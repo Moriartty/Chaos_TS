@@ -10,7 +10,7 @@ let actions:_Object = {};
  * 获取系统列表
  */
 actions.loadSystemList = () => (dispatch:any) => {
-    return Fetch.get('/menu/systems').then((data:Array<_Object>)=>{
+    return Fetch.get(API.APP_GETALLSYSTEM).then((data:Array<_Object>)=>{
         dispatch({type:'FIELDTRANS_SYSTEMLIST_LOAD',list:data});
         return data;
     })
@@ -26,17 +26,17 @@ actions.loadFieldsData = (pageNo:number,pageSize:number) => (dispatch:any,getSta
     const page = state.page;
     let params = {
         ...searchParams,
-        pageNo: pageNo || page.pageNo,
-        sizeNo: pageSize || page.pageSize
+        currentPage: pageNo || page.pageNo,
+        pageSize: pageSize || page.pageSize
     }
     Fetch.get(API.FIELDTRANS_GETALL,params).then((data:any)=>{
         dispatch({ type: 'FIELDTRANS_LOADING', loading: false });
         dispatch({
             type: 'FIELDTRANS_DATA_LOAD',
-            pageNo: pageNo || data.page.currPage,
-            pageSize: data.page.size,
-            dataCount: data.page.total,
-            list: data.data
+            pageNo: pageNo || data.currentPage,
+            pageSize: data.pageSize,
+            dataCount: data.totalDataCount,
+            list: data.list
         });
         dispatch(appAction.setSearchParamsInLocalStorage(params,'FIELDTRANS_SEARCHPARAM_CHANGE'));
     })
@@ -67,9 +67,7 @@ actions.batchCreate = (data:_Object) => (dispatch:any) => {
     })
 }
 
-/**
- * 编辑trackDemand
- */
+
 actions.edit = (data:_Object) => (dispatch:any) => {
     Fetch.post(API.FIELDTRANS_MODIFY,data).then(()=>{
         message.success('操作成功');

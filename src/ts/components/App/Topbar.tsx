@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import action from 'actions/app';
-import { Layout, Row, Col, Divider,Icon,Modal,Dropdown,Menu,Avatar,Badge } from 'antd';
+import { Layout, Row, Col, Divider,Icon,Modal,Dropdown,Menu,Avatar,Badge,Drawer } from 'antd';
 import LocaleToggle from 'components/LocaleToggle';
 import { FormattedMessage, injectIntl } from 'react-intl';
 const { Header } = Layout;
@@ -21,12 +21,14 @@ interface CompProps {
     userInfo?:_Object,
     isLogin?:boolean,
     onNav?:Function,
-    onLogout?:Function
+    onLogout?:Function,
+    viewNotification?:Function
 }
 interface CompState {
     icon?: string,
     count?: number,
-    visible?: boolean
+    visible?: boolean,
+    drawerVisible?:boolean
 }
 class Topbar extends React.Component<CompProps,CompState> {
     constructor(props:CompProps){
@@ -34,7 +36,8 @@ class Topbar extends React.Component<CompProps,CompState> {
         this.state  = {
             icon: 'arrows-alt',
             count: 100,
-            visible: false
+            visible: false,
+            drawerVisible:false
         };
     }
     
@@ -55,21 +58,21 @@ class Topbar extends React.Component<CompProps,CompState> {
     };
 
     render () {
-        const { menuData, onMenuChange,locale,activeTab,userInfo,isLogin,onNav,onLogout } = this.props;
+        const { menuData, onMenuChange,locale,activeTab,userInfo,isLogin,onNav,onLogout,viewNotification } = this.props;
         const { visible,icon } = this.state;
 
         const menu = (
             <Menu className='menu'>
                 <Menu.ItemGroup title='用户中心' className='menu-group'>
-                    <Menu.Item>你好</Menu.Item>
+                    <Menu.Item>你好，{userInfo.username}</Menu.Item>
                     <Menu.Item onClick={onNav.bind(this, 'profile')}>个人信息</Menu.Item>
                     {/*<Menu.Item><span>切换系统</span></Menu.Item>*/}
                     <Menu.Item><span onClick={()=>onLogout()}>退出登录</span></Menu.Item>
                 </Menu.ItemGroup>
-                <Menu.ItemGroup title='设置中心' className='menu-group'>
+                {/* <Menu.ItemGroup title='设置中心' className='menu-group'>
                     <Menu.Item>个人设置</Menu.Item>
                     <Menu.Item>系统设置</Menu.Item>
-                </Menu.ItemGroup>
+                </Menu.ItemGroup> */}
             </Menu>
         )
         const login = (
@@ -102,7 +105,7 @@ class Topbar extends React.Component<CompProps,CompState> {
                                 <ul className='header-ul'>
                                     {/*<li><LocaleToggle/></li>*/}
                                     <li><Icon type={icon} onClick={this.screenfullToggle}/></li>
-                                    <li onClick={() => this.setState({count: 0})}>
+                                    <li onClick={() => this.setState({drawerVisible:true})}>
                                         <Badge count={10} overflowCount={99} style={{marginRight: -17}}>
                                             <Icon type="notification"/>
                                         </Badge>
@@ -123,6 +126,17 @@ class Topbar extends React.Component<CompProps,CompState> {
                         </Col>
                     </Row>
                 </Header>
+                <Drawer
+                    title="Basic Drawer"
+                    placement="right"
+                    closable={false}
+                    onClose={()=>this.setState({drawerVisible:false})}
+                    visible={this.state.drawerVisible}
+                    >
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                </Drawer>
             </PotentialError>
         );
     }
@@ -152,6 +166,9 @@ const TopbarComp = connect((state:any) => {
                 else
                     dispatch(action.loadTabPage(item.list[0].module));
         }
+    },
+    viewNotification(){
+
     },
     /**
      * 导航菜单页面

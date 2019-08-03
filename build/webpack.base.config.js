@@ -8,7 +8,7 @@ const path=require('path');
 // const theme=require('../theme');
 const APP_NAME='Chaos_TS';
 //控制是否需要登陆认证
-const needAuth = 'false';
+const needAuth = 'true';
 
 // 生产环境
 var isProd = process.env.NODE_ENV === 'production';

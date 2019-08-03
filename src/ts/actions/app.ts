@@ -15,8 +15,27 @@ let action:_Object = {};
 /**
  * 切换语言
  */
-action.toggleLocale = (newLocale:string) => (dispatch:any) => {
-    dispatch({ type: 'APP_TOGGLE_LOCALE', locale: newLocale });
+action.toggleLocale = (newLocale:string) => (dispatch:any,getState:any) => {
+    const langList = getState().app.langList;
+    const _newLocale = (newLocale||getState().app.locale).replace(/-/,'_'); 
+
+    let params = {
+        systemId:66,
+        language:langList.find((o:_Object)=>o.name===_newLocale).id,
+        currentPage: 1,
+        pageSize: 100000
+    }
+    let temp:_Object = {};
+    Fetch.get(API.FIELDTRANS_GETALL,params).then((data:any)=>{
+        data.list.forEach((o:_Object)=>{
+            temp[o.strKey] = o.strVal;
+        })
+        dispatch({ 
+            type: 'APP_TOGGLE_LOCALE', 
+            locale: _newLocale.replace(/_/,'-'),
+            langs:temp
+        });
+    })
 };
 /**
  * 获取指定region数据
@@ -178,6 +197,7 @@ action.login = (loginName:string, password:string, section:string,autoLogin:numb
         if(!isEmpty(json)){
             setCookie('access_token',json.accessToken);
             setCookie('refresh_token',json.refreshToken);
+            localStorage.setItem('uid',json.uid);
         }
         return json;
     });
@@ -194,6 +214,7 @@ action.logout = () => (dispatch:any) => {
     }).then(()=>{
         delCookie('access_token');
         delCookie('refresh_token');
+        localStorage.setItem('uid','');
         dispatch({ type: 'APP_LOGOUT' });
         return Promise.resolve();
     }).catch((err:any)=>{
@@ -217,10 +238,13 @@ action.isExpiration = () => (dispatch:any) =>
 /**
  * 加载用户信息
  */
-action.loadUserInfo = () => (dispatch:any) => Fetch.get('/profile').then((data:any) => {
-    dispatch({ type: 'APP_SET_USER_INFO', info: data });
-    return data;
-});
+action.loadUserInfo = () => (dispatch:any) => {
+    const uid = localStorage.getItem('uid');
+    return Fetch.get(API.USER_INFO_LOAD,{uid}).then((data:any) => {
+        dispatch({ type: 'APP_SET_USER_INFO', info: data });
+        return data;
+    });
+}
 
 /**
  * 加载用户指定系统下的所有操作权限列表
@@ -234,10 +258,12 @@ action.loadUserAuth = () => (dispatch:any) => Fetch.get('/user/auth').then((data
  * @returns {Function}
  */
 action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => {
-    Promise.all([Fetch.get('/role/auth'),Fetch.get('/menu/user')]).then((data:Array<any>)=>{
-        const roleAuth = data[0];
-        let userMenu = data[1];
-        dispatch({type:'APP_SET_USER_AUTHLIST',list:roleAuth});
+    // Promise.all([Fetch.get('/role/auth'),Fetch.get('/menu/user')]).then((data:Array<any>)=>{
+    const uid = localStorage.getItem('uid');
+    return Fetch.get(API.MENU_USERTREE_LOAD,{uid:uid,systemId:66}).then((data:_Object)=>{
+        let roleAuth:Array<_Object> = [];
+        let userMenu = data.list;
+        
         //这里可以固定某些菜单页面
         let obj:_Object = {};
         function recursive (item:_Object, no:number|string) {
@@ -248,9 +274,12 @@ action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => {
                     o.id = o.oid;
                     const menu = menuConfig[o.module];
                     if (menu) {
+                        roleAuth.push(...o.list);
                         o.page = menu.page;
                         o.icon = menu.icon;
-                        o.functions = roleAuth.findAll(o.oid,'pid').map((k:_Object)=>k.name);
+                        // o.functions = roleAuth.findAll(o.oid,'pid').map((k:_Object)=>k.name);
+                        o.functions = o.list.map((k:_Object)=>k.name);
+                        o.list = null;
                         obj[o.module] = o;
                     }
                     recursive(o, num);
@@ -263,13 +292,17 @@ action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => {
             item.id = item.oid;
             const menu = menuConfig[item.module];
             if (menu) {
+                roleAuth.push(...item.list);
                 item.page = menu.page;
                 item.icon = menu.icon;
-                item.functions = roleAuth.findAll(item.oid,'pid').map((k:_Object)=>k.name);
+                // item.functions = roleAuth.findAll(item.oid,'pid').map((k:_Object)=>k.name);
+                item.functions = item.list.map((o:_Object)=>o.name);
+                item.list = null;
                 obj[item.module] = item;
             }
             recursive(item, no);
         });
+        dispatch({type:'APP_SET_USER_AUTHLIST',list:roleAuth});
         dispatch({
             type: 'APP_SET_MENU',
             data:userMenu,
@@ -289,6 +322,11 @@ action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => {
     
         return userMenu;
     })
+    // Promise.all(
+    //     [
+    //         Fetch.get('/role/auth'),
+    //         Fetch.get(API.MENU_TREE_LOAD,{uid:uid,systemId:66})
+    //     ])
 };
 
 /**

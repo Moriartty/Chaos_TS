@@ -5,5 +5,7 @@ export interface _Object {
 export interface RootProps {
     locale:string,
     store:any,
-    loadLang?:Function
+    loadLang?:Function,
+    init?:Function,
+    langs?:_Object
 }

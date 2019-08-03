@@ -1,4 +1,5 @@
 import Fetch from 'utils/fetch';
+import API from 'config/const';
 import { _Object } from 'customInterface';
 let action:_Object = {};
 
@@ -20,8 +21,9 @@ action.updatePassword = (data:any) => (dispatch:any) => Fetch.post('/profile/upd
  * 加载角色列表
  * @returns {Function}
  */
-action.loadRoleList = () => (dispatch:any) => Fetch.get('/role').then((list:any) => {
+action.loadRoleList = () => (dispatch:any) => Fetch.get(API.ROLE_ALLDATA_LOAD,{}).then((list:any) => {
     dispatch({ type: 'PROFILE_ROLE_LIST_LOAD', list: list });
 });
+
 
 export default action;
