@@ -20,7 +20,6 @@ class LocaleToggle extends React.Component<CompProps> {
     }
     handleClick = (item:_Object,e:any) => {
         this.props.changeLocale(item.key);
-         e.stopPropagation(); 
     }
     render () {
         const curLocale = this.props.locale;

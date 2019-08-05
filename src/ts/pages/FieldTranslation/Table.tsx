@@ -5,6 +5,7 @@ import {Divider,Popconfirm,Button} from 'antd';
 import * as React from 'react';
 import { _Object } from 'customInterface';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { lang } from 'moment';
 
 interface CompProps {
     loading?:boolean, 
@@ -18,7 +19,9 @@ interface CompProps {
     handleDelete?:Function,
     isBatchDelState?:boolean,
     onBatch?:Function,
-    operations?:Array<string>
+    operations?:Array<string>,
+    systemList?:Array<_Object>,
+    langList?:Array<_Object>
 }
 interface CompState {
     selectedRowKeys:Array<any>
@@ -42,15 +45,19 @@ class Table extends React.Component<CompProps,CompState> {
         this.setState({selectedRowKeys:[]});
     }
     render () {
-        const { loading, list, pageNo, dataCount, searchParams, onPageChange, onPageSizeChange,isBatchDelState,operations } = this.props;
+        const { loading, list, pageNo, dataCount, searchParams, onPageChange, onPageSizeChange,isBatchDelState,operations,systemList,langList } = this.props;
         const {selectedRowKeys} = this.state;
         const paginationOptions = { pageNo, pageSize: searchParams.pageSize, dataCount, onPageChange, onPageSizeChange };
         let rowSelection;
         this.columns = [
             { title: 'strKey', dataIndex: 'strKey' },
             { title: 'strVal', dataIndex:'strVal'},
-            { title: 'system', dataIndex:'systemId'},
-            { title: 'language', dataIndex:'language'},
+            { title: 'system', dataIndex:'systemId',render:(value:number)=>{
+                return systemList.find((o:_Object)=>o.oid===value).name
+            }},
+            { title: 'language', dataIndex:'language',render:(value:number)=>{
+                return langList.find((o:_Object)=>o.id===value).name
+            }},
         ];
         if(isBatchDelState){
             rowSelection = {
@@ -112,9 +119,10 @@ class Table extends React.Component<CompProps,CompState> {
 }
 //这里有一个需要注意的问题，关于HOC组件使用ref无法获得真实组件的问题，添加withRef
 let TableComp = connect((state:any) => {
+    const {langList} = state['app'];
     const operations = state.app.menuObj['systemConfig/fieldTranslation'].functions;
-    const { loading, list, page, searchParams } = state['fieldTranslation'];
-    return { loading, list, ...page, searchParams,operations };
+    const { loading, list, page, searchParams,systemList } = state['fieldTranslation'];
+    return { loading, list, ...page, searchParams,operations,langList,systemList };
 }, dispatch => ({
     onPageSizeChange ( pageSize:number) {
         dispatch({ type: 'FIELDTRANS_SEARCHPARAM', params: { pageSize } });

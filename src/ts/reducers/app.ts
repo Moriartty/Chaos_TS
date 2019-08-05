@@ -15,6 +15,8 @@ const defaultState:_Object = {
         {id:0,name:'zh_CN'},
         {id:1,name:'en_US'}
     ],
+    alertPriority:['success','info','warning','error'],
+    notifications:[],
     loadType:'browser',//网页打开方式，是在浏览器还是在webview中打开
     panes: [],
     activeTab: '',
@@ -83,7 +85,7 @@ export default (state:_Object, action:_Object) => {
         case 'APP_SET_USER_INFO':
             newState.userInfo = action.info;
             // 头像加上时间戮，避免图片缓存
-            newState.userInfo.avatar += `?v=${new Date().getTime()}`;
+            // newState.userInfo.avatar += `?v=${new Date().getTime()}`;
             break;
         case 'APP_UNREAD_COUNT':
             newState.unreadCount = action.count;
@@ -104,6 +106,9 @@ export default (state:_Object, action:_Object) => {
                 desc: action.obj.desc ? action.obj.desc : state.notification.desc,
                 duration: action.obj.duration ? action.obj.duration : state.notification.duration
             };
+            break;
+        case 'APP_NOTIFICATION_LOAD':
+            newState.notifications = action.list;
             break;
         default:return state || defaultState;
     }

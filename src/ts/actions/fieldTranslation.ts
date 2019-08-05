@@ -38,7 +38,7 @@ actions.loadFieldsData = (pageNo:number,pageSize:number) => (dispatch:any,getSta
             dataCount: data.totalDataCount,
             list: data.list
         });
-        dispatch(appAction.setSearchParamsInLocalStorage(params,'FIELDTRANS_SEARCHPARAM_CHANGE'));
+        dispatch(appAction.setSearchParamsInLocalStorage(params,'FIELDTRANS_SEARCHPARAMS_CHANGE'));
     })
 }
 

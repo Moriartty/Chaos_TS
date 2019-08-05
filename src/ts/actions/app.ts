@@ -8,6 +8,7 @@ import {setCookieWithScope,setCookie,delCookieWithScope, getCookie,delCookie} fr
 import {_Object} from 'customInterface';
 import { isEmpty } from 'utils/index';
 import API from 'config/const';
+import actions from './home';
 
 const Err403 = (cb:Function) => { require.ensure([], require => { cb(require('pages/Error/403')); }); };
 let action:_Object = {};
@@ -335,5 +336,17 @@ action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => {
 action.loadDataInfo = () => (dispatch:any) => Fetch.get('/common/current-date').then((info:any) => {
     dispatch({ type: 'APP_DATE_INFO', info });
 });
+
+action.loadNotifications = () => (dispatch:any,getState:any) => {
+    let list:_Object = []
+    for(let i=0;i<10;i++){
+        list.push({
+            id:i,
+            message:'消息通知'+i,
+            priority:Math.floor(Math.random()*3+1)
+        })
+    }
+    dispatch({type:'APP_NOTIFICATION_LOAD',list});
+}
 
 export default action;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import action from 'actions/app';
-import { Layout, Row, Col, Divider,Icon,Modal,Dropdown,Menu,Avatar,Badge,Drawer } from 'antd';
+import { Layout, Row, Col, Divider,Icon,Modal,Dropdown,Menu,Avatar,Badge,Drawer,Alert } from 'antd';
 import LocaleToggle from 'components/LocaleToggle';
 import { FormattedMessage, injectIntl } from 'react-intl';
 const { Header } = Layout;
@@ -22,7 +22,9 @@ interface CompProps {
     isLogin?:boolean,
     onNav?:Function,
     onLogout?:Function,
-    viewNotification?:Function
+    viewNotification?:Function,
+    notifications?:Array<any>,
+    alertPriority?:Array<any>
 }
 interface CompState {
     icon?: string,
@@ -58,9 +60,8 @@ class Topbar extends React.Component<CompProps,CompState> {
     };
 
     render () {
-        const { menuData, onMenuChange,locale,activeTab,userInfo,isLogin,onNav,onLogout,viewNotification } = this.props;
+        const { menuData, onMenuChange,locale,activeTab,userInfo,isLogin,onNav,onLogout,viewNotification,notifications,alertPriority } = this.props;
         const { visible,icon } = this.state;
-
         const menu = (
             <Menu className='menu'>
                 <Menu.ItemGroup title='用户中心' className='menu-group'>
@@ -127,15 +128,20 @@ class Topbar extends React.Component<CompProps,CompState> {
                     </Row>
                 </Header>
                 <Drawer
-                    title="Basic Drawer"
+                    title="NOTIFICATION"
                     placement="right"
                     closable={false}
                     onClose={()=>this.setState({drawerVisible:false})}
                     visible={this.state.drawerVisible}
+                    width={'30%'}
                     >
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
+                        <ul style={{listStyle:'none',paddingLeft:0}}>
+                            {
+                                notifications.map((o:_Object)=>{
+                                    return <li key={o.id} style={{marginBottom:10}}><Alert message={o.message} type={alertPriority[o.priority]}/></li>
+                                })
+                            }
+                        </ul>
                 </Drawer>
             </PotentialError>
         );
@@ -143,8 +149,8 @@ class Topbar extends React.Component<CompProps,CompState> {
 }
 
 const TopbarComp = connect((state:any) => {
-    const { menuData ,locale,activeTab,userInfo,isLogin} = state.app;
-    return { menuData ,locale,activeTab,userInfo,isLogin};
+    const { menuData ,locale,activeTab,userInfo,isLogin,notifications,alertPriority} = state.app;
+    return { menuData ,locale,activeTab,userInfo,isLogin,notifications,alertPriority};
 }, dispatch => ({
     /**
      * 切换侧边栏菜单
