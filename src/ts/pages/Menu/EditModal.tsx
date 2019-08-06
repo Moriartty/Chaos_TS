@@ -100,7 +100,6 @@ const EditForm:any = Form.create({
                         name='urls'
                         initialValue={data.urls}
                         placeholder='请填写该操作对应的url'
-                      
                         getFieldDecorator={getFieldDecorator}
                     />
                 )
@@ -112,6 +111,22 @@ const EditForm:any = Form.create({
                 onText="显示"
                 offText="隐藏"
                 required
+                getFieldDecorator={getFieldDecorator}/>
+            {
+                type===1 && (
+                    <ExFormItem
+                        label="SystemUrl"
+                        name='systemUrl'
+                        initialValue={data.systemUrl}
+                        placeholder='请填写该系统访问的url'
+                        getFieldDecorator={getFieldDecorator}
+                    />
+                )
+            }
+            <ExFormItem label="描述"
+                type="textarea"
+                name="description"
+                initialValue={data.description}
                 getFieldDecorator={getFieldDecorator}/>
             <ExFormItem type="hidden"
                 name="oid"

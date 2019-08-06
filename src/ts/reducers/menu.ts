@@ -14,7 +14,9 @@ const defaultState:_Object = {
         name: "",
         oid: '',
         pid: '',
-        type: ""
+        type: "",
+        description:'',
+        systemUrl:''
     },
     systemList:[],
     systemEditModalShow:false,
@@ -61,12 +63,14 @@ export default (state:_Object, action:_Object) => {
                 type: action._type, // 1系统，2目录，3菜单，4操作
                 module: '',
                 name: '',
+                systemUrl:'',
+                description:'',
                 display: 1,
             };
             break;
         case 'MENU_EDIT':
             newState.editShow = true;
-            const { oid, module, name, display, pid,type } = action.data;
+            const { oid, module, name, display, pid,type,description,systemUrl } = action.data;
             newState.editData = {
                 pid,
                 type, // 1系统，2目录，3菜单，4操作
@@ -74,6 +78,8 @@ export default (state:_Object, action:_Object) => {
                 module,
                 name,
                 display,
+                description,
+                systemUrl
             };
             break;
         case 'MENU_EDIT_CLOSE':

@@ -83,6 +83,7 @@ action.loadList = loadList;
  */
 action.addMenu = (data:any) => (dispatch:any) => {
     return Fetch.post(API.MENU_NODE_CREATE, data).then((data:any)=>{
+        dispatch(action.loadSystemList());
         dispatch(action.loadList())
         message.success('操作成功');
     }).catch((err:any)=>{
@@ -95,20 +96,50 @@ action.addMenu = (data:any) => (dispatch:any) => {
  * @param data
  * @returns {Function}
  */
-action.updateMenu = (data:any) => (dispatch:any) => Fetch.post('/menu/update', data);
+action.updateMenu = (data:any) => (dispatch:any) => {
+    return Fetch.post(API.MENU_NODE_UPDATE,data).then(()=>{
+        dispatch(action.loadSystemList());
+        dispatch(action.loadList());
+    }).catch((err:any)=>{
+
+    })
+}
 
 /**
  * 删除菜单
  * @param id
  * @returns {Function}
  */
-action.deleteMenu = (id:any) => (dispatch:any) => 
-    Fetch.post(API.MENU_OPERATION_REMOVE, { oid:id }).then(()=>{
+action.deleteMenu = (id:any) => (dispatch:any,getState:any) => {
+    let target = getState().menu.list.find((o:_Object)=>{
+        return o.id == id;
+    });
+    let deleteSet:Array<_Object> = [];
+    function recursive (item:any) {
+        if (item.list && item.list.length) {
+            item.list.forEach(function (o:_Object, i:number, list:Array<any>) {
+                deleteSet.push(o);
+                recursive(o);
+            });
+        }
+    }
+    deleteSet.push(target);
+    recursive(target);
+    //需要按type从高到低排序
+    deleteSet.sort((o1:_Object,o2:_Object)=>{
+        return o2.type-o1.type;
+    })
+
+    return Fetch.post(API.MENU_OPERATION_REMOVE, {oids:deleteSet.map((o:_Object)=>{return o.id}).join(',')} ).then(()=>{
+        target.type==1&&dispatch({type:'MENU_SEARCHPARAMS_CHANGE',params:{selectedSystem:null}});
+        dispatch(action.loadSystemList());
         dispatch(action.loadList())
         message.success('操作成功');
     }).catch((err:any)=>{
         message.success('操作失败');
     });
+
+}
 
 /**
  * 移动菜单

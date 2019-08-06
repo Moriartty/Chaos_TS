@@ -41,6 +41,7 @@ class Table extends React.Component<CompProps> {
                 )
             },
             { title: '菜单标签', dataIndex: 'module', render: (value:any) => value && <Tag color="geekblue">{value}</Tag> },
+            { title: '描述', dataIndex:'description'},
             { title: '状态', dataIndex: 'display', render: (value:any) => value === 1 ? <Badge status="success" text="显示"/> : <Badge status="default" text="隐藏"/> }
         ];
 

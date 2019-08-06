@@ -40,6 +40,7 @@ class Profile extends React.Component<CompProps,CompState>{
 
     render () {
         const { userInfo: info, form,roleList } = this.props;
+        console.log(info);
         const { getFieldDecorator } = form;
         return (
             <Form onSubmit={this.submit}>
@@ -66,7 +67,14 @@ class Profile extends React.Component<CompProps,CompState>{
                         <ExFormItem label="组织" type="static" initialValue={info.org}/>
                         {/* <ExFormItem label="上次登录时间" type="static" initialValue={info.lastLogin}/>
                         <ExFormItem label="注册时间" type="static" initialValue={info.createTime}/> */}
-                        <ExFormItem label="用户角色" type='select' name='role' list={roleList.map((o:_Object)=>({id:o.rid,name:o.name}))} getFieldDecorator={getFieldDecorator}/>
+                        <ExFormItem 
+                            label="用户角色" 
+                            mode={'multiple'} 
+                            type='select' 
+                            name='role' 
+                            initialValue={info.roles.map((o:_Object)=>o.rid)}
+                            list={roleList.map((o:_Object)=>({id:o.rid,name:o.name}))} 
+                            getFieldDecorator={getFieldDecorator}/>
                     </div>
                 </fieldset>
                 <fieldset>

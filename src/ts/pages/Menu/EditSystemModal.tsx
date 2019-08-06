@@ -21,7 +21,9 @@ const EditForm = Form.create({
         return {
             oid: Form.createFormField({ value : params.oid }),
             pid: Form.createFormField({ value : null }),
-            name: Form.createFormField({ value : params.systemName })
+            name: Form.createFormField({ value : params.systemName }),
+            systemUrl: Form.createFormField({ value : params.systemUrl }),
+            description: Form.createFormField({ value : params.description })
         };
     }
 })((props:EditFormProps)=>{
@@ -32,6 +34,8 @@ const EditForm = Form.create({
             <ExFormItem type='hidden' name='oid' getFieldDecorator={getFieldDecorator}/>
             <ExFormItem type='hidden' name='pid' getFieldDecorator={getFieldDecorator}/>
             <ExFormItem label='SystemName' name='name' getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem label='SystemUrl' name='systemUrl' getFieldDecorator={getFieldDecorator}/>
+            <ExFormItem type='textarea' label='Description' name='description' getFieldDecorator={getFieldDecorator}/>
         </Form>
     );
 })

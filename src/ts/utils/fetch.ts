@@ -6,8 +6,6 @@ import {_Object} from 'customInterface';
 import { isEmpty,getUriParams } from '.';
 import CONST from 'config/const';
 
-console.log(process.env.NODE_ENV);
-
 const ReactDOM = require('react-dom');
 const Err50x = (cb:Function) => { require.ensure([], require => { cb(require('pages/Error/50x')); }); };
 const Fetch:_Object = {};

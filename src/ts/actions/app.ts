@@ -198,7 +198,8 @@ action.login = (loginName:string, password:string, section:string,autoLogin:numb
         if(!isEmpty(json)){
             setCookie('access_token',json.accessToken);
             setCookie('refresh_token',json.refreshToken);
-            localStorage.setItem('uid',json.uid);
+            setCookie('chaos_uid',json.uid);
+            // localStorage.setItem('uid',json.uid);
         }
         return json;
     });
@@ -215,7 +216,8 @@ action.logout = () => (dispatch:any) => {
     }).then(()=>{
         delCookie('access_token');
         delCookie('refresh_token');
-        localStorage.setItem('uid','');
+        delCookie('chaos_uid');
+        // localStorage.setItem('uid','');
         dispatch({ type: 'APP_LOGOUT' });
         return Promise.resolve();
     }).catch((err:any)=>{
@@ -240,7 +242,8 @@ action.isExpiration = () => (dispatch:any) =>
  * 加载用户信息
  */
 action.loadUserInfo = () => (dispatch:any) => {
-    const uid = localStorage.getItem('uid');
+    // const uid = localStorage.getItem('uid');
+    const uid = getCookie('chaos_uid');
     return Fetch.get(API.USER_INFO_LOAD,{uid}).then((data:any) => {
         dispatch({ type: 'APP_SET_USER_INFO', info: data });
         return data;
@@ -260,7 +263,8 @@ action.loadUserAuth = () => (dispatch:any) => Fetch.get('/user/auth').then((data
  */
 action.loadUserMenu = (reloadOnly:boolean) => (dispatch:any) => {
     // Promise.all([Fetch.get('/role/auth'),Fetch.get('/menu/user')]).then((data:Array<any>)=>{
-    const uid = localStorage.getItem('uid');
+    // const uid = localStorage.getItem('uid');
+    const uid = getCookie('chaos_uid');
     return Fetch.get(API.MENU_USERTREE_LOAD,{uid:uid,systemId:66}).then((data:_Object)=>{
         let roleAuth:Array<_Object> = [];
         let userMenu = data.list;

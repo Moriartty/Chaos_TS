@@ -2,9 +2,11 @@ import {Card,Row,Col} from 'antd';
 import {connect} from 'react-redux';
 import action from 'actions/home';
 import * as React from 'react';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 interface CompProps {
     init:Function,
+    intl:any,
     availableSystem:Array<any>
 }
 
@@ -14,6 +16,7 @@ class Home extends React.Component<CompProps>{
     }
     render(){
         const {availableSystem} = this.props;
+        const intl = this.props.intl;
         return (
             <Row>
                 {
@@ -22,12 +25,15 @@ class Home extends React.Component<CompProps>{
                             <Col xxl={6} lg={8} md={12}  style={{display:'flex',justifyContent:'center',marginBottom:'20px'}} key={o.systemName}>
                                 <Card
                                     hoverable
-                                    style={{ width: 280 }}
+                                    style={{ width: 280,borderRadius:200 }}
                                     key={o.systemName}
                                     onClick={()=>location.href = o.systemUrl}
                                     cover={<img alt="example" src={require('../../../img/logo.svg')} />}
                                 >
-                                    <Card.Meta title={o.systemName} description={o.systemUrl} />
+                                    <div style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>
+                                        <b>{intl.formatMessage({ id: o.name })}</b>
+                                        <span>{o.description}</span>
+                                    </div>
                                 </Card>
                             </Col>
                         )
@@ -38,7 +44,7 @@ class Home extends React.Component<CompProps>{
     }
 }
 
-const HomeComponent = connect((state:any)=>{
+let HomeComponent = connect((state:any)=>{
     const {availableSystem} = state['home'];
     return {availableSystem};
 },dispatch=>({
@@ -48,4 +54,4 @@ const HomeComponent = connect((state:any)=>{
 }))(Home)
 
 
-module.exports = HomeComponent;
+module.exports = injectIntl(HomeComponent);

@@ -92,7 +92,7 @@ export function getReduction(preArr:Array<any>,intersection:Array<any>){
  * @param val
  * @returns {*}
  */
-export function isEmpty(val:any){
+export function isEmpty(val:any):boolean{
     switch(Object.prototype.toString.call(val)){
         case '[object Array]':
             return !(val&&val.length);

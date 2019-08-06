@@ -6,7 +6,7 @@ import Table from './Table';
 import Toolbar from 'components/App/Toolbar';
 import SearchModal from './SearchModal';
 import {Button} from "antd"
-import EditModal from './EditModal';
+import BatchEditModal from './BatchEditModal';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import * as React from 'react';
 import { _Object } from 'customInterface';
@@ -66,7 +66,7 @@ class FieldTranslation extends React.Component<CompProps,CompState> {
                                     operations.indexOf('fieldTranslation_operation_add')>-1&&
                                     <Button onClick={()=>this.props.onAdd()} style={{marginLeft:20}} icon={'plus'}>
                                         <FormattedMessage id='fieldTranslation_operation_add'/>
-                                    </Button>
+                                    </Button> 
                                 }
                                 {
                                     operations.indexOf('fieldTranslation_operation_delete')>-1&&
@@ -79,7 +79,7 @@ class FieldTranslation extends React.Component<CompProps,CompState> {
                     }
                     
                 </Toolbar>
-                <EditModal/>
+                <BatchEditModal/>
                 <SearchModal
                     show={this.state.showSearchModal}
                     onSearch={onSearch}

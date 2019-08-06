@@ -82,7 +82,7 @@ actions.edit = (data:_Object) => (dispatch:any) => {
  * 删除一个埋点需求
  */
 actions.delete = (key:number) => (dispatch:any) => {
-    Fetch.get(API.FIELDTRANS_REMOVE+'/'+key,{}).then(()=>{
+    Fetch.post(API.FIELDTRANS_REMOVE,key).then(()=>{
         message.success('操作成功');
         dispatch(actions.loadFieldsData())
     }).catch((err:any)=>{

@@ -3,7 +3,6 @@ import action from 'actions/menu';
 import appAction from 'actions/app';
 import EditModal from './EditModal';
 import EditSystemModal from './EditSystemModal';
-// import Toolbar from './Toolbar';
 import Toolbar from 'components/App/Toolbar';
 import Table from './Table';
 import * as React from 'react';
